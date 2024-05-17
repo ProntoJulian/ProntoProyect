@@ -1,0 +1,128 @@
+{{#if user}}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barra de Navegación</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .btn-nav {
+            margin: 0 5px; /* Espaciado entre botones */
+            white-space: nowrap; /* Evitar que las palabras se dividan */
+        }
+
+        .btn-nav {
+            margin-right: 10px; /* Espaciado entre botones */
+        }
+
+        .active {
+            background-color: #007BFF; /* Color cuando está activo */
+            color: white;
+        }
+
+        .navbar {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para la barra de navegación */
+            border-radius: 0.5rem; /* Bordes redondeados */
+        }
+
+        .navbar-brand {
+            font-weight: bold; /* Texto en negrita para la marca */
+            color: #007BFF; /* Color de la marca */
+        }
+
+        .navbar-toggler {
+            border: none; /* Quitar borde del toggler */
+        }
+
+        .navbar-toggler-icon {
+            color: #007BFF; /* Color del ícono toggler */
+        }
+
+        .navbar-nav .btn-nav {
+            border-radius: 0.25rem; /* Bordes redondeados para los botones */
+            transition: background-color 0.3s ease; /* Transición suave para el fondo */
+        }
+
+        .navbar-nav .btn-nav:hover {
+            background-color: #f8f9fa; /* Fondo al pasar el mouse */
+        }
+
+        @media (max-width: 768px) {
+            .navbar-nav .btn-nav {
+                margin: 5px 0; /* Espaciado vertical en móviles */
+                width: 100%; /* Botones ocupan todo el ancho */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Menú</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <div class="navbar-nav">
+                    <form action="/app/companies" method="GET">
+                        <button type="submit" class="btn btn-light btn-nav"
+                            onclick="setActive(this)">Companies</button>
+                    </form>
+                    <form action="/app/feeds" method="GET">
+                        <button type="submit" class="btn btn-light btn-nav"
+                            onclick="setActive(this)">Feeds</button>
+                    </form>
+                    <form action="/app/roles" method="GET">
+                        <button type="submit" class="btn btn-light btn-nav"
+                            onclick="setActive(this)">Roles</button>
+                    </form>
+                    <form action="/app/users" method="GET">
+                        <button type="submit" class="btn btn-light btn-nav"
+                            onclick="setActive(this)">Users</button>
+                    </form>
+                    <form action="/app/logout" method="GET">
+                        <button type="submit" class="btn btn-light btn-nav"
+                            onclick="setActive(this)">LogOut</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Bootstrap JS bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function setActive(button) {
+            var buttons = document.getElementsByClassName('btn-nav');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('active');
+            }
+            button.classList.add('active');
+        }
+
+        // Asegurarse de que el menú colapsa correctamente en dispositivos móviles
+        document.addEventListener('DOMContentLoaded', function () {
+            var toggler = document.querySelector('.navbar-toggler');
+            var collapse = new bootstrap.Collapse(document.getElementById('navbarNav'), {
+                toggle: false
+            });
+
+            document.querySelectorAll('.btn-nav').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    if (window.innerWidth < 992) { // El tamaño de pantalla donde el navbar se colapsa
+                        collapse.hide();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
+{{/if}}

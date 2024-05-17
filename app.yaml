@@ -1,0 +1,4 @@
+runtime: nodejs
+env: flex
+beta_settings:
+  cloud_sql_instances: sincere-stack-421919:us-central1:google-merchant-feed-manager
