@@ -86,6 +86,7 @@ app.use((req, res, next) => {
   res.locals.user = req.user || null;
   next();
 });
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
 
