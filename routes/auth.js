@@ -10,14 +10,15 @@ routerAuth.get("/login", (req, res) => {
 
 routerAuth.post('/login', async (req, res) => {
     const { username, password } = req.body;
+
+    console.log("Username: ", username)
+    console.log("Password: ", password)
+
     const authResult = await authenticateUser(username, password);
 
     if (!authResult.success) {
         return res.status(401).json({ message: authResult.message });
     }
-
-    // Autenticación exitosa, establecer el usuario en req.user
-    req.user = authResult.user;
 
     const accessToken = jwt.sign(
         { username: authResult.user.username }, // Es mejor no incluir información sensible
@@ -31,7 +32,7 @@ routerAuth.post('/login', async (req, res) => {
         maxAge: 3600000 // Tiempo de expiración de la cookie en milisegundos
     });
 
-    res.redirect('/login');
+    res.json({ message: "Autenticación exitosa" });
 });
 
 module.exports = routerAuth;
