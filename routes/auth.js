@@ -31,8 +31,7 @@ routerAuth.post('/login', async (req, res) => {
         maxAge: 3600000 // Tiempo de expiración de la cookie en milisegundos
     });
 
-    req.flash('success_msg', 'Autenticación exitosa');
-    res.redirect('login/login');
+    res.redirect('/login');
 });
 
 module.exports = routerAuth;
