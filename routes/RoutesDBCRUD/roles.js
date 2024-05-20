@@ -24,11 +24,12 @@ routerRoles.post("/roles/createRole", authenticateToken, async (req, res) => {
     const columns = ['role_name'];  // Columnas específicas para la tabla roles
     if (!roleName || roleName == '') {
         res.render("app/roles", {error_msg: 'El nombre es requerido'});
+        
     }
     try {
         const result = await insertIntoTable('roles', { role_name: roleName }, columns);
         if (result.affectedRows > 0) {
-            res.render("app/roles", { success_msg: 'Rol creado con exito' });
+            res.render("app/roles", { success_msg: "Rol creado con éxito" });
         } else {
             res.render("app/roles", { error_msg: 'Hubo un error al crear el rol' });
         }
