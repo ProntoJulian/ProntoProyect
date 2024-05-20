@@ -77,7 +77,6 @@ async function fetchOneFromTable(tableName, id, idColumnName = 'id') {
     const sql = `SELECT * FROM \`${tableName}\` WHERE \`${idColumnName}\` = ?`;
     try {
         const [results, fields] = await pool.promise().query(sql, [id]);
-        console.log('Query executed, results:', results);
         return results.length > 0 ? results[0] : null;
     } catch (error) {
         console.error(`Error al obtener el registro desde ${tableName}:`, error);
