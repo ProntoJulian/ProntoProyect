@@ -63,7 +63,7 @@ routerFeeds.get("/feeds/updateFeed/:feedId", authenticateToken, async (req, res)
     try {
         const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
         if (feed) {
-            res.render("pages/editFeeds",{feed:feed});
+            res.render("pages/editFeeds",{feed:[feed]});
         } else {
             res.status(404).json({ message: "Feed no encontrado" });
         }
