@@ -25,8 +25,9 @@ passport.serializeUser((user, done) => {
   done(null, user.user_id);
 });
 
-passport.deserializeUser((id, done) => {
-  const user = db.users.find(user => user.user_id === id);
+ passport.deserializeUser(async (id, done) => {
+    const authResult = await authenticateUser(username, password);
+  const user = authResult.user;
   if (user) {
     done(null, user);
   } else {
