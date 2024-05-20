@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,7 +28,6 @@
         }
     </style>
 </head>
-
 <body>
     <div class="content">
         <div class="container mt-5">
@@ -56,8 +54,7 @@
                         <div class="mb-3">
                             <label for="x_auth_token" class="form-label">x_auth_token</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="x_auth_token"
-                                    value="{{this.x_auth_token}}">
+                                <input type="password" class="form-control" id="x_auth_token" value="{{this.x_auth_token}}">
                                 <span class="input-group-text toggle-password" data-toggle="x_auth_token">
                                     <i class="fas fa-eye"></i>
                                 </span>
@@ -75,8 +72,7 @@
                         <div class="mb-3">
                             <label for="client_secret" class="form-label">Client Secret</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="client_secret"
-                                    value="{{this.client_secret}}">
+                                <input type="password" class="form-control" id="client_secret" value="{{this.client_secret}}">
                                 <span class="input-group-text toggle-password" data-toggle="client_secret">
                                     <i class="fas fa-eye"></i>
                                 </span>
@@ -88,23 +84,19 @@
                         </div>
                         <div class="mb-3">
                             <label for="last_update" class="form-label">Última Actualización</label>
-                            <input type="text" class="form-control" id="last_update" value="{{this.last_update}}"
-                                disabled>
+                            <input type="text" class="form-control" id="last_update" value="{{this.last_update}}" disabled>
                         </div>
                         <div class="mb-3">
                             <label for="active_products_gm" class="form-label">Productos Activos GM</label>
-                            <input type="number" class="form-control" id="active_products_gm"
-                                value="{{this.active_products_gm}}">
+                            <input type="number" class="form-control" id="active_products_gm" value="{{this.active_products_gm}}">
                         </div>
                         <div class="mb-3">
                             <label for="total_products_bc" class="form-label">Productos Totales BC</label>
-                            <input type="number" class="form-control" id="total_products_bc"
-                                value="{{this.total_products_bc}}">
+                            <input type="number" class="form-control" id="total_products_bc" value="{{this.total_products_bc}}">
                         </div>
                         <div class="mb-3">
                             <label for="preorder_products" class="form-label">Productos en Preorden</label>
-                            <input type="number" class="form-control" id="preorder_products"
-                                value="{{this.preorder_products}}">
+                            <input type="number" class="form-control" id="preorder_products" value="{{this.preorder_products}}">
                         </div>
                         <div class="mb-3">
                             <label for="company_id" class="form-label">ID de la Compañía</label>
@@ -147,29 +139,28 @@
             });
 
             updateButton.addEventListener('click', function () {
-                const feedId = {{ this.feed_id }}
-            };
-            const feedData = {
-                feed_name: document.getElementById('feed_name').value,
-                store_hash: document.getElementById('store_hash').value,
-                x_auth_token: document.getElementById('x_auth_token').value,
-                client_id: document.getElementById('client_id').value,
-                client_secret: document.getElementById('client_secret').value,
-                formulas: document.getElementById('formulas').value,
-                last_update: document.getElementById('last_update').value,
-                active_products_gm: document.getElementById('active_products_gm').value,
-                total_products_bc: document.getElementById('total_products_bc').value,
-                preorder_products: document.getElementById('preorder_products').value,
-                company_id: document.getElementById('company_id').value,
-            };
+                const feedId = '{{ this.feed_id }}'; // Ensure this is rendered properly
+                const feedData = {
+                    feed_name: document.getElementById('feed_name').value,
+                    store_hash: document.getElementById('store_hash').value,
+                    x_auth_token: document.getElementById('x_auth_token').value,
+                    client_id: document.getElementById('client_id').value,
+                    client_secret: document.getElementById('client_secret').value,
+                    formulas: document.getElementById('formulas').value,
+                    last_update: document.getElementById('last_update').value,
+                    active_products_gm: document.getElementById('active_products_gm').value,
+                    total_products_bc: document.getElementById('total_products_bc').value,
+                    preorder_products: document.getElementById('preorder_products').value,
+                    company_id: document.getElementById('company_id').value,
+                };
 
-            fetch(`/feeds/update/${feedId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(feedData)
-            })
+                fetch(`/feeds/update/${feedId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(feedData)
+                })
                 .then(response => response.json())
                 .then(data => {
                     if (data.message === "Feed actualizado con éxito") {
@@ -183,9 +174,8 @@
                     console.error('Error:', error);
                     alert("Error al actualizar el feed");
                 });
-        });
+            });
         });
     </script>
 </body>
-
 </html>
