@@ -91,7 +91,7 @@
                                 </button>
                             </td>
                             <td><span class="non-editable">{{this.role_id}}</span><input type="text" class="form-control editable" value="{{this.role_id}}" disabled></td>
-                            <td><span class="non-editable">{{this.role_name}}</span><input type="text" class="form-control editable" value="{{this.role_name}}"></td>
+                            <td><span class="non-editable">{{this.role_name}}</span><input type="text" class="form-control editable" value="{{this.role_name}}" data-role-name></td>
                         </tr>
                         {{/each}}
                     </tbody>
@@ -189,7 +189,7 @@
                 btn.addEventListener('click', function () {
                     var row = btn.closest('tr');
                     var roleId = btn.getAttribute('data-role-id');
-                    var newRoleName = row.querySelector('input[type="text"]').value;
+                    var newRoleName = row.querySelector('input[data-role-name]').value;
                     var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
 
                     document.getElementById('confirmSave').onclick = function () {
@@ -288,7 +288,7 @@
                                     </button>
                                 </td>
                                 <td><span class="non-editable">${data.role_id}</span><input type="text" class="form-control editable" value="${data.role_id}" disabled></td>
-                                <td><span class="non-editable">${newRoleName}</span><input type="text" class="form-control editable" value="${newRoleName}"></td>
+                                <td><span class="non-editable">${newRoleName}</span><input type="text" class="form-control editable" value="${newRoleName}" data-role-name></td>
                             </tr>
                         `;
                         document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
