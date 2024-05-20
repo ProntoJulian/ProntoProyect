@@ -14,7 +14,7 @@ passport.use(new LocalStrategy({
       // Compara la contraseña usando bcrypt
       const match = await bcrypt.compare(password, authResult.user.password_hash);
       if (match) {
-        return done(null, user);
+        return done(null, authResult.user);
       } else {
         return done(null, false, { message: 'Incorrect Password' });
       }
