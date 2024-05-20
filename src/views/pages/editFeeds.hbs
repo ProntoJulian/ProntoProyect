@@ -141,7 +141,7 @@
             });
 
             updateButton.addEventListener('click', function () {
-                const feedId = {{feed.feed_id}};
+                const feedId = {{this.feed_id}};
                 const feedData = {
                     feed_name: document.getElementById('feed_name').value,
                     store_hash: document.getElementById('store_hash').value,
