@@ -1,5 +1,5 @@
 const appRouter = require("express").Router();
-const { authenticateToken } = require("../helpers/helpers");
+const { authenticateToken } = require("../middleware/index");
 const {
     insertIntoTable,
     updateTable,
