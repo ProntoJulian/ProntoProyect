@@ -2,7 +2,7 @@ const express = require("express");
 const routerAuth = express.Router();
 const { authenticateUser } = require("../databases/auth");
 const jwt = require('jsonwebtoken');
-
+const passport = require('passport');
 
 routerAuth.get("/login", (req, res) => {
     res.render("login/login");
