@@ -59,6 +59,7 @@ const routerImages = require("./routes/Merchant/images");
 const routerOrders = require("./routes/Merchant/orders");
 const routerProducts = require("./routes/Merchant/products");
 const routerWebHooks = require("./routes/Merchant/webHooks");
+const appRouter = require("./routes/index");
 
 // Register routers
 app.use(routerOrders);
@@ -73,6 +74,7 @@ app.use(routerRoles);
 app.use(routerUsers);
 app.use(routerUserFeeds);
 app.use(routerAuth);
+app.use(appRouter);
 
 // Server is listening
 const PORT = process.env.PORT || 8443;
