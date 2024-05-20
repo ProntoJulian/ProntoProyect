@@ -1,9 +1,41 @@
-const router = require("express").Router();
+const appRouter = require("express").Router();
+const { authenticateToken } = require("../helpers/helpers");
+const {
+    insertIntoTable,
+    updateTable,
+    fetchDataFromTable,
+    deleteFromTable,
+    fetchOneFromTable
+} = require("../databases/CRUD");
 
-router.get("/", (req,res) => {
+appRouter.get("/", (req, res) => {
     res.send("Index")
 })
 
-module.exports = router;
+appRouter.get("/app", authenticateToken, (req, res, next) => {
+    res.render("app");
+});
+
+appRouter.get("/app/companies", authenticateToken,async function (req, res) {
+    const companies = await fetchDataFromTable('companies');
+    res.render("pages/companies",{ companies: companies });
+});
+
+appRouter.get("/app/feeds", authenticateToken, async function (req, res) {
+    const feeds = await fetchDataFromTable('feeds');
+    res.render("pages/feeds",{ feeds: feeds });
+});
+
+appRouter.get("/app/roles", authenticateToken,async function (req, res) {
+    const roles = await fetchDataFromTable('roles');
+    res.render("pages/roles",{ roles: roles });
+});
+
+appRouter.get("/app/users", authenticateToken,async function (req, res) {
+    const users = await fetchDataFromTable('users');
+    res.render("pages/users",{ users: users });
+});
+
+module.exports = appRouter;
 
 

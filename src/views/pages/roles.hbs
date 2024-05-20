@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabla de Roles</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .table td, .table th {
+            padding: 0.75rem;
+            white-space: nowrap;
+        }
+
+        .icon-btn {
+            border: none;
+            background: none;
+            padding: 0;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+
+        .icon-btn i {
+            font-size: 1.2em;
+            color: #007BFF;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .table thead th {
+            white-space: nowrap;
+        }
+
+        .highlight-row {
+            background-color: #f8f9fa;
+        }
+
+        .editable {
+            display: none;
+        }
+
+        .editing .editable {
+            display: inline;
+        }
+
+        .editing .non-editable {
+            display: none;
+        }
+
+        .action-buttons {
+            margin-top: 15px;
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-user-tag table-icon"></i> Lista de Roles</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="text-center"><i class="fas fa-tools table-icon"></i>Acciones</th>
+                            <th class="col-id"><i class="fas fa-id-badge table-icon"></i>ID Rol</th>
+                            <th class="col-name"><i class="fas fa-user-tag table-icon"></i>Rol</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each roles}}
+                        <tr>
+                            <td class="text-center">
+                                <button class="btn btn-primary btn-edit" title="Actualizar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-delete" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                <button class="btn btn-success btn-save editable" title="Guardar">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </td>
+                            <td><span class="non-editable">{{this.role_id}}</span><input type="text" class="form-control editable" value="{{this.role_id}}" disabled></td>
+                            <td><span class="non-editable">{{this.role_name}}</span><input type="text" class="form-control editable" value="{{this.role_name}}"></td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="action-buttons">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="fas fa-plus"></i> Crear
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Confirmación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Seguro que quiere guardar los cambios?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="confirmSave">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Crear Rol -->
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel">Crear Nuevo Rol</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createForm">
+                        <div class="mb-3">
+                            <label for="newRoleName" class="form-label">Nombre del Rol</label>
+                            <input type="text" class="form-control" id="newRoleName" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Crear</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Funcionalidad de editar
+    document.querySelectorAll('.btn-edit').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var row = btn.closest('tr');
+            row.classList.add('editing');
+        });
+    });
+
+    // Funcionalidad de cancelar edición
+    document.querySelectorAll('.btn-cancel').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var row = btn.closest('tr');
+            row.classList.remove('editing');
+        });
+    });
+
+    // Funcionalidad de guardar cambios
+    document.querySelectorAll('.btn-save').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var row = btn.closest('tr');
+            var inputs = row.querySelectorAll('input');
+            var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+
+            document.getElementById('confirmSave').onclick = function () {
+                inputs.forEach(function (input) {
+                    var span = input.previousElementSibling;
+                    span.innerText = input.value;
+                });
+                row.classList.remove('editing');
+                confirmModal.hide();
+            };
+
+            confirmModal.show();
+        });
+    });
+
+    // Funcionalidad de crear nuevo rol
+    document.getElementById('createForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        var newRoleName = document.getElementById('newRoleName').value;
+        var newRow = `
+            <tr>
+                <td class="text-center">
+                    <button class="btn btn-primary btn-edit" title="Actualizar">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-danger btn-delete" title="Eliminar">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="btn btn-success btn-save editable" title="Guardar">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </td>
+                <td><span class="non-editable">NUEVO</span><input type="text" class="form-control editable" value="NUEVO" disabled></td>
+                <td><span class="non-editable">${newRoleName}</span><input type="text" class="form-control editable" value="${newRoleName}"></td>
+            </tr>
+        `;
+        document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
+        var createModal = new bootstrap.Modal(document.getElementById('createModal'));
+        createModal.hide();
+    });
+});
+    </script>
+</body>
+
+</html>
