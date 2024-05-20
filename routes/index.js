@@ -9,7 +9,7 @@ const {
 } = require("../databases/CRUD");
 
 appRouter.get("/", (req, res) => {
-    res.send("Index")
+    res.render("login/login");
 })
 
 appRouter.get("/app", authenticateToken, (req, res, next) => {
