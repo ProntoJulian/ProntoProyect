@@ -40,36 +40,38 @@ routerAuth.post('/login', async (req, res) => {
 
 routerAuth.post('/login', (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
-      if (err) {
-        return next(err);
-      }
-      if (!user) {
-        return res.redirect('/login', {
-          errors: [{ text: info.message }],
-          email: req.body.email,
-          password: req.body.password
-        });
-      }
-  
-      req.logIn(user, function(err) {
         if (err) {
-          return next(err);
+            return next(err);
         }
-  
-        const accessToken = jwt.sign(
-          { id: user.id }, // asegúrate de que el 'id' exista en tu objeto de usuario
-          process.env.ACCESS_TOKEN_SECRET,
-          { expiresIn: '1h' }
-        );
-  
-        res.cookie("accessToken", accessToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production', // Usa secure solo en producción
-          maxAge: 3600000 // 1 hora
+        if (!user) {
+            return res.redirect('/login', {
+                errors: [{ text: info.message }],
+                email: req.body.email,
+                password: req.body.password
+            });
+        }
+
+        req.logIn(user, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            const accessToken = jwt.sign(
+                { id: user.id }, // asegúrate de que el 'id' exista en tu objeto de usuario
+                process.env.ACCESS_TOKEN_SECRET,
+                { expiresIn: '1h' }
+            );
+
+            res.cookie("accessToken", accessToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production', // Usa secure solo en producción
+                maxAge: 3600000 // 1 hora
+            });
+
+            res.redirect('/app');
         });
-  
-        res.redirect('/app');
-      });
     })(req, res, next);
-  });
+});
+
+
 module.exports = routerAuth;
