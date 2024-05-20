@@ -11,6 +11,8 @@ const passport = require('passport');
 const database = require(path.join(__dirname, 'databases', 'prontoWebDB'));
 const GoogleAPI = require(path.join(__dirname, 'api', 'googleMerchantAPI'));
 
+require("./src/config/passport.js");
+
 // Setting up Handlebars
 app.set('views', path.join(__dirname,"src","views"));
 app.engine('.hbs', engine({
