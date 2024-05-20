@@ -12,6 +12,15 @@ appRouter.get("/", (req, res) => {
     res.render("login/login");
 })
 
+appRouter.get("/app/logout", authenticateToken, function (req, res) {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/login");
+  });
+});
+
 appRouter.get("/app", authenticateToken, (req, res, next) => {
     res.render("app");
 });
