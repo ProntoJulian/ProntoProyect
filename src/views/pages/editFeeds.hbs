@@ -48,7 +48,7 @@
                             <label for="store_hash" class="form-label">Store Hash</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="store_hash" value="{{this.store_hash}}">
-                                <span class="input-group-text toggle-password" onclick="togglePassword('store_hash')">
+                                <span class="input-group-text toggle-password" data-toggle="store_hash">
                                     <i class="fas fa-eye"></i>
                                 </span>
                             </div>
@@ -57,7 +57,7 @@
                             <label for="x_auth_token" class="form-label">x_auth_token</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="x_auth_token" value="{{this.x_auth_token}}">
-                                <span class="input-group-text toggle-password" onclick="togglePassword('x_auth_token')">
+                                <span class="input-group-text toggle-password" data-toggle="x_auth_token">
                                     <i class="fas fa-eye"></i>
                                 </span>
                             </div>
@@ -66,7 +66,7 @@
                             <label for="client_id" class="form-label">Client ID</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="client_id" value="{{this.client_id}}">
-                                <span class="input-group-text toggle-password" onclick="togglePassword('client_id')">
+                                <span class="input-group-text toggle-password" data-toggle="client_id">
                                     <i class="fas fa-eye"></i>
                                 </span>
                             </div>
@@ -75,7 +75,7 @@
                             <label for="client_secret" class="form-label">Client Secret</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="client_secret" value="{{this.client_secret}}">
-                                <span class="input-group-text toggle-password" onclick="togglePassword('client_secret')">
+                                <span class="input-group-text toggle-password" data-toggle="client_secret">
                                     <i class="fas fa-eye"></i>
                                 </span>
                             </div>
@@ -129,26 +129,15 @@
                 field.type = type;
             };
 
-            const enableEditing = () => {
-                form.querySelectorAll('input').forEach(input => {
-                    if (input.id !== 'last_update') {
-                        input.classList.add('editing');
-                    }
+            document.querySelectorAll('.toggle-password').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const fieldId = btn.getAttribute('data-toggle');
+                    togglePassword(fieldId);
                 });
-            };
-
-            const disableEditing = () => {
-                form.querySelectorAll('input').forEach(input => {
-                    input.classList.remove('editing');
-                });
-            };
-
-            form.addEventListener('input', enableEditing);
+            });
 
             cancelButton.addEventListener('click', function () {
-                disableEditing();
-                // Reload the page to reset the form values
-                window.location.reload();
+                window.location.href = "/app/feeds";
             });
 
             updateButton.addEventListener('click', function () {
@@ -178,7 +167,7 @@
                 .then(data => {
                     if (data.message === "Feed actualizado con éxito") {
                         alert("Feed actualizado con éxito");
-                        disableEditing();
+                        window.location.href = "/app/feeds";
                     } else {
                         alert("Error al actualizar el feed: " + data.message);
                     }
@@ -188,9 +177,6 @@
                     alert("Error al actualizar el feed");
                 });
             });
-
-            // Toggle password visibility
-            window.togglePassword = togglePassword;
         });
     </script>
 </body>
