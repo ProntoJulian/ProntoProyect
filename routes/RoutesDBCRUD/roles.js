@@ -29,7 +29,7 @@ routerRoles.post("/roles/createRole", authenticateToken, async (req, res) => {
     try {
         const result = await insertIntoTable('roles', { role_name: roleName }, columns);
         if (result.affectedRows > 0) {
-            res.render("app/roles", { success_msg: "Rol creado con éxito" });
+            res.send({ message: "Rol creado con éxito" });
         } else {
             res.render("app/roles", { error_msg: 'Hubo un error al crear el rol' });
         }
@@ -44,7 +44,7 @@ routerRoles.delete("/roles/deleteRole/:roleId", authenticateToken, async (req, r
     try {
         const result = await deleteFromTable('roles', 'role_id', roleId);
         if (result.affectedRows > 0) {
-            res.status(200).json({ message: "Rol eliminado con éxito" });
+            res.send({ message: "Rol eliminado con éxito" });
         } else {
             res.status(404).json({ message: "Rol no encontrado" });
         }
@@ -64,7 +64,7 @@ routerRoles.put("/roles/updateRole/:roleId", authenticateToken, async (req, res)
     try {
         const result = await updateTable('roles', { role_name: newName }, 'role_id', roleId);
         if (result.affectedRows > 0) {
-            res.status(200).json({ message: "Rol actualizado con éxito" });
+            res.send({ message: "Rol actualizado con éxito" });
         } else {
             res.status(404).json({ message: "Rol no encontrado" });
         }

@@ -83,7 +83,7 @@
                                 <button class="btn btn-danger btn-delete" title="Eliminar" data-role-id="{{this.role_id}}">
                                     <i class="fas fa-trash"></i>
                                 </button>
-                                <button class="btn btn-success btn-save editable" title="Guardar">
+                                <button class="btn btn-success btn-save editable" title="Guardar" data-role-id="{{this.role_id}}">
                                     <i class="fas fa-check"></i>
                                 </button>
                                 <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
@@ -188,16 +188,33 @@
             document.querySelectorAll('.btn-save').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     var row = btn.closest('tr');
-                    var inputs = row.querySelectorAll('input');
+                    var roleId = btn.getAttribute('data-role-id');
+                    var newRoleName = row.querySelector('input[type="text"]').value;
                     var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
 
                     document.getElementById('confirmSave').onclick = function () {
-                        inputs.forEach(function (input) {
-                            var span = input.previousElementSibling;
-                            span.innerText = input.value;
+                        fetch(`/roles/updateRole/${roleId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ newName: newRoleName })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === "Rol actualizado con éxito") {
+                                row.querySelector('.non-editable').innerText = newRoleName;
+                                row.classList.remove('editing');
+                            } else {
+                                alert("Error al actualizar el rol: " + data.message);
+                            }
+                            confirmModal.hide();
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert("Error al actualizar el rol");
+                            confirmModal.hide();
                         });
-                        row.classList.remove('editing');
-                        confirmModal.hide();
                     };
 
                     confirmModal.show();
@@ -253,7 +270,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success_msg === "Rol creado con éxito") {
+                    if (data.message === "Rol creado con éxito") {
                         var newRow = `
                             <tr>
                                 <td class="text-center">
@@ -263,7 +280,7 @@
                                     <button class="btn btn-danger btn-delete" title="Eliminar" data-role-id="${data.role_id}">
                                         <i class="fas fa-trash"></i>
                                     </button>
-                                    <button class="btn btn-success btn-save editable" title="Guardar">
+                                    <button class="btn btn-success btn-save editable" title="Guardar" data-role-id="${data.role_id}">
                                         <i class="fas fa-check"></i>
                                     </button>
                                     <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
