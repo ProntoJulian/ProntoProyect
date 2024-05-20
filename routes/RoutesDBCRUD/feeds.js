@@ -75,7 +75,7 @@ routerFeeds.get("/feeds/updateFeed/:feedId", authenticateToken, async (req, res)
     
 });
 
-routerFeeds.put("/feeds/updateFeed/:feedId", authenticateToken, async (req, res) => {
+routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => {
     const { feedId } = req.params;
     const updateData = req.body;
 

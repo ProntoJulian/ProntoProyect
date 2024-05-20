@@ -164,7 +164,7 @@
                     company_id: document.getElementById('company_id').value,
                 };
 
-                fetch(`/feeds/updateFeed/${feedId}`, {
+                fetch(`/feeds/update/${feedId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
