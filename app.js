@@ -3,6 +3,7 @@ const app = express();
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const { engine } = require('express-handlebars');
+const handlebars = require('handlebars');
 const methodOveride = require("method-override")
 const session = require("express-session")
 const flash = require('express-flash');
@@ -12,6 +13,13 @@ const database = require(path.join(__dirname, 'databases', 'prontoWebDB'));
 const GoogleAPI = require(path.join(__dirname, 'api', 'googleMerchantAPI'));
 
 require("./src/config/passport.js");
+
+handlebars.registerHelper('ifCond', function (v1, v2, options) {
+  if (v1 === v2) {
+      return options.fn(this);
+  }
+  return options.inverse(this);
+});
 
 // Setting up Handlebars
 app.set('views', path.join(__dirname,"src","views"));
