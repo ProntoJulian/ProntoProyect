@@ -3,6 +3,7 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const { authenticateUser } = require("../../databases/auth");
 
 // Leer los datos desde el archivo JSON
 const rawData = fs.readFileSync(path.join(__dirname, '..', 'databases', 'db.json'));
