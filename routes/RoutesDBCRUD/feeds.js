@@ -71,8 +71,6 @@ routerFeeds.get("/feeds/updateFeed/:feedId", authenticateToken, async (req, res)
         console.error('Error al obtener el feed:', error);
         res.status(500).json({ message: "Error interno del servidor al intentar obtener el feed" });
     }
-
-    
 });
 
 routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => {

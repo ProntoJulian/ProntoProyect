@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -56,7 +55,6 @@
         }
     </style>
 </head>
-
 <body>
     <div class="container mt-5">
         <div class="card">
@@ -93,8 +91,22 @@
                             </td>
                             <td><span class="non-editable">{{this.user_id}}</span><input type="text" class="form-control editable" value="{{this.user_id}}" disabled></td>
                             <td><span class="non-editable">{{this.username}}</span><input type="text" class="form-control editable" value="{{this.username}}"></td>
-                            <td><span class="non-editable">{{this.company_name}}</span><input type="text" class="form-control editable" value="{{this.company_name}}"></td>
-                            <td><span class="non-editable">{{this.role_name}}</span><input type="text" class="form-control editable" value="{{this.role_name}}"></td>
+                            <td>
+                                <span class="non-editable">{{this.company_name}}</span>
+                                <select class="form-control editable">
+                                    {{#each ../companies}}
+                                    <option value="{{this.company_id}}" {{#ifCond this.company_id ../this.company_id}}selected{{/ifCond}}>{{this.name}}</option>
+                                    {{/each}}
+                                </select>
+                            </td>
+                            <td>
+                                <span class="non-editable">{{this.role_name}}</span>
+                                <select class="form-control editable">
+                                    {{#each ../roles}}
+                                    <option value="{{this.role_id}}" {{#ifCond this.role_id ../this.role_id}}selected{{/ifCond}}>{{this.role_name}}</option>
+                                    {{/each}}
+                                </select>
+                            </td>
                         </tr>
                         {{/each}}
                     </tbody>
@@ -159,77 +171,82 @@
     <!-- Bootstrap JS bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Funcionalidad de editar
-    document.querySelectorAll('.btn-edit').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var row = btn.closest('tr');
-            row.classList.add('editing');
+    document.addEventListener('DOMContentLoaded', function () {
+        // Funcionalidad de editar
+        document.querySelectorAll('.btn-edit').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var row = btn.closest('tr');
+                row.classList.add('editing');
+            });
         });
-    });
 
-    // Funcionalidad de cancelar edición
-    document.querySelectorAll('.btn-cancel').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var row = btn.closest('tr');
-            row.classList.remove('editing');
-        });
-    });
-
-    // Funcionalidad de guardar cambios
-    document.querySelectorAll('.btn-save').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var row = btn.closest('tr');
-            var inputs = row.querySelectorAll('input');
-            var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-
-            document.getElementById('confirmSave').onclick = function () {
-                inputs.forEach(function (input) {
-                    var span = input.previousElementSibling;
-                    span.innerText = input.value;
-                });
+        // Funcionalidad de cancelar edición
+        document.querySelectorAll('.btn-cancel').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var row = btn.closest('tr');
                 row.classList.remove('editing');
-                confirmModal.hide();
-            };
+            });
+        });
 
-            confirmModal.show();
+        // Funcionalidad de guardar cambios
+        document.querySelectorAll('.btn-save').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var row = btn.closest('tr');
+                var inputs = row.querySelectorAll('input');
+                var selects = row.querySelectorAll('select');
+                var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+
+                document.getElementById('confirmSave').onclick = function () {
+                    inputs.forEach(function (input) {
+                        var span = input.previousElementSibling;
+                        span.innerText = input.value;
+                    });
+                    selects.forEach(function (select) {
+                        var span = select.previousElementSibling;
+                        var selectedOption = select.options[select.selectedIndex];
+                        span.innerText = selectedOption.text;
+                    });
+                    row.classList.remove('editing');
+                    confirmModal.hide();
+                };
+
+                confirmModal.show();
+            });
+        });
+
+        // Funcionalidad de crear nuevo usuario
+        document.getElementById('createForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var newUsername = document.getElementById('newUsername').value;
+            var newCompanyName = document.getElementById('newCompanyName').value;
+            var newRoleName = document.getElementById('newRoleName').value;
+            var newRow = `
+                <tr>
+                    <td class="text-center">
+                        <button class="btn btn-primary btn-edit" title="Actualizar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-delete" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button class="btn btn-success btn-save editable" title="Guardar">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </td>
+                    <td><span class="non-editable">NUEVO</span><input type="text" class="form-control editable" value="NUEVO" disabled></td>
+                    <td><span class="non-editable">${newUsername}</span><input type="text" class="form-control editable" value="${newUsername}"></td>
+                    <td><span class="non-editable">${newCompanyName}</span><input type="text" class="form-control editable" value="${newCompanyName}"></td>
+                    <td><span class="non-editable">${newRoleName}</span><input type="text" class="form-control editable" value="${newRoleName}"></td>
+                </tr>
+            `;
+            document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
+            var createModal = new bootstrap.Modal(document.getElementById('createModal'));
+            createModal.hide();
         });
     });
-
-    // Funcionalidad de crear nuevo usuario
-    document.getElementById('createForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        var newUsername = document.getElementById('newUsername').value;
-        var newCompanyName = document.getElementById('newCompanyName').value;
-        var newRoleName = document.getElementById('newRoleName').value;
-        var newRow = `
-            <tr>
-                <td class="text-center">
-                    <button class="btn btn-primary btn-edit" title="Actualizar">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-danger btn-delete" title="Eliminar">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <button class="btn btn-success btn-save editable" title="Guardar">
-                        <i class="fas fa-check"></i>
-                    </button>
-                    <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </td>
-                <td><span class="non-editable">NUEVO</span><input type="text" class="form-control editable" value="NUEVO" disabled></td>
-                <td><span class="non-editable">${newUsername}</span><input type="text" class="form-control editable" value="${newUsername}"></td>
-                <td><span class="non-editable">${newCompanyName}</span><input type="text" class="form-control editable" value="${newCompanyName}"></td>
-                <td><span class="non-editable">${newRoleName}</span><input type="text" class="form-control editable" value="${newRoleName}"></td>
-            </tr>
-        `;
-        document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
-        var createModal = new bootstrap.Modal(document.getElementById('createModal'));
-        createModal.hide();
-    });
-});
     </script>
 </body>
-
 </html>
