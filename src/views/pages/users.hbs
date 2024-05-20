@@ -95,7 +95,7 @@
                                 <span class="non-editable">{{this.company_name}}</span>
                                 <select class="form-control editable">
                                     {{#each ../companies}}
-                                    <option value="{{this.company_id}}" {{#ifCond this.company_id ../this.company_id}}selected{{/ifCond}}>{{this.name}}</option>
+                                    <option value="{{this.company_id}}" {{#ifCond this.company_id ../this.company_id}}selected{{/ifCond}}>{{this.company_name}}</option>
                                     {{/each}}
                                 </select>
                             </td>
