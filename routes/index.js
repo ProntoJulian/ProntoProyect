@@ -13,7 +13,8 @@ appRouter.get("/", (req, res) => {
 })
 
 appRouter.get("/app/logout", authenticateToken, function (req, res) {
-  req.logout(function (err) {
+  res.clearCookie('token');
+  req.session.destroy((err) => {
     if (err) {
       return next(err);
     }
