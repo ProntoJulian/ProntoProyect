@@ -31,7 +31,7 @@
 </head>
 
 <body>
-    {{#if feed}}
+    {{#each feed}}
     <div class="content">
         <div class="container mt-5">
             <div class="card">
@@ -42,12 +42,12 @@
                     <form id="feedForm">
                         <div class="mb-3">
                             <label for="feed_name" class="form-label">Nombre del Feed</label>
-                            <input type="text" class="form-control" id="feed_name" value="{{feed.feed_name}}">
+                            <input type="text" class="form-control" id="feed_name" value="{{this.feed_name}}">
                         </div>
                         <div class="mb-3">
                             <label for="store_hash" class="form-label">Store Hash</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="store_hash" value="{{feed.store_hash}}">
+                                <input type="password" class="form-control" id="store_hash" value="{{this.store_hash}}">
                                 <span class="input-group-text toggle-password" onclick="togglePassword('store_hash')">
                                     <i class="fas fa-eye"></i>
                                 </span>
@@ -56,7 +56,7 @@
                         <div class="mb-3">
                             <label for="x_auth_token" class="form-label">x_auth_token</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="x_auth_token" value="{{feed.x_auth_token}}">
+                                <input type="password" class="form-control" id="x_auth_token" value="{{this.x_auth_token}}">
                                 <span class="input-group-text toggle-password" onclick="togglePassword('x_auth_token')">
                                     <i class="fas fa-eye"></i>
                                 </span>
@@ -65,7 +65,7 @@
                         <div class="mb-3">
                             <label for="client_id" class="form-label">Client ID</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="client_id" value="{{feed.client_id}}">
+                                <input type="password" class="form-control" id="client_id" value="{{this.client_id}}">
                                 <span class="input-group-text toggle-password" onclick="togglePassword('client_id')">
                                     <i class="fas fa-eye"></i>
                                 </span>
@@ -74,7 +74,7 @@
                         <div class="mb-3">
                             <label for="client_secret" class="form-label">Client Secret</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="client_secret" value="{{feed.client_secret}}">
+                                <input type="password" class="form-control" id="client_secret" value="{{this.client_secret}}">
                                 <span class="input-group-text toggle-password" onclick="togglePassword('client_secret')">
                                     <i class="fas fa-eye"></i>
                                 </span>
@@ -82,29 +82,29 @@
                         </div>
                         <div class="mb-3">
                             <label for="formulas" class="form-label">Formulas</label>
-                            <input type="text" class="form-control" id="formulas" value="{{feed.formulas}}">
+                            <input type="text" class="form-control" id="formulas" value="{{this.formulas}}">
                         </div>
                         <div class="mb-3">
                             <label for="last_update" class="form-label">Última Actualización</label>
-                            <input type="text" class="form-control" id="last_update" value="{{feed.last_update}}" disabled>
+                            <input type="text" class="form-control" id="last_update" value="{{this.last_update}}" disabled>
                         </div>
                         <div class="mb-3">
                             <label for="active_products_gm" class="form-label">Productos Activos GM</label>
-                            <input type="number" class="form-control" id="active_products_gm" value="{{feed.active_products_gm}}">
+                            <input type="number" class="form-control" id="active_products_gm" value="{{this.active_products_gm}}">
                         </div>
                         <div class="mb-3">
                             <label for="total_products_bc" class="form-label">Productos Totales BC</label>
-                            <input type="number" class="form-control" id="total_products_bc" value="{{feed.total_products_bc}}">
+                            <input type="number" class="form-control" id="total_products_bc" value="{{this.total_products_bc}}">
                         </div>
                         <div class="mb-3">
                             <label for="preorder_products" class="form-label">Productos en Preorden</label>
-                            <input type="number" class="form-control" id="preorder_products" value="{{feed.preorder_products}}">
+                            <input type="number" class="form-control" id="preorder_products" value="{{this.preorder_products}}">
                         </div>
                         <div class="mb-3">
                             <label for="company_id" class="form-label">ID de la Compañía</label>
-                            <input type="number" class="form-control" id="company_id" value="{{feed.company_id}}">
+                            <input type="number" class="form-control" id="company_id" value="{{this.company_id}}">
                         </div>
-                        <div class="action-buttons" style="display:none;">
+                        <div class="action-buttons">
                             <button type="button" class="btn btn-primary" id="updateButton">Actualizar</button>
                             <button type="button" class="btn btn-secondary" id="cancelButton">Cancelar</button>
                         </div>
@@ -113,7 +113,7 @@
             </div>
         </div>
     </div>
-    {{/if}}
+    {{/each}}
 
     <!-- Bootstrap JS bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -122,7 +122,6 @@
             const form = document.getElementById('feedForm');
             const updateButton = document.getElementById('updateButton');
             const cancelButton = document.getElementById('cancelButton');
-            const actionButtons = document.querySelector('.action-buttons');
 
             const togglePassword = (fieldId) => {
                 const field = document.getElementById(fieldId);
@@ -131,7 +130,6 @@
             };
 
             const enableEditing = () => {
-                actionButtons.style.display = 'block';
                 form.querySelectorAll('input').forEach(input => {
                     if (input.id !== 'last_update') {
                         input.classList.add('editing');
@@ -140,7 +138,6 @@
             };
 
             const disableEditing = () => {
-                actionButtons.style.display = 'none';
                 form.querySelectorAll('input').forEach(input => {
                     input.classList.remove('editing');
                 });
