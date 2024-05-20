@@ -1,13 +1,7 @@
-const fs = require('fs');
-const path = require('path');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const { authenticateUser } = require("../../databases/auth");
-
-// Leer los datos desde el archivo JSON
-const rawData = fs.readFileSync(path.join(__dirname, '..', 'databases', 'db.json'));
-const db = JSON.parse(rawData);
 
 passport.use(new LocalStrategy({
     usernameField: 'username'
@@ -18,7 +12,7 @@ passport.use(new LocalStrategy({
       return done(null, false, { message: 'Not User found.' });
     } else {
       // Compara la contraseña usando bcrypt
-      const match = await bcrypt.compare(password, user.password_hash);
+      const match = await bcrypt.compare(password, authResult.user.password_hash);
       if (match) {
         return done(null, user);
       } else {
