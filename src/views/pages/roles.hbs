@@ -294,7 +294,7 @@
                             </tr>
                         `;
                         document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
-                        var createModal = bootstrap.Modal(document.getElementById('createModal'));
+                        var createModal = new bootstrap.Modal(document.getElementById('createModal'));
                         createModal.hide();
                         window.location.reload();
                     } else {
