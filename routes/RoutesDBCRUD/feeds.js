@@ -28,10 +28,10 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
         'client_id', 
         'client_secret', 
         'formulas', 
+        'company_id',
         'active_products_gm', 
         'total_products_bc', 
-        'preorder_products', 
-        'company_id'
+        'preorder_products' 
     ]; // Ajusta según sea necesario
 
     feedData.active_products_gm = feedData.active_products_gm || 0;
