@@ -45,7 +45,7 @@ appRouter.get("/app/feeds", authenticateToken, async function (req, res) {
 
         if (feed.company_id) {
             const company = companies.find(c => c.company_id === feed.company_id);
-            feed.company_name = company ? company.name : "Compañía no encontrada";
+            feed.company_name = company ? company.company_name : "Compañía no encontrada";
         }
         
     }
