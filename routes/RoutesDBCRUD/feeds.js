@@ -44,6 +44,8 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
     const formattedLastUpdate = lastUpdate.toISOString().slice(0, 19).replace('T', ' ');
     feedData.last_update = formattedLastUpdate;
 
+    console.log("Fecha: ", formattedLastUpdate)
+
     try {
         const result = await insertIntoTable('feeds', feedData, columns);
         if (result.affectedRows > 0) {
