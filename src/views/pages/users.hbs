@@ -39,6 +39,18 @@
             background-color: #f8f9fa;
         }
 
+        .editable {
+            display: none;
+        }
+
+        .editing .editable {
+            display: inline;
+        }
+
+        .editing .non-editable {
+            display: none;
+        }
+
         .toggle-password {
             cursor: pointer;
         }
@@ -228,7 +240,7 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="editPassword" class="form-label">Contraseña</label>
+                            <label for="editPassword" class="form-label">Nueva Contraseña</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="editPassword">
                                 <span class="input-group-text toggle-password" data-toggle="editPassword">
@@ -237,7 +249,7 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="editConfirmPassword" class="form-label">Confirmar Contraseña</label>
+                            <label for="editConfirmPassword" class="form-label">Confirmar Nueva Contraseña</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="editConfirmPassword">
                                 <span class="input-group-text toggle-password" data-toggle="editConfirmPassword">
@@ -309,7 +321,7 @@
                 var companyId = document.getElementById('editCompanyId').value;
                 var roleId = document.getElementById('editRoleId').value;
 
-                if (password !== confirmPassword) {
+                if (newPassword !== confirmPassword) {
                     alert("Las contraseñas no coinciden");
                     return;
                 }
@@ -402,17 +414,11 @@
                                 <td><span class="non-editable">${newCompanyName}</span><input type="text" class="form-control editable" value="${newCompanyName}"></td>
                                 <td><span class="non-editable">${newRoleName}</span><input type="text" class="form-control editable" value="${newRoleName}"></td>
                                 <td class="text-center">
-                                    <button class="btn btn-primary btn-edit" title="Actualizar">
+                                    <button class="btn btn-primary btn-edit" title="Actualizar" data-user-id="${data.user_id}" data-username="${newUsername}" data-company-id="${newCompanyName}" data-role-id="${newRoleName}">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <button class="btn btn-danger btn-delete" title="Eliminar" data-user-id="${data.user_id}">
                                         <i class="fas fa-trash"></i>
-                                    </button>
-                                    <button class="btn btn-success btn-save editable" title="Guardar">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
-                                        <i class="fas fa-times"></i>
                                     </button>
                                 </td>
                             </tr>
