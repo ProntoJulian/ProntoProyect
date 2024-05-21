@@ -75,6 +75,7 @@ routerFeeds.get("/feeds/updateFeed/:feedId", authenticateToken, async (req, res)
 
 routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => {
     const { feedId } = req.params;
+    console.log('Received feedId:', feedId); // Registro del feedId recibido
     const updateData = req.body;
 
     const lastUpdate = new Date(updateData.last_update);
@@ -84,6 +85,7 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
 
     try {
         const result = await updateTable('feeds', updateData, 'feed_id', feedId);
+        console.log('Resultado de la consulta:', result); // Registro del feedId recibido
         if (result.affectedRows > 0) {
             res.status(200).json({ message: "Feed actualizado con éxito" });
         } else {

@@ -33,6 +33,7 @@ appRouter.get("/app/companies", authenticateToken,async function (req, res) {
 
 appRouter.get("/app/feeds", authenticateToken, async function (req, res) {
     const feeds = await fetchDataFromTable('feeds');
+    const companies = await fetchDataFromTable('companies');
     
     // Formatear la fecha y obtener el nombre de la compañía
     for (let feed of feeds) {
@@ -41,16 +42,12 @@ appRouter.get("/app/feeds", authenticateToken, async function (req, res) {
             const date = new Date(feed.last_update);
             feed.last_update = date.toLocaleDateString();
         }
-        
-        // Obtener el nombre de la compañía
+
         if (feed.company_id) {
-            const company = await fetchOneFromTable('companies', feed.company_id, 'company_id');
-            if (company && company.name) {
-                feed.company_name = company.name;
-            } else {
-                feed.company_name = "Compañía no encontrada";
-            }
+            const company = companies.find(c => c.company_id === feed.company_id);
+            feed.company_name = company ? company.name : "Compañía no encontrada";
         }
+        
     }
 
     res.render("pages/feeds", { feeds: feeds });
