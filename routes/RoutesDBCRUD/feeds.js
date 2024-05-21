@@ -19,7 +19,6 @@ routerFeeds.get("/feeds/getFeeds", authenticateToken, async (req, res) => {
 });
 
 
-
 routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
     const feedData = req.body;
     const columns = [
@@ -36,13 +35,13 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
         'company_id'
     ]; // Ajusta según sea necesario
 
-    feedData.active_products_gm = 0;
-    feedData.total_products_bc = 0;
-    feedData.preorder_products = 0;
+    feedData.active_products_gm = feedData.active_products_gm || 0;
+    feedData.total_products_bc = feedData.total_products_bc || 0;
+    feedData.preorder_products = feedData.preorder_products || 0;
 
     // Establecer la fecha y hora actual como last_update
     const lastUpdate = new Date();
-    const formattedLastUpdate = lastUpdate.toISOString().replace('T', ' ').substring(0, 19);
+    const formattedLastUpdate = lastUpdate.toISOString().slice(0, 19).replace('T', ' ');
     feedData.last_update = formattedLastUpdate;
 
     try {
@@ -61,13 +60,14 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
 
 
 routerFeeds.get("/feeds/updateFeed/:feedId", authenticateToken, async (req, res) => {
+    const companies = await fetchDataFromTable('companies');
     const { feedId } = req.params;
     const updateData = req.body;
 
     try {
         const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
         if (feed) {
-            res.render("pages/editFeeds",{feed:[feed]});
+            res.render("pages/editFeeds",{feed:[feed], companies:companies});
         } else {
             res.status(404).json({ message: "Feed no encontrado" });
         }

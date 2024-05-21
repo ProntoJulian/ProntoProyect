@@ -89,19 +89,23 @@
                         </div>
                         <div class="mb-3">
                             <label for="active_products_gm" class="form-label">Productos Activos GM</label>
-                            <input type="number" class="form-control" id="active_products_gm" value="{{this.active_products_gm}}">
+                            <input type="number" class="form-control" id="active_products_gm" disabled value="{{this.active_products_gm}}">
                         </div>
                         <div class="mb-3">
                             <label for="total_products_bc" class="form-label">Productos Totales BC</label>
-                            <input type="number" class="form-control" id="total_products_bc" value="{{this.total_products_bc}}">
+                            <input type="number" class="form-control" id="total_products_bc" disabled value="{{this.total_products_bc}}">
                         </div>
                         <div class="mb-3">
                             <label for="preorder_products" class="form-label">Productos en Preorden</label>
-                            <input type="number" class="form-control" id="preorder_products" value="{{this.preorder_products}}">
+                            <input type="number" class="form-control" id="preorder_products" disabled value="{{this.preorder_products}}">
                         </div>
                         <div class="mb-3">
                             <label for="company_id" class="form-label">ID de la Compañía</label>
-                            <input type="number" class="form-control" id="company_id" value="{{this.company_id}}">
+                            <select class="form-control" id="company_id">
+                                {{#each companies}}
+                                <option value="{{this.company_id}}">{{this.company_name}}</option>
+                                {{/each}}
+                            </select>
                         </div>
                         {{/each}}
                         <div class="action-buttons">
