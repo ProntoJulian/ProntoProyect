@@ -38,6 +38,7 @@
                 <div class="card-body">
                     <form id="feedForm">
                         {{#each feed}}
+                        <input type="hidden" id="feed_id" value="{{this.feed_id}}">
                         <div class="mb-3">
                             <label for="feed_name" class="form-label">Nombre del Feed</label>
                             <input type="text" class="form-control" id="feed_name" value="{{this.feed_name}}">
@@ -139,7 +140,7 @@
             });
 
             updateButton.addEventListener('click', function () {
-                const feedId = '{{ this.feed_id }}'; // Ensure this is rendered properly
+                const feedId = document.getElementById('feed_id').value;
                 const feedData = {
                     feed_name: document.getElementById('feed_name').value,
                     store_hash: document.getElementById('store_hash').value,
