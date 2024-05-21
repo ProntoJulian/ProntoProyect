@@ -38,6 +38,7 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
     feedData.total_products_bc = feedData.total_products_bc || 0;
     feedData.preorder_products = feedData.preorder_products || 0;
 
+    console.log("Datos enviamos: ", feedData)
 
     try {
         const result = await insertIntoTable('feeds', feedData, columns);
