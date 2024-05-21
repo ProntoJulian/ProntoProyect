@@ -294,8 +294,9 @@
                             </tr>
                         `;
                         document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
-                        var createModal = new bootstrap.Modal(document.getElementById('createModal'));
+                        var createModal = bootstrap.Modal(document.getElementById('createModal'));
                         createModal.hide();
+                        window.location.reload();
                     } else {
                         alert("Error al crear el rol: " + data.message);
                     }
