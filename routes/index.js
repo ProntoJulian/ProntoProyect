@@ -50,7 +50,7 @@ appRouter.get("/app/feeds", authenticateToken, async function (req, res) {
         
     }
 
-    res.render("pages/feeds", { feeds: feeds });
+    res.render("pages/feeds", { feeds: feeds, companies:companies  });
 });
 
 

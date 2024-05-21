@@ -36,6 +36,10 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
         'company_id'
     ]; // Ajusta según sea necesario
 
+    feedData.active_products_gm = 0;
+    feedData.total_products_bc = 0;
+    feedData.preorder_products = 0;
+
     // Establecer la fecha y hora actual como last_update
     const lastUpdate = new Date();
     const formattedLastUpdate = lastUpdate.toISOString().replace('T', ' ').substring(0, 19);

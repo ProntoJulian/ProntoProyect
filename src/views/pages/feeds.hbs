@@ -219,22 +219,6 @@
                             <input type="text" class="form-control" id="formulas">
                         </div>
                         <div class="mb-3">
-                            <label for="last_update" class="form-label">Última Actualización</label>
-                            <input type="datetime-local" class="form-control" id="last_update">
-                        </div>
-                        <div class="mb-3">
-                            <label for="active_products_gm" class="form-label">Productos Activos GM</label>
-                            <input type="number" class="form-control" id="active_products_gm">
-                        </div>
-                        <div class="mb-3">
-                            <label for="total_products_bc" class="form-label">Productos Totales BC</label>
-                            <input type="number" class="form-control" id="total_products_bc">
-                        </div>
-                        <div class="mb-3">
-                            <label for="preorder_products" class="form-label">Productos en Preorden</label>
-                            <input type="number" class="form-control" id="preorder_products">
-                        </div>
-                        <div class="mb-3">
                             <label for="company_id" class="form-label">ID de la Compañía</label>
                             <select class="form-control" id="company_id">
                                 {{#each companies}}
@@ -336,10 +320,6 @@
                     client_id: document.getElementById('client_id').value,
                     client_secret: document.getElementById('client_secret').value,
                     formulas: document.getElementById('formulas').value,
-                    last_update: new Date().toISOString().replace('T', ' ').substring(0, 19),
-                    active_products_gm: document.getElementById('active_products_gm').value,
-                    total_products_bc: document.getElementById('total_products_bc').value,
-                    preorder_products: document.getElementById('preorder_products').value,
                     company_id: document.getElementById('company_id').value,
                 };
 
