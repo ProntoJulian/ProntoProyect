@@ -39,23 +39,6 @@
             background-color: #f8f9fa;
         }
 
-        .editable {
-            display: none;
-        }
-
-        .editing .editable {
-            display: inline;
-        }
-
-        .editing .non-editable {
-            display: none;
-        }
-
-        .action-buttons {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
         .toggle-password {
             cursor: pointer;
         }
@@ -112,17 +95,11 @@
                                 </select>
                             </td>
                             <td class="text-center">
-                                <button class="btn btn-primary btn-edit" title="Actualizar">
+                                <button class="btn btn-primary btn-edit" title="Actualizar" data-user-id="{{this.user_id}}" data-username="{{this.username}}" data-company-id="{{this.company_id}}" data-role-id="{{this.role_id}}">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="btn btn-danger btn-delete" title="Eliminar" data-user-id="{{this.user_id}}">
                                     <i class="fas fa-trash"></i>
-                                </button>
-                                <button class="btn btn-success btn-save editable" title="Guardar">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                                <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
-                                    <i class="fas fa-times"></i>
                                 </button>
                             </td>
                         </tr>
@@ -131,7 +108,6 @@
                 </table>
             </div>
         </div>
-
     </div>
 
     <!-- Modal de Confirmación -->
@@ -227,6 +203,71 @@
         </div>
     </div>
 
+    <!-- Modal para Editar Usuario -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Editar Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm">
+                        <input type="hidden" id="editUserId">
+                        <div class="mb-3">
+                            <label for="editUsername" class="form-label">Nombre de Usuario</label>
+                            <input type="text" class="form-control" id="editUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPassword" class="form-label">Contraseña Actual</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="Password">
+                                <span class="input-group-text toggle-password" data-toggle="editPassword">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPassword" class="form-label">Contraseña</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="editPassword">
+                                <span class="input-group-text toggle-password" data-toggle="editPassword">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editConfirmPassword" class="form-label">Confirmar Contraseña</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="editConfirmPassword">
+                                <span class="input-group-text toggle-password" data-toggle="editConfirmPassword">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCompanyId" class="form-label">Nombre de la Compañía</label>
+                            <select class="form-control" id="editCompanyId">
+                                {{#each companies}}
+                                <option value="{{this.company_id}}">{{this.company_name}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editRoleId" class="form-label">Rol</label>
+                            <select class="form-control" id="editRoleId">
+                                {{#each roles}}
+                                <option value="{{this.role_id}}">{{this.role_name}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -234,8 +275,18 @@
             // Funcionalidad de editar
             document.querySelectorAll('.btn-edit').forEach(function (btn) {
                 btn.addEventListener('click', function () {
-                    var row = btn.closest('tr');
-                    row.classList.add('editing');
+                    var userId = btn.getAttribute('data-user-id');
+                    var username = btn.getAttribute('data-username');
+                    var companyId = btn.getAttribute('data-company-id');
+                    var roleId = btn.getAttribute('data-role-id');
+
+                    document.getElementById('editUserId').value = userId;
+                    document.getElementById('editUsername').value = username;
+                    document.getElementById('editCompanyId').value = companyId;
+                    document.getElementById('editRoleId').value = roleId;
+
+                    var editModal = new bootstrap.Modal(document.getElementById('editModal'));
+                    editModal.show();
                 });
             });
 
@@ -248,28 +299,40 @@
             });
 
             // Funcionalidad de guardar cambios
-            document.querySelectorAll('.btn-save').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    var row = btn.closest('tr');
-                    var inputs = row.querySelectorAll('input');
-                    var selects = row.querySelectorAll('select');
-                    var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            document.getElementById('editForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                var userId = document.getElementById('editUserId').value;
+                var username = document.getElementById('editUsername').value;
+                var password = document.getElementById('Password').value;
+                var newPassword = document.getElementById('editPassword').value;
+                var confirmPassword = document.getElementById('editConfirmPassword').value;
+                var companyId = document.getElementById('editCompanyId').value;
+                var roleId = document.getElementById('editRoleId').value;
 
-                    document.getElementById('confirmSave').onclick = function () {
-                        inputs.forEach(function (input) {
-                            var span = input.previousElementSibling;
-                            span.innerText = input.value;
-                        });
-                        selects.forEach(function (select) {
-                            var span = select.previousElementSibling;
-                            var selectedOption = select.options[select.selectedIndex];
-                            span.innerText = selectedOption.text;
-                        });
-                        row.classList.remove('editing');
-                        confirmModal.hide();
-                    };
+                if (password !== confirmPassword) {
+                    alert("Las contraseñas no coinciden");
+                    return;
+                }
 
-                    confirmModal.show();
+                fetch(`/users/updateUser/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password, newPassword, companyId, roleId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === "Usuario actualizado con éxito") {
+                        alert("Usuario actualizado con éxito");
+                        window.location.reload();
+                    } else {
+                        alert("Error al actualizar el usuario: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("Error al actualizar el usuario");
                 });
             });
 

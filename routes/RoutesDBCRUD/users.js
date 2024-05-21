@@ -36,8 +36,35 @@ routerUsers.post("/users/createUser", authenticateToken, async (req, res) => {
 
 routerUsers.put("/users/updateUser/:userId", authenticateToken, async (req, res) => {
     const { userId } = req.params;
-    const updateData = req.body;
+    const { username, password, newPassword, companyId, roleId } = req.body;
+
     try {
+        // Obtener el usuario actual de la base de datos
+        const user = await fetchOneFromTable('users', userId, 'user_id');
+        if (!user) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+        // Verificar la contraseña actual
+        const passwordMatch = await bcrypt.compare(password, user.password_hash);
+        if (!passwordMatch) {
+            return res.status(401).json({ message: "Contraseña actual incorrecta" });
+        }
+
+        // Preparar los datos para la actualización
+        const updateData = {
+            username,
+            company_id: companyId,
+            role_id: roleId
+        };
+
+        // Si se proporciona una nueva contraseña, encriptarla
+        if (newPassword) {
+            const salt = await bcrypt.genSalt(10);
+            updateData.password_hash = await bcrypt.hash(newPassword, salt);
+        }
+
+        // Actualizar el usuario en la base de datos
         const result = await updateTable('users', updateData, 'user_id', userId);
         if (result.affectedRows > 0) {
             res.status(200).json({ message: "Usuario actualizado con éxito" });
@@ -49,6 +76,7 @@ routerUsers.put("/users/updateUser/:userId", authenticateToken, async (req, res)
         res.status(500).json({ message: "Error al actualizar el usuario" });
     }
 });
+
 
 
 routerUsers.delete("/users/deleteUser/:userId", authenticateToken, async (req, res) => {

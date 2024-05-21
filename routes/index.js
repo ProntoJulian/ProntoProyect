@@ -68,7 +68,7 @@ appRouter.get("/app/users", authenticateToken, async function (req, res) {
         // Obtener el nombre de la compañía
         if (user.company_id) {
             const company = companies.find(c => c.company_id === user.company_id);
-            user.company_name = company ? company.name : "Compañía no encontrada";
+            user.company_name = company ? company.company_name : "Compañía no encontrada";
         }
 
         // Obtener el nombre del rol
