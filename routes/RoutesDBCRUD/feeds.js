@@ -28,7 +28,6 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
         'client_id', 
         'client_secret', 
         'formulas', 
-        'last_update', 
         'active_products_gm', 
         'total_products_bc', 
         'preorder_products', 
@@ -39,12 +38,6 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
     feedData.total_products_bc = feedData.total_products_bc || 0;
     feedData.preorder_products = feedData.preorder_products || 0;
 
-    // Establecer la fecha y hora actual como last_update
-    const lastUpdate = new Date();
-    const formattedLastUpdate = lastUpdate.toISOString().slice(0, 19).replace('T', ' ');
-    feedData.last_update = formattedLastUpdate;
-
-    console.log("Fecha: ", formattedLastUpdate)
 
     try {
         const result = await insertIntoTable('feeds', feedData, columns);
