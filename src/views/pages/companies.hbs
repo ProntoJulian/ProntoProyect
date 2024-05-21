@@ -293,6 +293,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
                 var createModal = bootstrap.Modal.getInstance(document.getElementById('createModal'));
                 createModal.hide();
+                window.location.reload();
             } else {
                 alert("Error al crear la compañía: " + data.message);
             }
