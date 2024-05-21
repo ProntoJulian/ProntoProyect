@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 var newRow = `
                     <tr>
                         <td><span class="non-editable">${data.company_id}</span><input type="text" class="form-control editable" value="${data.company_id}" disabled></td>
-                        <td><span class="non-editable">${newCompanyName}</span><input type="text" class="form-control editable" value="${newCompanyName}"></td>
+                        <td><span class="non-editable">${newCompanyName}</span><input type="text" class="form-control editable" value="${newCompanyName}" data-company-name></td>
                         <td class="text-center">
                             <button class="btn btn-primary btn-edit" title="Actualizar">
                                 <i class="fas fa-edit"></i>
@@ -291,7 +291,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     </tr>
                 `;
                 document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
-                var createModal = new bootstrap.Modal(document.getElementById('createModal'));
+                var createModal = bootstrap.Modal.getInstance(document.getElementById('createModal'));
                 createModal.hide();
             } else {
                 alert("Error al crear la compañía: " + data.message);
