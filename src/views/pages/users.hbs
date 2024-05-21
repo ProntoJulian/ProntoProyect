@@ -175,11 +175,19 @@
                         </div>
                         <div class="mb-3">
                             <label for="newCompanyName" class="form-label">Nombre de la Compañía</label>
-                            <input type="text" class="form-control" id="newCompanyName" required>
+                            <select class="form-control" id="company_id">
+                                {{#each companies}}
+                                <option value="{{this.company_id}}">{{this.company_name}}</option>
+                                {{/each}}
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="newRoleName" class="form-label">Rol</label>
-                            <input type="text" class="form-control" id="newRoleName" required>
+                            <select class="form-control" id="rol_id">
+                                {{#each roles}}
+                                <option value="{{this.rol_id}}">{{this.role_name}}</option>
+                                {{/each}}
+                            </select>
                         </div>
                         <button type="submit" class="btn btn-primary">Crear</button>
                     </form>
@@ -273,8 +281,8 @@
         document.getElementById('createForm').addEventListener('submit', function (event) {
             event.preventDefault();
             var newUsername = document.getElementById('newUsername').value;
-            var newCompanyName = document.getElementById('newCompanyName').value;
-            var newRoleName = document.getElementById('newRoleName').value;
+            var newCompanyName = document.getElementById('company_id').value;
+            var newRoleName = document.getElementById('rol_id').value;
 
             fetch('/users/createUser', {
                 method: 'POST',
