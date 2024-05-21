@@ -52,7 +52,7 @@
         }
 
         .action-buttons {
-            margin-top: 15px;
+            margin-bottom: 15px;
             text-align: left;
         }
     </style>
@@ -192,8 +192,8 @@
             // Funcionalidad de editar
             document.querySelectorAll('.btn-edit').forEach(function (btn) {
                 btn.addEventListener('click', function () {
-                    var row = btn.closest('tr');
-                    row.classList.add('editing');
+                    var feedId = btn.getAttribute('data-feed-id');
+                    window.location.href = `/feeds/updateFeed/${feedId}`;
                 });
             });
 
