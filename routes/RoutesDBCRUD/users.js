@@ -6,6 +6,7 @@ const {insertIntoTable,
     deleteFromTable,
     fetchOneFromTable} = require("../../databases/CRUD");
 const routerUsers = express.Router();
+const bcrypt = require('bcrypt');
 
 routerUsers.get("/users/getUsers", authenticateToken, async (req, res) => {
     try {
