@@ -53,13 +53,18 @@
 
         .action-buttons {
             margin-top: 15px;
-            text-align: right;
+            text-align: left;
         }
     </style>
 </head>
 
 <body>
     <div class="container mt-5">
+        <div class="action-buttons">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="fas fa-plus"></i> Crear
+            </button>
+        </div>
         <div class="card">
             <div class="card-header">
                 <h2><i class="fas fa-user-tag table-icon"></i> Lista de Roles</h2>
@@ -68,14 +73,16 @@
                 <table class="table table-bordered table-hover table-striped">
                     <thead class="table-dark">
                         <tr>
-                            <th class="text-center"><i class="fas fa-tools table-icon"></i>Acciones</th>
                             <th class="col-id"><i class="fas fa-id-badge table-icon"></i>ID Rol</th>
                             <th class="col-name"><i class="fas fa-user-tag table-icon"></i>Rol</th>
+                            <th class="text-center"><i class="fas fa-tools table-icon"></i>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {{#each roles}}
                         <tr>
+                            <td><span class="non-editable">{{this.role_id}}</span><input type="text" class="form-control editable" value="{{this.role_id}}" disabled></td>
+                            <td><span class="non-editable">{{this.role_name}}</span><input type="text" class="form-control editable" value="{{this.role_name}}" data-role-name></td>
                             <td class="text-center">
                                 <button class="btn btn-primary btn-edit" title="Actualizar">
                                     <i class="fas fa-edit"></i>
@@ -90,19 +97,13 @@
                                     <i class="fas fa-times"></i>
                                 </button>
                             </td>
-                            <td><span class="non-editable">{{this.role_id}}</span><input type="text" class="form-control editable" value="{{this.role_id}}" disabled></td>
-                            <td><span class="non-editable">{{this.role_name}}</span><input type="text" class="form-control editable" value="{{this.role_name}}" data-role-name></td>
                         </tr>
                         {{/each}}
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="action-buttons">
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">
-                <i class="fas fa-plus"></i> Crear
-            </button>
-        </div>
+    
     </div>
 
     <!-- Modal de Confirmación de Guardado -->

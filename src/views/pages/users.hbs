@@ -51,12 +51,17 @@
 
         .action-buttons {
             margin-top: 15px;
-            text-align: right;
+            text-align: left;
         }
     </style>
 </head>
 <body>
     <div class="container mt-5">
+        <div class="action-buttons">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="fas fa-plus"></i> Crear
+            </button>
+        </div>
         <div class="card">
             <div class="card-header">
                 <h2><i class="fas fa-users table-icon"></i> Lista de Usuarios</h2>
@@ -65,30 +70,16 @@
                 <table class="table table-bordered table-hover table-striped">
                     <thead class="table-dark">
                         <tr>
-                            <th class="text-center"><i class="fas fa-tools table-icon"></i>Acciones</th>
                             <th class="col-id"><i class="fas fa-id-badge table-icon"></i>ID User</th>
                             <th class="col-name"><i class="fas fa-user table-icon"></i>Username</th>
                             <th><i class="fas fa-building table-icon"></i>Company</th>
                             <th><i class="fas fa-user-tag table-icon"></i>Rol</th>
+                            <th class="text-center"><i class="fas fa-tools table-icon"></i>Acciones</th>                  
                         </tr>
                     </thead>
                     <tbody>
                         {{#each users}}
                         <tr>
-                            <td class="text-center">
-                                <button class="btn btn-primary btn-edit" title="Actualizar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-danger btn-delete" title="Eliminar">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                                <button class="btn btn-success btn-save editable" title="Guardar">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                                <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </td>
                             <td><span class="non-editable">{{this.user_id}}</span><input type="text" class="form-control editable" value="{{this.user_id}}" disabled></td>
                             <td><span class="non-editable">{{this.username}}</span><input type="text" class="form-control editable" value="{{this.username}}"></td>
                             <td>
@@ -107,17 +98,27 @@
                                     {{/each}}
                                 </select>
                             </td>
+                            <td class="text-center">
+                                <button class="btn btn-primary btn-edit" title="Actualizar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-delete" title="Eliminar" data-user-id="{{this.user_id}}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                <button class="btn btn-success btn-save editable" title="Guardar">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </td>
                         </tr>
                         {{/each}}
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="action-buttons">
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">
-                <i class="fas fa-plus"></i> Crear
-            </button>
-        </div>
+        
     </div>
 
     <!-- Modal de Confirmación -->
@@ -134,6 +135,25 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-primary" id="confirmSave">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación de Eliminación -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Confirmación de Eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Seguro que quiere eliminar el usuario con ID <span id="deleteUserId"></span>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Eliminar</button>
                 </div>
             </div>
         </div>
@@ -214,37 +234,91 @@
             });
         });
 
+        // Funcionalidad de eliminar
+        document.querySelectorAll('.btn-delete').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var userId = btn.getAttribute('data-user-id');
+                var deleteUserIdSpan = document.getElementById('deleteUserId');
+                deleteUserIdSpan.textContent = userId;
+
+                var deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+                deleteConfirmModal.show();
+
+                document.getElementById('confirmDelete').onclick = function () {
+                    fetch(`/users/deleteUser/${userId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === "Usuario eliminado con éxito") {
+                            var row = btn.closest('tr');
+                            row.remove();
+                        } else {
+                            alert("Error al eliminar el usuario: " + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Error al eliminar el usuario");
+                    });
+                    deleteConfirmModal.hide();
+                };
+            });
+        });
+
         // Funcionalidad de crear nuevo usuario
         document.getElementById('createForm').addEventListener('submit', function (event) {
             event.preventDefault();
             var newUsername = document.getElementById('newUsername').value;
             var newCompanyName = document.getElementById('newCompanyName').value;
             var newRoleName = document.getElementById('newRoleName').value;
-            var newRow = `
-                <tr>
-                    <td class="text-center">
-                        <button class="btn btn-primary btn-edit" title="Actualizar">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-danger btn-delete" title="Eliminar">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                        <button class="btn btn-success btn-save editable" title="Guardar">
-                            <i class="fas fa-check"></i>
-                        </button>
-                        <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </td>
-                    <td><span class="non-editable">NUEVO</span><input type="text" class="form-control editable" value="NUEVO" disabled></td>
-                    <td><span class="non-editable">${newUsername}</span><input type="text" class="form-control editable" value="${newUsername}"></td>
-                    <td><span class="non-editable">${newCompanyName}</span><input type="text" class="form-control editable" value="${newCompanyName}"></td>
-                    <td><span class="non-editable">${newRoleName}</span><input type="text" class="form-control editable" value="${newRoleName}"></td>
-                </tr>
-            `;
-            document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
-            var createModal = new bootstrap.Modal(document.getElementById('createModal'));
-            createModal.hide();
+
+            fetch('/users/createUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: newUsername, companyName: newCompanyName, roleName: newRoleName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === "Usuario creado con éxito") {
+                    var newRow = `
+                        <tr>
+                            <td><span class="non-editable">${data.user_id}</span><input type="text" class="form-control editable" value="${data.user_id}" disabled></td>
+                            <td><span class="non-editable">${newUsername}</span><input type="text" class="form-control editable" value="${newUsername}"></td>
+                            <td><span class="non-editable">${newCompanyName}</span><input type="text" class="form-control editable" value="${newCompanyName}"></td>
+                            <td><span class="non-editable">${newRoleName}</span><input type="text" class="form-control editable" value="${newRoleName}"></td>
+                            <td class="text-center">
+                                <button class="btn btn-primary btn-edit" title="Actualizar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-delete" title="Eliminar" data-user-id="${data.user_id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                <button class="btn btn-success btn-save editable" title="Guardar">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
+                    var createModal = new bootstrap.Modal(document.getElementById('createModal'));
+                    createModal.hide();
+                } else {
+                    alert("Error al crear el usuario: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Error al crear el usuario");
+            });
         });
     });
     </script>

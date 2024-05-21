@@ -53,13 +53,18 @@
 
         .action-buttons {
             margin-top: 15px;
-            text-align: right;
+            text-align: left;
         }
     </style>
 </head>
 
 <body>
     <div class="container mt-5">
+        <div class="action-buttons">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="fas fa-plus"></i> Crear
+            </button>
+        </div>
         <div class="card">
             <div class="card-header">
                 <h2><i class="fas fa-rss table-icon"></i> Lista de Feeds</h2>
@@ -68,7 +73,6 @@
                 <table class="table table-bordered table-hover table-striped">
                     <thead class="table-dark">
                         <tr>
-                            <th class="text-center"><i class="fas fa-tools table-icon"></i>Acciones</th>
                             <th class="col-id"><i class="fas fa-id-badge table-icon"></i>ID</th>
                             <th class="col-name"><i class="fas fa-tag table-icon"></i>Nombre</th>
                             <th><i class="fas fa-cogs table-icon"></i>Formulas</th>
@@ -77,16 +81,34 @@
                             <th><i class="fas fa-box table-icon"></i>Total Products BC</th>
                             <th><i class="fas fa-clipboard-list table-icon"></i>Preorder Products</th>
                             <th><i class="fas fa-building table-icon"></i>Company Id</th>
+                            <th class="text-center"><i class="fas fa-tools table-icon"></i>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {{#each feeds}}
                         <tr>
+                            <td><span class="non-editable">{{this.feed_id}}</span><span
+                                    class="editable">{{this.feed_id}}</span></td>
+                            <td><span class="non-editable">{{this.feed_name}}</span><input type="text"
+                                    class="form-control editable" value="{{this.feed_name}}"></td>
+                            <td><span class="non-editable">{{this.formulas}}</span><input type="text"
+                                    class="form-control editable" value="{{this.formulas}}"></td>
+                            <td><span class="non-editable">{{this.last_update}}</span><input type="text"
+                                    class="form-control editable" value="{{this.last_update}}"></td>
+                            <td><span class="non-editable">{{this.active_products_gm}}</span><input type="text"
+                                    class="form-control editable" value="{{this.active_products_gm}}"></td>
+                            <td><span class="non-editable">{{this.total_products_bc}}</span><input type="text"
+                                    class="form-control editable" value="{{this.total_products_bc}}"></td>
+                            <td><span class="non-editable">{{this.preorder_products}}</span><input type="text"
+                                    class="form-control editable" value="{{this.preorder_products}}"></td>
+                            <td><span class="non-editable">{{this.company_id}}</span><input type="text"
+                                    class="form-control editable" value="{{this.company_id}}"></td>
                             <td class="text-center">
-                                <button class="btn btn-primary btn-edit" title="Actualizar" data-feed-id="{{this.feed_id}}">
+                                <button class="btn btn-primary btn-edit" title="Actualizar"
+                                    data-feed-id="{{this.feed_id}}">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-danger btn-delete" title="Eliminar">
+                                <button class="btn btn-danger btn-delete" title="Eliminar" data-feed-id="{{this.feed_id}}">
                                     <i class="fas fa-trash"></i>
                                 </button>
                                 <button class="btn btn-success btn-save editable" title="Guardar">
@@ -96,24 +118,11 @@
                                     <i class="fas fa-times"></i>
                                 </button>
                             </td>
-                            <td><span class="non-editable">{{this.feed_id}}</span><span class="editable">{{this.feed_id}}</span></td>
-                            <td><span class="non-editable">{{this.feed_name}}</span><input type="text" class="form-control editable" value="{{this.feed_name}}"></td>
-                            <td><span class="non-editable">{{this.formulas}}</span><input type="text" class="form-control editable" value="{{this.formulas}}"></td>
-                            <td><span class="non-editable">{{this.last_update}}</span><input type="text" class="form-control editable" value="{{this.last_update}}"></td>
-                            <td><span class="non-editable">{{this.active_products_gm}}</span><input type="text" class="form-control editable" value="{{this.active_products_gm}}"></td>
-                            <td><span class="non-editable">{{this.total_products_bc}}</span><input type="text" class="form-control editable" value="{{this.total_products_bc}}"></td>
-                            <td><span class="non-editable">{{this.preorder_products}}</span><input type="text" class="form-control editable" value="{{this.preorder_products}}"></td>
-                            <td><span class="non-editable">{{this.company_id}}</span><input type="text" class="form-control editable" value="{{this.company_id}}"></td>
                         </tr>
                         {{/each}}
                     </tbody>
                 </table>
             </div>
-        </div>
-        <div class="action-buttons">
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">
-                <i class="fas fa-plus"></i> Crear
-            </button>
         </div>
     </div>
 
@@ -136,6 +145,25 @@
         </div>
     </div>
 
+    <!-- Modal de Confirmación de Eliminación -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Confirmación de Eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Seguro que quiere eliminar el feed con ID <span id="deleteFeedId"></span>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal para Crear Feed -->
     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -152,7 +180,6 @@
                         </div>
                         <button type="submit" class="btn btn-primary">Crear</button>
                     </form>
-    
                 </div>
             </div>
         </div>
@@ -161,81 +188,113 @@
     <!-- Bootstrap JS bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Funcionalidad de editar
-    document.querySelectorAll('.btn-edit').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var feedId = btn.getAttribute('data-feed-id');
-            window.location.href = `/feeds/updateFeed/${feedId}`;
-        });
-    });
-
-    // Funcionalidad de cancelar edición
-    document.querySelectorAll('.btn-cancel').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var row = btn.closest('tr');
-            row.classList.remove('editing');
-        });
-    });
-
-    // Funcionalidad de guardar cambios
-    document.querySelectorAll('.btn-save').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var row = btn.closest('tr');
-            var inputs = row.querySelectorAll('input');
-            var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-
-            document.getElementById('confirmSave').onclick = function () {
-                inputs.forEach(function (input) {
-                    var span = input.previousElementSibling;
-                    span.innerText = input.value;
+        document.addEventListener('DOMContentLoaded', function () {
+            // Funcionalidad de editar
+            document.querySelectorAll('.btn-edit').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var row = btn.closest('tr');
+                    row.classList.add('editing');
                 });
-                row.classList.remove('editing');
-                confirmModal.hide();
-            };
+            });
 
-            confirmModal.show();
+            // Funcionalidad de cancelar edición
+            document.querySelectorAll('.btn-cancel').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var row = btn.closest('tr');
+                    row.classList.remove('editing');
+                });
+            });
+
+            // Funcionalidad de guardar cambios
+            document.querySelectorAll('.btn-save').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var row = btn.closest('tr');
+                    var inputs = row.querySelectorAll('input');
+                    var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+
+                    document.getElementById('confirmSave').onclick = function () {
+                        inputs.forEach(function (input) {
+                            var span = input.previousElementSibling;
+                            span.innerText = input.value;
+                        });
+                        row.classList.remove('editing');
+                        confirmModal.hide();
+                    };
+
+                    confirmModal.show();
+                });
+            });
+
+            // Funcionalidad de eliminar
+            document.querySelectorAll('.btn-delete').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var feedId = btn.getAttribute('data-feed-id');
+                    var deleteFeedIdSpan = document.getElementById('deleteFeedId');
+                    deleteFeedIdSpan.textContent = feedId;
+
+                    var deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+                    deleteConfirmModal.show();
+
+                    document.getElementById('confirmDelete').onclick = function () {
+                        fetch(`/feeds/deleteFeed/${feedId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === "Feed eliminado con éxito") {
+                                var row = btn.closest('tr');
+                                row.remove();
+                            } else {
+                                alert("Error al eliminar el feed: " + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert("Error al eliminar el feed");
+                        });
+                        deleteConfirmModal.hide();
+                    };
+                });
+            });
+
+            // Funcionalidad de crear nuevo feed
+            document.getElementById('createForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                var newFeedName = document.getElementById('newFeedName').value;
+                var newRow = `
+                    <tr>
+                        <td><span class="non-editable">NUEVO</span><span class="editable">NUEVO</span></td>
+                        <td><span class="non-editable">${newFeedName}</span><input type="text" class="form-control editable" value="${newFeedName}"></td>
+                        <td><span class="non-editable"></span><input type="text" class="form-control editable" value=""></td>
+                        <td><span class="non-editable"></span><input type="text" class="form-control editable" value=""></td>
+                        <td><span class="non-editable"></span><input type="text" class="form-control editable" value=""></td>
+                        <td><span class="non-editable"></span><input type="text" class="form-control editable" value=""></td>
+                        <td><span class="non-editable"></span><input type="text" class="form-control editable" value=""></td>
+                        <td><span class="non-editable"></span><input type="text" class="form-control editable" value=""></td>
+                        <td class="text-center">
+                            <button class="btn btn-primary btn-edit" title="Actualizar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-delete" title="Eliminar" data-feed-id="NUEVO">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="btn btn-success btn-save editable" title="Guardar">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
+                var createModal = new bootstrap.Modal(document.getElementById('createModal'));
+                createModal.hide();
+            });
         });
-    });
-
-    // Funcionalidad de crear nuevo feed
-    document.getElementById('createForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        var newFeedName = document.getElementById('newFeedName').value;
-        var newRow = `
-            <tr>
-                <td class="text-center">
-                    <button class="btn btn-primary btn-edit" title="Actualizar">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-danger btn-delete" title="Eliminar">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <button class="btn btn-success btn-save editable" title="Guardar">
-                        <i class="fas fa-check"></i>
-                    </button>
-                    <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </td>
-                <td><span class="non-editable">NUEVO</span></td>
-                <td><span class="non-editable">${newFeedName}</span><input type="text" class="form-control editable" value="${newFeedName}"></td>
-                <td><span class="non-editable"></span><input type="text" class="form-control editable" value=""></td>
-                <td><span class="non-editable"></span><input type="text" class="form-control editable" value=""></td>
-                <td><span class="non-editable"></span><input type="text" class="form-control editable" value=""></td>
-                <td><span class="non-editable"></span><input type="text" class="form-control editable" value=""></td>
-                <td><span class="non-editable"></span><input type="text" class="form-control editable" value=""></td>
-                <td><span class="non-editable"></span><input type="text" class="form-control editable" value=""></td>
-                <td><span class="non-editable"></span><input type="text" class="form-control editable" value=""></td>
-                <td><span class="non-editable"></span><input type="text" class="form-control editable" value=""></td>
-                <td><span class="non-editable"></span><input type="text" class="form-control editable" value=""></td>
-            </tr>
-        `;
-        document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
-        var createModal = new bootstrap.Modal(document.getElementById('createModal'));
-        createModal.hide();
-    });
-});
     </script>
 </body>
 
