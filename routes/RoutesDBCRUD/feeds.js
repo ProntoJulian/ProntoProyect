@@ -36,11 +36,10 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
         'company_id'
     ]; // Ajusta según sea necesario
 
-    const lastUpdate = new Date(feedData.last_update);
-
+    // Establecer la fecha y hora actual como last_update
+    const lastUpdate = new Date();
     const formattedLastUpdate = lastUpdate.toISOString().replace('T', ' ').substring(0, 19);
-
-    feedData.last_update = formattedLastUpdate
+    feedData.last_update = formattedLastUpdate;
 
     try {
         const result = await insertIntoTable('feeds', feedData, columns);
@@ -54,6 +53,7 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
         res.status(500).json({ message: "Error al crear el feed" });
     }
 });
+
 
 
 routerFeeds.get("/feeds/updateFeed/:feedId", authenticateToken, async (req, res) => {
@@ -71,6 +71,18 @@ routerFeeds.get("/feeds/updateFeed/:feedId", authenticateToken, async (req, res)
         console.error('Error al obtener el feed:', error);
         res.status(500).json({ message: "Error interno del servidor al intentar obtener el feed" });
     }
+});
+
+routerFeeds.get("/feeds/createFeed", authenticateToken, async (req, res) => {
+
+    try {
+        const companies = await fetchDataFromTable('companies');
+        res.render("pages/createFeed", {companies: companies });
+    } catch (error) {
+        console.error('Error al obtener compañías:', error);
+        res.status(500).json({ message: "Error al obtener las compañías" });
+    }
+    
 });
 
 routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => {
