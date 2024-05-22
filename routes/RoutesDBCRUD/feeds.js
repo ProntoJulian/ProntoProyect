@@ -5,7 +5,7 @@ const {insertIntoTable,
     fetchDataFromTable,
     deleteFromTable,
     fetchOneFromTable} = require("../../databases/CRUD");
-const {createWebhookToUpdateProduct, createWebhookToUpdateProduct} = require("../../api/webHooksBigCommerceApi")
+const {createWebhookToCreateProduct, createWebhookToUpdateProduct} = require("../../api/webHooksBigCommerceApi")
 const routerFeeds = express.Router();
 
 
@@ -155,7 +155,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
             // Agregar una demora de 15 segundos
             setTimeout(async () => {
                 await createWebhookToUpdateProduct(storeHash, accessToken);
-                await createWebhookToUpdateProduct(storeHash, accessToken);
+                await createWebhookToCreateProduct(storeHash, accessToken);
 
                 res.status(200).json(feed);
             }, 15000); // 15000 ms = 15 segundos
