@@ -1,27 +1,27 @@
 const fetch = require("node-fetch");
 require("dotenv").config();
 
-const {generateHash} = require("../helpers/helpers.js")
+const { generateHash } = require("../helpers/helpers.js")
 
 const storeHash = process.env.STOREHASH;
 const accessToken = process.env.ACCESS_TOKEN;
 const urlGCloud = process.env.URL_GCLOUD;
 
 const optionsGet = {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Auth-Token": accessToken,
-    },
-  };
+  method: "GET",
+  headers: {
+    "Content-Type": "application/json",
+    "X-Auth-Token": accessToken,
+  },
+};
 
-  const optionsDelete = {
-    method: 'DELETE',
-    headers: {
-      'X-Auth-Token': accessToken,
-      'Content-Type': 'application/json'
-    }
-  };
+const optionsDelete = {
+  method: 'DELETE',
+  headers: {
+    'X-Auth-Token': accessToken,
+    'Content-Type': 'application/json'
+  }
+};
 
 
 /**
@@ -150,170 +150,223 @@ async function createWebhook(scope, destination) {
  * La función asegura que cualquier error en la creación del webhook es registrado y muestra información detallada sobre el problema.
  */
 
-async function createWebhookToUpdateProduct(productID) {
-    const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/hooks`;
-    const producer = `stores/${storeHash}`;
-  
-    // Obtener la marca de tiempo UNIX actual
-    const currentTimestamp = Math.floor(Date.now() / 1000);
-    console.log("La marca de tiempo UNIX actual es:", currentTimestamp);
-  
-    const dataToHash = {
-      store_id: storeHash,
-      data: {
-        type: "product",
-        id: productID,
-      },
-      created_at: currentTimestamp,
-      producer: producer,
-    };
-  
-    const hashValue = generateHash(dataToHash); 
-  
-    const webhookPayload = {
-      scope: "store/product/updated",
-      destination: `${urlGCloud}/updatedProduct`,
-      is_active: true,
-      headers: {},
-      store_id: storeHash,
-      data: dataToHash.data,
-      hash: hashValue,
-      created_at: currentTimestamp,
-      producer: producer,
-    };
+async function createWebhookToUpdateProduct(storeHashF, accessTokenF) {
+  const url = `https://api.bigcommerce.com/stores/${storeHashF}/v3/hooks`;
+  const producer = `stores/${storeHashF}`;
 
-    const optionsPost = {
-      method: "POST",
-      headers: {
-        "X-Auth-Token": accessToken,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(webhookPayload),
-    };
-  
-    try {
-        const response = await fetch(url, optionsPost);
-        const responseBody = await response.json(); // Asegúrate de leer el cuerpo de la respuesta siempre
-        if (!response.ok) {
-          console.error('Respuesta de la API:', responseBody); // Esto te mostrará el mensaje de error detallado de la API
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        console.log("Webhook creado exitosamente:", responseBody);
-      } catch (error) {
-        console.error("Error al crear el webhook:", error);
-      }
-      
-  }
+  // Obtener la marca de tiempo UNIX actual
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+  console.log("La marca de tiempo UNIX actual es:", currentTimestamp);
 
+  const dataToHash = {
+    store_id: storeHashF,
+    data: {
+      type: "product",
+      id: productID,
+    },
+    created_at: currentTimestamp,
+    producer: producer,
+  };
 
-  /**
- * Función asíncrona para eliminar un webhook específico en BigCommerce.
- * Utiliza el ID del webhook para formar la URL necesaria para una solicitud DELETE.
- *
- * Parámetros:
- * - webhookId: Identificador único del webhook que se desea eliminar.
- *
- * Proceso:
- * 1. Configura las opciones de la solicitud HTTP, incluyendo el método DELETE y los encabezados necesarios para autenticación.
- * 2. Realiza la solicitud HTTP a la API de BigCommerce para eliminar el webhook especificado.
- * 3. Verifica la respuesta: si es exitosa, registra un mensaje de éxito; si no, obtiene y registra los detalles del error.
- * 4. Maneja cualquier error de conexión o solicitud con un registro detallado del error.
- *
- * Esta función asegura que se manejen adecuadamente los errores durante la eliminación, proporcionando claridad sobre el estado de la operación.
- */
+  const hashValue = generateHash(dataToHash);
 
+  const webhookPayload = {
+    scope: "store/product/updated",
+    destination: `${urlGCloud}/updatedProduct`,
+    is_active: true,
+    headers: {},
+    store_id: storeHashF,
+    data: dataToHash.data,
+    hash: hashValue,
+    created_at: currentTimestamp,
+    producer: producer,
+  };
 
-  async function deleteWebhook(webhookId) {
-    const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/hooks/${webhookId}`;
+  const optionsPost = {
+    method: "POST",
+    headers: {
+      "X-Auth-Token": accessTokenF,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(webhookPayload),
+  };
 
-  
-    try {
-      const response = await fetch(url, optionsDelete);
-      if (response.ok) {
-        console.log("Webhook eliminado con éxito.");
-      } else {
-        const errorData = await response.json();
-        console.error("Error al eliminar el webhook: ", errorData);
-      }
-    } catch (error) {
-      console.error("Error en la solicitud para eliminar el webhook: ", error);
+  try {
+    const response = await fetch(url, optionsPost);
+    const responseBody = await response.json(); // Asegúrate de leer el cuerpo de la respuesta siempre
+    if (!response.ok) {
+      console.error('Respuesta de la API:', responseBody); // Esto te mostrará el mensaje de error detallado de la API
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    console.log("Webhook creado exitosamente:", responseBody);
+  } catch (error) {
+    console.error("Error al crear el webhook:", error);
   }
 
-
-  /**
- * Función asíncrona para crear un webhook en BigCommerce que se activará cuando un producto sea eliminado.
- * La función configura y envía una solicitud POST para registrar un nuevo webhook que notifique a una URL especificada
- * en Google Cloud cada vez que se elimine un producto en la tienda.
- *
- * Proceso:
- * 1. Genera una marca de tiempo UNIX actual y utiliza esta junto con el ID de la tienda para crear un hash de seguridad.
- * 2. Configura el payload del webhook especificando el ámbito para productos eliminados, la URL de destino, 
- *    y otros metadatos relevantes como el ID de la tienda y la marca de tiempo.
- * 3. Envía una solicitud POST a la API de BigCommerce con los detalles del webhook.
- * 4. Verifica la respuesta de la API y maneja los estados de éxito o error adecuadamente.
- *    En caso de éxito, logra la creación del webhook; en caso de error, muestra detalles del error y lanza una excepción.
- *
- */
+}
 
 
-  async function createWebhookToDeleteProduct() {
+/**
+* Función asíncrona para eliminar un webhook específico en BigCommerce.
+* Utiliza el ID del webhook para formar la URL necesaria para una solicitud DELETE.
+*
+* Parámetros:
+* - webhookId: Identificador único del webhook que se desea eliminar.
+*
+* Proceso:
+* 1. Configura las opciones de la solicitud HTTP, incluyendo el método DELETE y los encabezados necesarios para autenticación.
+* 2. Realiza la solicitud HTTP a la API de BigCommerce para eliminar el webhook especificado.
+* 3. Verifica la respuesta: si es exitosa, registra un mensaje de éxito; si no, obtiene y registra los detalles del error.
+* 4. Maneja cualquier error de conexión o solicitud con un registro detallado del error.
+*
+* Esta función asegura que se manejen adecuadamente los errores durante la eliminación, proporcionando claridad sobre el estado de la operación.
+*/
 
-    const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/hooks`;
-    const producer = `stores/${storeHash}`;
-  
-    const currentTimestamp = Math.floor(Date.now() / 1000);
-    console.log("La marca de tiempo UNIX actual es:", currentTimestamp);
-  
-    const dataToHash = {
-      store_id: storeHash,
-      created_at: currentTimestamp,
-      producer: producer,
-    };
-  
-    const hashValue = generateHash(dataToHash); // Asegúrate de tener esta función definida o reemplázala por tu método de generación de hash
-  
-    const webhookPayload = {
-      scope: "store/product/deleted",
-      destination: `${urlGCloud}/deletedProduct`,
-      is_active: true,
-      headers: {},
-      store_id: storeHash,
-      data: dataToHash.data,
-      hash: hashValue,
-      created_at: currentTimestamp,
-      producer: producer,
-    };
 
-    const optionsPost = {
-      method: "POST",
-      headers: {
-        "X-Auth-Token": accessToken,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(webhookPayload),
-    };
-  
-    try {
-      const response = await fetch(url, optionsPost);
-      const responseBody = await response.json(); // Asegúrate de leer el cuerpo de la respuesta siempre
-      if (!response.ok) {
-        console.error('Respuesta de la API:', responseBody); // Esto te mostrará el mensaje de error detallado de la API
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      console.log("Webhook para producto eliminado creado exitosamente:", responseBody);
-    } catch (error) {
-      console.error("Error al crear el webhook para producto eliminado:", error);
+async function deleteWebhook(webhookId) {
+  const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/hooks/${webhookId}`;
+
+
+  try {
+    const response = await fetch(url, optionsDelete);
+    if (response.ok) {
+      console.log("Webhook eliminado con éxito.");
+    } else {
+      const errorData = await response.json();
+      console.error("Error al eliminar el webhook: ", errorData);
     }
+  } catch (error) {
+    console.error("Error en la solicitud para eliminar el webhook: ", error);
   }
-  
+}
+
+
+/**
+* Función asíncrona para crear un webhook en BigCommerce que se activará cuando un producto sea eliminado.
+* La función configura y envía una solicitud POST para registrar un nuevo webhook que notifique a una URL especificada
+* en Google Cloud cada vez que se elimine un producto en la tienda.
+*
+* Proceso:
+* 1. Genera una marca de tiempo UNIX actual y utiliza esta junto con el ID de la tienda para crear un hash de seguridad.
+* 2. Configura el payload del webhook especificando el ámbito para productos eliminados, la URL de destino, 
+*    y otros metadatos relevantes como el ID de la tienda y la marca de tiempo.
+* 3. Envía una solicitud POST a la API de BigCommerce con los detalles del webhook.
+* 4. Verifica la respuesta de la API y maneja los estados de éxito o error adecuadamente.
+*    En caso de éxito, logra la creación del webhook; en caso de error, muestra detalles del error y lanza una excepción.
+*
+*/
+
+
+async function createWebhookToDeleteProduct() {
+
+  const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/hooks`;
+  const producer = `stores/${storeHash}`;
+
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+  console.log("La marca de tiempo UNIX actual es:", currentTimestamp);
+
+  const dataToHash = {
+    store_id: storeHash,
+    created_at: currentTimestamp,
+    producer: producer,
+  };
+
+  const hashValue = generateHash(dataToHash); // Asegúrate de tener esta función definida o reemplázala por tu método de generación de hash
+
+  const webhookPayload = {
+    scope: "store/product/deleted",
+    destination: `${urlGCloud}/deletedProduct`,
+    is_active: true,
+    headers: {},
+    store_id: storeHash,
+    data: dataToHash.data,
+    hash: hashValue,
+    created_at: currentTimestamp,
+    producer: producer,
+  };
+
+  const optionsPost = {
+    method: "POST",
+    headers: {
+      "X-Auth-Token": accessToken,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(webhookPayload),
+  };
+
+  try {
+    const response = await fetch(url, optionsPost);
+    const responseBody = await response.json(); // Asegúrate de leer el cuerpo de la respuesta siempre
+    if (!response.ok) {
+      console.error('Respuesta de la API:', responseBody); // Esto te mostrará el mensaje de error detallado de la API
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    console.log("Webhook para producto eliminado creado exitosamente:", responseBody);
+  } catch (error) {
+    console.error("Error al crear el webhook para producto eliminado:", error);
+  }
+}
+
+
+async function createWebhookToCreateProduct(storeHashF,accessTokenF) {
+  const url = `https://api.bigcommerce.com/stores/${storeHashF}/v3/hooks`;
+  const producer = `stores/${storeHashF}`;
+
+  // Obtener la marca de tiempo UNIX actual
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+  console.log("La marca de tiempo UNIX actual es:", currentTimestamp);
+
+  const dataToHash = {
+    store_id: storeHashF,
+    created_at: currentTimestamp,
+    producer: producer,
+  };
+
+  const hashValue = generateHash(dataToHash); // Asegúrate de tener esta función definida o reemplázala por tu método de generación de hash
+
+  const webhookPayload = {
+    scope: "store/product/created",
+    destination: `${urlGCloud}/createdProduct`,
+    is_active: true,
+    headers: {},
+    store_id: storeHashF,
+    data: dataToHash.data,
+    hash: hashValue,
+    created_at: currentTimestamp,
+    producer: producer,
+  };
+
+  const options = {
+    method: "POST",
+    headers: {
+      "X-Auth-Token": accessTokenF,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(webhookPayload),
+  };
+
+  try {
+    const response = await fetch(url, options);
+    const responseBody = await response.json(); // Asegúrate de leer el cuerpo de la respuesta siempre
+    if (!response.ok) {
+      console.error('Respuesta de la API:', responseBody); // Esto te mostrará el mensaje de error detallado de la API
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    console.log("Webhook creado exitosamente:", responseBody);
+  } catch (error) {
+    console.error("Error al crear el webhook:", error);
+  }
+}
+
 
 module.exports = {
   fetchWebHooks,
   createWebhookToUpdateProduct,
   deleteWebhook,
   createWebhookToDeleteProduct,
-  activateAllWebHooks
+  activateAllWebHooks,
+  createWebhookToCreateProduct
 };

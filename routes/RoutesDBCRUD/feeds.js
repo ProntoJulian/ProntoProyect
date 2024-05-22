@@ -5,6 +5,7 @@ const {insertIntoTable,
     fetchDataFromTable,
     deleteFromTable,
     fetchOneFromTable} = require("../../databases/CRUD");
+const {createWebhookToUpdateProduct, createWebhookToUpdateProduct} = require("../../api/webHooksBigCommerceApi")
 const routerFeeds = express.Router();
 
 
@@ -134,6 +135,30 @@ routerFeeds.get("/feeds/getFeed/:feedId", authenticateToken, async (req, res) =>
         const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
         if (feed) {
             res.status(200).json(feed);
+        } else {
+            res.status(404).json({ message: "Feed no encontrado" });
+        }
+    } catch (error) {
+        console.error('Error al obtener el feed:', error);
+        res.status(500).json({ message: "Error interno del servidor al intentar obtener el feed" });
+    }
+});
+
+routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res) => {
+    const { feedId } = req.params;
+    try {
+        const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
+        if (feed) {
+            const storeHash = feed.store_hash;
+            const accessToken = feed.x_auth_token;
+            
+            // Agregar una demora de 15 segundos
+            setTimeout(async () => {
+                await createWebhookToUpdateProduct(storeHash, accessToken);
+                await createWebhookToUpdateProduct(storeHash, accessToken);
+
+                res.status(200).json(feed);
+            }, 15000); // 15000 ms = 15 segundos
         } else {
             res.status(404).json({ message: "Feed no encontrado" });
         }
