@@ -110,8 +110,6 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
     }
 });
 
-
-
 routerFeeds.delete("/feeds/deleteFeed/:feedId", authenticateToken, async (req, res) => {
     const { feedId } = req.params;
     try {

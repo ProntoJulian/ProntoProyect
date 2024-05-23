@@ -335,6 +335,7 @@
                         if (data.message === "Feed created successfully") {
                             alert("Feed created successfully");
                             window.location.href = "/app/feeds";
+                            window.location.reload();
                         } else {
                             alert("Error creating feed: " + data.message);
                         }

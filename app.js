@@ -59,6 +59,7 @@ app.use(express.static(path.join(__dirname,"src","public")));
 
 // Importing routers
 const routerCompanies = require("./routes/RoutesDBCRUD/companies");
+const routerModules = require("./routes/RoutesDBCRUD/modules.js");
 const routerFeeds = require("./routes/RoutesDBCRUD/feeds");
 const routerRoles = require("./routes/RoutesDBCRUD/roles");
 const routerUsers = require("./routes/RoutesDBCRUD/users");
@@ -74,6 +75,7 @@ const appRouter = require("./routes/index");
 // Register routers
 app.use(routerOrders);
 app.use(routerProducts);
+app.use(routerModules);
 app.use(routerMerchant);
 app.use(routerImages);
 app.use(routerWebHooks);
