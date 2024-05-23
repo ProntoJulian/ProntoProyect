@@ -80,8 +80,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{#each roles}}
+                        {{#if company}}
                             <input type="text" class="form-control editable" data-company-id="{{this.company_id}}" hidden>
+                        {{/if}}
+                        {{#each roles}}
                         <tr>
                             <td><span class="non-editable">{{this.role_id}}</span><input type="text" class="form-control editable" value="{{this.role_id}}" disabled></td>
                             <td><span class="non-editable">{{this.role_name}}</span><input type="text" class="form-control editable" value="{{this.role_name}}" data-role-name></td>
