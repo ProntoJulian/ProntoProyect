@@ -36,7 +36,8 @@ appRouter.get("/app/companies", authenticateToken,async function (req, res) {
 appRouter.get("/app/feeds", authenticateToken, async function (req, res) {
     const user = res.locals.user;
     const feeds = await getFeedByIdCompany(user.company_id);
-    const company =  await fetchOneFromTable('companies', user.company_id, 'company_id');
+
+    console.log("Feeds: ", feeds)
     
     // Formatear la fecha y obtener el nombre de la compañía
     for (let feed of feeds) {
@@ -53,7 +54,7 @@ appRouter.get("/app/feeds", authenticateToken, async function (req, res) {
         
     }
 
-    res.render("pages/feeds", { feeds: [feeds], companies:companies  });
+    res.render("pages/feeds", { feeds: feeds, companies:companies  });
 });
 
 
