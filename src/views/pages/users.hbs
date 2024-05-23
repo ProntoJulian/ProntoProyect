@@ -95,8 +95,8 @@
                                 <span class="non-editable">{{this.company_name}}</span>
                                 <select class="form-control editable">
                                     {{#each ../companies}}
-                                    <option value="{{this.company_id}}"
-                                        {{#ifCond this.company_id ../this.company_id}}selected{{/ifCond}}>
+                                    <option value="{{this.company_id}}" {{#ifCond this.company_id
+                                        ../this.company_id}}selected{{/ifCond}}>
                                         {{this.company_name}}</option>
                                     {{/each}}
                                 </select>
@@ -105,17 +105,20 @@
                                 <span class="non-editable">{{this.role_name}}</span>
                                 <select class="form-control editable">
                                     {{#each ../roles}}
-                                    <option value="{{this.role_id}}"
-                                        {{#ifCond this.role_id ../this.role_id}}selected{{/ifCond}}>{{this.role_name}}
+                                    <option value="{{this.role_id}}" {{#ifCond this.role_id
+                                        ../this.role_id}}selected{{/ifCond}}>{{this.role_name}}
                                     </option>
                                     {{/each}}
                                 </select>
                             </td>
                             <td class="text-center">
-                                <button class="btn btn-primary btn-edit" title="Actualizar" data-user-id="{{this.user_id}}" data-username="{{this.username}}" data-company-id="{{this.company_id}}" data-role-id="{{this.role_id}}">
+                                <button class="btn btn-primary btn-edit" title="Actualizar"
+                                    data-user-id="{{this.user_id}}" data-username="{{this.username}}"
+                                    data-company-id="{{this.company_id}}" data-role-id="{{this.role_id}}">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-danger btn-delete" title="Eliminar" data-user-id="{{this.user_id}}">
+                                <button class="btn btn-danger btn-delete" title="Eliminar"
+                                    data-user-id="{{this.user_id}}">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
@@ -147,7 +150,8 @@
     </div>
 
     <!-- Modal de Confirmación de Eliminación -->
-    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -199,11 +203,20 @@
                         </div>
                         <div class="mb-3">
                             <label for="newCompanyName" class="form-label">Nombre de la Compañía</label>
+
+                            {{#if (includes permisos 'modules')}}
+                            <select class="form-control" id="company_id" disabled>
+                                {{#each companies}}
+                                <option value="{{this.company_id}}">{{this.company_name}}</option>
+                                {{/each}}
+                            </select>
+                            {{else}}
                             <select class="form-control" id="company_id">
                                 {{#each companies}}
                                 <option value="{{this.company_id}}">{{this.company_name}}</option>
                                 {{/each}}
                             </select>
+                            {{/if}}
                         </div>
                         <div class="mb-3">
                             <label for="newRoleName" class="form-label">Rol</label>
@@ -338,19 +351,19 @@
                     },
                     body: JSON.stringify({ username, password, newPassword, companyId, roleId })
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message === "Usuario actualizado con éxito") {
-                        alert("Usuario actualizado con éxito");
-                        window.location.reload();
-                    } else {
-                        alert("Error al actualizar el usuario: " + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert("Error al actualizar el usuario");
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === "Usuario actualizado con éxito") {
+                            alert("Usuario actualizado con éxito");
+                            window.location.reload();
+                        } else {
+                            alert("Error al actualizar el usuario: " + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Error al actualizar el usuario");
+                    });
             });
 
             // Funcionalidad de eliminar
@@ -370,19 +383,19 @@
                                 'Content-Type': 'application/json'
                             }
                         })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.message === "Usuario eliminado con éxito") {
-                                var row = btn.closest('tr');
-                                row.remove();
-                            } else {
-                                alert("Error al eliminar el usuario: " + data.message);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert("Error al eliminar el usuario");
-                        });
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.message === "Usuario eliminado con éxito") {
+                                    var row = btn.closest('tr');
+                                    row.remove();
+                                } else {
+                                    alert("Error al eliminar el usuario: " + data.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert("Error al eliminar el usuario");
+                            });
                         deleteConfirmModal.hide();
                     };
                 });
@@ -409,10 +422,10 @@
                     },
                     body: JSON.stringify({ company_id: newCompanyName, username: newUsername, password_hash: password, role_id: newRoleName })
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message === "Usuario creado con éxito") {
-                        var newRow = `
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === "Usuario creado con éxito") {
+                            var newRow = `
                             <tr>
                                 <td><span class="non-editable">${data.user_id}</span><input type="text" class="form-control editable" value="${data.user_id}" disabled></td>
                                 <td><span class="non-editable">${newUsername}</span><input type="text" class="form-control editable" value="${newUsername}"></td>
@@ -428,18 +441,18 @@
                                 </td>
                             </tr>
                         `;
-                        document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
-                        var createModal = new bootstrap.Modal(document.getElementById('createModal'));
-                        createModal.hide();
-                        window.location.reload();
-                    } else {
-                        alert("Error al crear el usuario: " + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert("Error al crear el usuario");
-                });
+                            document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
+                            var createModal = new bootstrap.Modal(document.getElementById('createModal'));
+                            createModal.hide();
+                            window.location.reload();
+                        } else {
+                            alert("Error al crear el usuario: " + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Error al crear el usuario");
+                    });
             });
 
             // Toggle password visibility
