@@ -1,4 +1,7 @@
 const jwt = require('jsonwebtoken');
+const {
+    fetchOneFromTable
+} = require("../databases/CRUD");
 
 function authenticateToken(req, res, next) {
     const token = req.cookies.accessToken; // Extrae el token de la cookie
