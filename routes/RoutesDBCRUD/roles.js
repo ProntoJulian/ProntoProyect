@@ -20,14 +20,15 @@ routerRoles.get("/roles/getRoles", authenticateToken, async (req, res) => {
 
 
 routerRoles.post("/roles/createRole", authenticateToken, async (req, res) => {
-    const { roleName } = req.body;
-    const columns = ['role_name'];  // Columnas específicas para la tabla roles
+    const { roleName, company_Id } = req.body;
+    const columns = ['role_name',
+                    "company_id"];  // Columnas específicas para la tabla roles
     if (!roleName || roleName == '') {
         res.render("app/roles", {error_msg: 'El nombre es requerido'});
         
     }
     try {
-        const result = await insertIntoTable('roles', { role_name: roleName }, columns);
+        const result = await insertIntoTable('roles', { role_name: roleName, company_id:company_Id }, columns);
         if (result.affectedRows > 0) {
             res.send({ message: "Rol creado con éxito" });
         } else {
@@ -57,12 +58,12 @@ routerRoles.delete("/roles/deleteRole/:roleId", authenticateToken, async (req, r
 
 routerRoles.put("/roles/updateRole/:roleId", authenticateToken, async (req, res) => {
     const { roleId } = req.params;
-    const { newName } = req.body;
+    const { newName, companyId } = req.body;
     if (!newName) {
         return res.status(400).json({ message: "El nuevo nombre del rol es requerido" });
     }
     try {
-        const result = await updateTable('roles', { role_name: newName }, 'role_id', roleId);
+        const result = await updateTable('roles', { role_name: newName, company_id: companyId }, 'role_id', roleId);
         if (result.affectedRows > 0) {
             res.send({ message: "Rol actualizado con éxito" });
         } else {

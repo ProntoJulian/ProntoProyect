@@ -81,6 +81,7 @@
                     </thead>
                     <tbody>
                         {{#each roles}}
+                            <input type="text" class="form-control editable" data-company-id="{{this.company_id}}" hidden>
                         <tr>
                             <td><span class="non-editable">{{this.role_id}}</span><input type="text" class="form-control editable" value="{{this.role_id}}" disabled></td>
                             <td><span class="non-editable">{{this.role_name}}</span><input type="text" class="form-control editable" value="{{this.role_name}}" data-role-name></td>
@@ -191,6 +192,7 @@
                 btn.addEventListener('click', function () {
                     var row = btn.closest('tr');
                     var roleId = btn.getAttribute('data-role-id');
+                    var company_Id = btn.getAttribute('data-company-id');
                     var newRoleName = row.querySelector('input[data-role-name]').value;
                     var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
 
@@ -200,7 +202,7 @@
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({ newName: newRoleName })
+                            body: JSON.stringify({newName: newRoleName,companyId: company_Id })
                         })
                         .then(response => response.json())
                         .then(data => {
@@ -261,6 +263,7 @@
             // Funcionalidad de crear nuevo rol
             document.getElementById('createForm').addEventListener('submit', function (event) {
                 event.preventDefault();
+                var companyId = btn.getAttribute('data-company-id');
                 var newRoleName = document.getElementById('newRoleName').value;
 
                 fetch('/roles/createRole', {
@@ -268,7 +271,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ roleName: newRoleName })
+                    body: JSON.stringify({ roleName: newRoleName, company_Id:companyId })
                 })
                 .then(response => response.json())
                 .then(data => {

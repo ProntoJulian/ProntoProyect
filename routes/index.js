@@ -8,10 +8,17 @@ const {
     fetchOneFromTable
 } = require("../databases/CRUD");
 
-const {getFeedByIdCompany} = require("../databases/consultas")
+const {getByIdCompany} = require("../databases/consultas")
 
 appRouter.get("/", (req, res) => {
-    res.render("login/login");
+    const user = res.locals.user;
+
+    if(user){
+        res.render("app");
+    }else{
+        res.render("login/login");
+    }
+
 })
 
 appRouter.get("/app/logout", authenticateToken, function (req, res) {
@@ -35,7 +42,7 @@ appRouter.get("/app/companies", authenticateToken,async function (req, res) {
 
 appRouter.get("/app/feeds", authenticateToken, async function (req, res) {
     const user = res.locals.user;
-    const feeds = await getFeedByIdCompany(user.company_id);
+    const feeds = await getByIdCompany("feeds",user.company_id);
     const companies = await fetchDataFromTable('companies');
 
     console.log("Feeds: ", feeds)
@@ -60,12 +67,35 @@ appRouter.get("/app/feeds", authenticateToken, async function (req, res) {
 
 
 appRouter.get("/app/roles", authenticateToken,async function (req, res) {
-    const roles = await fetchDataFromTable('roles');
+    
+    const user = res.locals.user;
+    const roles = await getByIdCompany('roles', user.company_id);
+
+    const role = await fetchOneFromTable('roles', user.company_id, 'role_id');
+    
+    let users;
+    if(role.role_name == "Superusuario"){
+        users = await fetchDataFromTable('roles');
+    }else{
+        users = await getByIdCompany("roles", user.company_id);
+    }
+
     res.render("pages/roles",{ roles: roles });
 });
 
 appRouter.get("/app/users", authenticateToken, async function (req, res) {
-    const users = await fetchDataFromTable('users');
+
+    const user = res.locals.user;
+
+    const role = await fetchOneFromTable('roles', user.company_id, 'role_id');
+    
+    let users;
+    if(role.role_name == "Superusuario"){
+        users = await fetchDataFromTable('users');
+    }else{
+        users = await getByIdCompany("users", user.company_id);
+    }
+
     const companies = await fetchDataFromTable('companies');
     const roles = await fetchDataFromTable('roles');
 

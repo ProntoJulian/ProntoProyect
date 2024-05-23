@@ -12,30 +12,18 @@ const pool = mysql.createPool({
 });
 
 
-async function getFeedByIdCompany(feedId) {
-    const sql = 'SELECT * FROM `feeds` WHERE `company_id` = ?';
+async function getByIdCompany(table, feedId) {
+    const sql = `SELECT * FROM \`${table}\` WHERE \`company_id\` = ?`;
     try {
         const [rows] = await pool.promise().query(sql, [feedId]);
         return rows;
     } catch (error) {
-        console.error(`Error al obtener feed con feed_id ${feedId}:`, error);
+        console.error(`Error al obtener datos de la tabla ${table} con company_id ${feedId}:`, error);
         throw error;
     }
 }
 
-async function getRolesByIdCompany(RoleId) {
-    const sql = 'SELECT * FROM `roles` WHERE `company_id` = ?';
-    try {
-        const [rows] = await pool.promise().query(sql, [RoleId]);
-        console.log(`Feeds con feed_id ${RoleId}:`, rows);
-        return rows;
-    } catch (error) {
-        console.error(`Error al obtener feed con feed_id ${RoleId}:`, error);
-        throw error;
-    }
-}
 
 module.exports = {
-    getFeedByIdCompany,
-    getRolesByIdCompany
+    getByIdCompany
 }
