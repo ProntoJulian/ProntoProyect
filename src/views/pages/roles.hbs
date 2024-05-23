@@ -81,7 +81,8 @@
                     </thead>
                     <tbody>
                         {{#if company}}
-                            <input type="text" class="form-control editable" data-company-id="{{this.company_id}}" hidden>
+                            <button class="btn btn-success btn-save editable" hidden data-company-id="{{this.company_id}}">
+                            </button>
                         {{/if}}
                         {{#each roles}}
                         <tr>
