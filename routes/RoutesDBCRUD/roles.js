@@ -1,5 +1,5 @@
 const express = require("express");
-const {authenticateToken} = require("../../middleware/index");
+const {authenticateToken,superUsuarioPages} = require("../../middleware/index");
 const {insertIntoTable,
     updateTable,
     fetchDataFromTable,
@@ -8,7 +8,7 @@ const {insertIntoTable,
 const routerRoles = express.Router();
 
 
-routerRoles.get("/roles/getRoles", authenticateToken, async (req, res) => {
+routerRoles.get("/roles/getRoles", authenticateToken,superUsuarioPages, async (req, res) => {
     try {
         const roles = await fetchDataFromTable('roles');
         res.status(200).json(roles);
@@ -19,7 +19,7 @@ routerRoles.get("/roles/getRoles", authenticateToken, async (req, res) => {
 });
 
 
-routerRoles.post("/roles/createRole", authenticateToken, async (req, res) => {
+routerRoles.post("/roles/createRole", authenticateToken,superUsuarioPages, async (req, res) => {
     const { roleName, company_Id } = req.body;
     const columns = ['role_name', "company_id"];  // Columnas específicas para la tabla roles
     if (!roleName || roleName == '') {
@@ -43,7 +43,7 @@ routerRoles.post("/roles/createRole", authenticateToken, async (req, res) => {
 
 
 
-routerRoles.delete("/roles/deleteRole/:roleId", authenticateToken, async (req, res) => {
+routerRoles.delete("/roles/deleteRole/:roleId", authenticateToken,superUsuarioPages, async (req, res) => {
     const { roleId } = req.params;
     try {
         const result = await deleteFromTable('roles', 'role_id', roleId);
@@ -59,7 +59,7 @@ routerRoles.delete("/roles/deleteRole/:roleId", authenticateToken, async (req, r
 });
 
 
-routerRoles.put("/roles/updateRole/:roleId", authenticateToken, async (req, res) => {
+routerRoles.put("/roles/updateRole/:roleId", authenticateToken,superUsuarioPages, async (req, res) => {
     const { roleId } = req.params;
     const { newName, companyId } = req.body;
     if (!newName) {
@@ -79,7 +79,7 @@ routerRoles.put("/roles/updateRole/:roleId", authenticateToken, async (req, res)
 });
 
 
-routerRoles.get("/roles/getRole/:roleId", authenticateToken, async (req, res) => {
+routerRoles.get("/roles/getRole/:roleId", authenticateToken,superUsuarioPages, async (req, res) => {
     const { roleId } = req.params;
     try {
         const role = await fetchOneFromTable('roles', roleId, 'role_id');

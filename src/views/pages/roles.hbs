@@ -82,8 +82,7 @@
                     <tbody>
                         {{#if company}}
 
-                        <input type="text" class="form-control" id="data-company-id" hidden
-                            value="{{this.company_id}}">
+                        <input type="text" class="form-control" id="data-company-id" hidden value="{{this.company_id}}">
                         {{/if}}
                         {{#each roles}}
                         <tr>
@@ -271,7 +270,9 @@
             document.getElementById('createForm').addEventListener('submit', function (event) {
                 event.preventDefault();
                 var newRoleName = document.getElementById('newRoleName').value;
-                var companyId = document.getElementById('data-company-id').value;
+                var companyId = document.getElementById('newCompanyId').value;
+
+                console.log("Datos del formulario enviados:", { roleName: newRoleName, company_Id: companyId }); // Para depuración
 
                 fetch('/roles/createRole', {
                     method: 'POST',
@@ -284,25 +285,25 @@
                     .then(data => {
                         if (data.message === "Rol creado con éxito") {
                             var newRow = `
-                    <tr>
-                        <td><span class="non-editable">${data.role_id}</span><input type="text" class="form-control editable" value="${data.role_id}" disabled></td>
-                        <td><span class="non-editable">${newRoleName}</span><input type="text" class="form-control editable" value="${newRoleName}" data-role-name></td>
-                        <td class="text-center">
-                            <button class="btn btn-primary btn-edit" title="Actualizar">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-danger btn-delete" title="Eliminar" data-role-id="${data.role_id}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                            <button class="btn btn-success btn-save editable" title="Guardar" data-role-id="${data.role_id}">
-                                <i class="fas fa-check"></i>
-                            </button>
-                            <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                        <tr>
+                            <td><span class="non-editable">${data.role_id}</span><input type="text" class="form-control editable" value="${data.role_id}" disabled></td>
+                            <td><span class="non-editable">${newRoleName}</span><input type="text" class="form-control editable" value="${newRoleName}" data-role-name></td>
+                            <td class="text-center">
+                                <button class="btn btn-primary btn-edit" title="Actualizar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-delete" title="Eliminar" data-role-id="${data.role_id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                <button class="btn btn-success btn-save editable" title="Guardar" data-role-id="${data.role_id}">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
                             document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
                             var createModal = new bootstrap.Modal(document.getElementById('createModal'));
                             createModal.hide();
