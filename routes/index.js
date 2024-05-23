@@ -1,5 +1,5 @@
 const appRouter = require("express").Router();
-const { authenticateToken } = require("../middleware/index");
+const { authenticateToken, superUsuarioPages } = require("../middleware/index");
 const {
     insertIntoTable,
     updateTable,
@@ -33,11 +33,12 @@ appRouter.get("/app/logout", authenticateToken, function (req, res) {
 
 appRouter.get("/app", authenticateToken, async (req, res, next) => {
 
-    const user = res.locals.user;
-    
-    let permiso;
 
-    if(user.role_name == "Superusuario"){
+    const user = res.locals.user;
+    const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
+    
+    let users;
+    if(role.role_name == "Superusuario"){
         permiso = true;
     }else{
         permiso = false;
@@ -46,7 +47,7 @@ appRouter.get("/app", authenticateToken, async (req, res, next) => {
     res.render("app", {permiso: permiso});
 });
 
-appRouter.get("/app/companies", authenticateToken,async function (req, res) {
+appRouter.get("/app/companies", authenticateToken, superUsuarioPages,async function (req, res) {
     const companies = await fetchDataFromTable('companies');
     res.render("pages/companies",{ companies: companies });
 });
@@ -80,9 +81,10 @@ appRouter.get("/app/feeds", authenticateToken, async function (req, res) {
 appRouter.get("/app/roles", authenticateToken,async function (req, res) {
     
     const user = res.locals.user;
+    const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
     
     let roles;
-    if(user.role_name == "Superusuario"){
+    if(role.role_name == "Superusuario"){
         roles = await fetchDataFromTable('roles');
     }else{
         roles = await getByIdCompany("roles", user.company_id);
@@ -91,7 +93,7 @@ appRouter.get("/app/roles", authenticateToken,async function (req, res) {
     res.render("pages/roles",{ roles: roles });
 });
 
-appRouter.get("/app/modules", authenticateToken,async function (req, res) {
+appRouter.get("/app/modules", authenticateToken, superUsuarioPages,async function (req, res) {
     modules = await fetchDataFromTable('modules');
     res.render("pages/modules",{ modules: modules });
 });
@@ -99,9 +101,10 @@ appRouter.get("/app/modules", authenticateToken,async function (req, res) {
 appRouter.get("/app/users", authenticateToken, async function (req, res) {
 
     const user = res.locals.user;
+    const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
     
     let users;
-    if(user.role_name == "Superusuario"){
+    if(role.role_name == "Superusuario"){
         users = await fetchDataFromTable('users');
     }else{
         users = await getByIdCompany("users", user.company_id);
