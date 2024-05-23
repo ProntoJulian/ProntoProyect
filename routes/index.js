@@ -44,7 +44,7 @@ appRouter.get("/app", authenticateToken, async (req, res, next) => {
         permiso = false;
     }
 
-    res.render("app", {permiso: permiso});
+    res.render("app", permiso);
 });
 
 appRouter.get("/app/companies", authenticateToken, superUsuarioPages,async function (req, res) {
