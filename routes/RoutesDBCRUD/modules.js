@@ -41,7 +41,7 @@ routerModules.post("/modules/createModule", async (req, res) => {
     }
 });
 
-routerModules.put("/modules/update/:moduleId", async (req, res) => {
+routerModules.put("/modules/updateModule/:moduleId", async (req, res) => {
     const { moduleId } = req.params;
     console.log('Received moduleId:', moduleId); // Registro del moduleId recibido
     const updateData = req.body;
@@ -59,5 +59,22 @@ routerModules.put("/modules/update/:moduleId", async (req, res) => {
         res.status(500).json({ message: "Error al actualizar el módulo" });
     }
 });
+
+routerModules.delete("/modules/deleteModule/:moduleId", authenticateToken, async (req, res) => {
+    const { moduleId } = req.params;
+    try {
+        const result = await deleteFromTable('modules', 'module_id', moduleId);
+        if (result.affectedRows > 0) {
+            res.send({ message: "Rol eliminado con éxito" });
+        } else {
+            res.status(404).json({ message: "Rol no encontrado" });
+        }
+    } catch (error) {
+        console.error('Error al eliminar rol:', error);
+        res.status(500).json({ message: "Error al eliminar el rol" });
+    }
+});
+
+
 
 module.exports = routerModules;
