@@ -20,7 +20,7 @@ function authenticateToken(req, res, next) {
 }
 
 
-function superUsuarioPages(req, res, next) {
+async function superUsuarioPages (req, res, next) {
     const user = res.locals.user;
     const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
 
