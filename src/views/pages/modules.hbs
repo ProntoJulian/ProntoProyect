@@ -268,13 +268,14 @@
                             if (data.message === "Módulo eliminado con éxito") {
                                 var row = btn.closest('tr');
                                 row.remove();
+                                window.location.reload();
                             } else {
-                                alert("Error al eliminar el módulo: " + data.message);
+                                window.location.reload();
                             }
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                            alert("Error al eliminar el módulo");
+                            window.location.reload();
                         });
                         deleteConfirmModal.hide();
                     };
