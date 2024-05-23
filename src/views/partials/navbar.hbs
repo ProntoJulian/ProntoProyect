@@ -147,10 +147,12 @@
                 <i class="fas fa-home"></i>
                 Inicio
             </a>
-            <a class="nav-link" href="/app/companies">
-                <i class="fas fa-building"></i>
-                Companies
-            </a>
+            {{#if ../permiso}}
+                <a class="nav-link" href="/app/companies">
+                    <i class="fas fa-building"></i>
+                    Companies
+                </a>
+            {{/if}}
             <a class="nav-link" href="/app/feeds">
                 <i class="fas fa-rss"></i>
                 Feeds
@@ -163,10 +165,12 @@
                 <i class="fas fa-users"></i>
                 Users
             </a>
-            <a class="nav-link" href="/app/modules">
-                <i class="fas fa-cubes"></i>
-                Modules
-            </a>
+            {{#if ../permiso}}
+                <a class="nav-link" href="/app/modules">
+                    <i class="fas fa-cubes"></i>
+                    Modules
+                </a>
+            {{/if}}
         </div>
         <div class="logout">
             <a class="nav-link" href="/app/logout">

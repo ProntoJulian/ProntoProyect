@@ -31,8 +31,19 @@ appRouter.get("/app/logout", authenticateToken, function (req, res) {
   });
 });
 
-appRouter.get("/app", authenticateToken, (req, res, next) => {
-    res.render("app");
+appRouter.get("/app", authenticateToken, async (req, res, next) => {
+
+    const user = res.locals.user;
+    
+    let permiso;
+
+    if(user.role_name == "Superusuario"){
+        permiso = true;
+    }else{
+        permiso = false;
+    }
+
+    res.render("app", {permiso: permiso});
 });
 
 appRouter.get("/app/companies", authenticateToken,async function (req, res) {
