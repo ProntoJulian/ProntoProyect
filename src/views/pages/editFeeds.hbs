@@ -101,7 +101,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="company_id" class="form-label">ID de la Compañía</label>
-                            <select class="form-control" id="company_id">
+                            <select class="form-control" id="company_id" disabled>
                                 {{#each ../companies}}
                                 <option value="{{this.company_id}}">{{this.company_name}}</option>
                                 {{/each}}
