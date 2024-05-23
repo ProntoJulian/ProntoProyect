@@ -8,37 +8,36 @@ const {
     fetchOneFromTable
 } = require("../databases/CRUD");
 
-const { getFeedByIdCompany } = require("../databases/consultas")
+const {getFeedByIdCompany} = require("../databases/consultas")
 
 appRouter.get("/", (req, res) => {
     res.render("login/login");
 })
 
 appRouter.get("/app/logout", authenticateToken, function (req, res) {
-    res.clearCookie('accessToken');
-    req.session.destroy((err) => {
-        if (err) {
-            return next(err);
-        }
-        res.redirect("/login");
-    });
+  res.clearCookie('accessToken');
+  req.session.destroy((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/login");
+  });
 });
 
 appRouter.get("/app", authenticateToken, (req, res, next) => {
     res.render("app");
 });
 
-appRouter.get("/app/companies", authenticateToken, async function (req, res) {
+appRouter.get("/app/companies", authenticateToken,async function (req, res) {
     const companies = await fetchDataFromTable('companies');
-    res.render("pages/companies", { companies: companies });
+    res.render("pages/companies",{ companies: companies });
 });
 
 appRouter.get("/app/feeds", authenticateToken, async function (req, res) {
     const user = res.locals.user;
     const feeds = await getFeedByIdCompany(user.company_id);
-    const company = await fetchOneFromTable('companies', user.company_id, 'company_id');
-    const companies = await fetchDataFromTable('companies');
-
+    const company =  await fetchOneFromTable('companies', user.company_id, 'company_id');
+    
     // Formatear la fecha y obtener el nombre de la compañía
     for (let feed of feeds) {
         // Formatear la fecha
@@ -46,17 +45,21 @@ appRouter.get("/app/feeds", authenticateToken, async function (req, res) {
             const date = new Date(feed.last_update);
             feed.last_update = date.toLocaleDateString();
         }
+
+        if (feed.company_id) {
+            const company = companies.find(c => c.company_id === feed.company_id);
+            feed.company_name = company ? company.company_name : "Compañía no encontrada";
+        }
+        
     }
 
-    feed.company_name = company ? company.company_name : "Compañía no encontrada";
-
-    res.render("pages/feeds", { feeds: feeds, company: company });
+    res.render("pages/feeds", { feeds: feeds, companies:companies  });
 });
 
 
-appRouter.get("/app/roles", authenticateToken, async function (req, res) {
+appRouter.get("/app/roles", authenticateToken,async function (req, res) {
     const roles = await fetchDataFromTable('roles');
-    res.render("pages/roles", { roles: roles });
+    res.render("pages/roles",{ roles: roles });
 });
 
 appRouter.get("/app/users", authenticateToken, async function (req, res) {

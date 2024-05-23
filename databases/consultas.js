@@ -16,7 +16,6 @@ async function getFeedByIdCompany(feedId) {
     const sql = 'SELECT * FROM `feeds` WHERE `company_id` = ?';
     try {
         const [rows] = await pool.promise().query(sql, [feedId]);
-        console.log(`Feeds con feed_id ${feedId}:`, rows);
         return rows;
     } catch (error) {
         console.error(`Error al obtener feed con feed_id ${feedId}:`, error);
