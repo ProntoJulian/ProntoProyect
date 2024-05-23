@@ -25,6 +25,9 @@ routerRoles.post("/roles/createRole", authenticateToken, async (req, res) => {
     if (!roleName || roleName == '') {
         return res.status(400).send({ message: 'El nombre es requerido' });
     }
+
+    console.log("Role Name: ", roleName)
+    console.log("Company ID: ", company_Id)
     try {
         const result = await insertIntoTable('roles', { role_name: roleName, company_id:company_Id }, columns);
         if (result.affectedRows > 0) {

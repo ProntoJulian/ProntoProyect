@@ -269,6 +269,7 @@
             // Funcionalidad de crear nuevo rol
             document.getElementById('createForm').addEventListener('submit', function (event) {
                 event.preventDefault();
+                var companyId = btn.getAttribute('data-company-id');
                 var newRoleName = document.getElementById('newRoleName').value;
 
                 fetch('/roles/createRole', {
@@ -276,7 +277,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ roleName: newRoleName })
+                    body: JSON.stringify({ roleName: newRoleName,company_Id:companyId })
                 })
                     .then(response => response.json())
                     .then(data => {
