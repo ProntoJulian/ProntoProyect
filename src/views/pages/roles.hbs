@@ -81,8 +81,9 @@
                     </thead>
                     <tbody>
                         {{#if company}}
-                        <button class="btn btn-success btn-save editable" hidden data-company-id="{{this.company_id}}">
-                        </button>
+
+                        <input type="text" class="form-control" id="data-company-id" hidden
+                            value="{{this.company_id}}">
                         {{/if}}
                         {{#each roles}}
                         <tr>
@@ -269,15 +270,15 @@
             // Funcionalidad de crear nuevo rol
             document.getElementById('createForm').addEventListener('submit', function (event) {
                 event.preventDefault();
-                var companyId = btn.getAttribute('data-company-id');
                 var newRoleName = document.getElementById('newRoleName').value;
+                var companyId = document.getElementById('data-company-id').value;
 
                 fetch('/roles/createRole', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ roleName: newRoleName,company_Id:companyId })
+                    body: JSON.stringify({ roleName: newRoleName, company_Id: companyId })
                 })
                     .then(response => response.json())
                     .then(data => {
