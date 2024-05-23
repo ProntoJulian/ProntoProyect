@@ -151,6 +151,7 @@ async function createWebhook(scope, destination) {
  */
 
 async function createWebhookToUpdateProduct(storeHashF, accessTokenF) {
+  const urlPage = "https://pronto-proyect-4gzkueldfa-uc.a.run.app";
   const url = `https://api.bigcommerce.com/stores/${storeHashF}/v3/hooks`;
   const producer = `stores/${storeHashF}`;
 
@@ -172,7 +173,7 @@ async function createWebhookToUpdateProduct(storeHashF, accessTokenF) {
 
   const webhookPayload = {
     scope: "store/product/updated",
-    destination: `${urlGCloud}/updatedProduct`,
+    destination: `${urlPage}/updatedProduct`,
     is_active: true,
     headers: {},
     store_id: storeHashF,
@@ -311,6 +312,7 @@ async function createWebhookToDeleteProduct() {
 
 
 async function createWebhookToCreateProduct(storeHashF,accessTokenF) {
+  const urlPage = "https://pronto-proyect-4gzkueldfa-uc.a.run.app";
   const url = `https://api.bigcommerce.com/stores/${storeHashF}/v3/hooks`;
   const producer = `stores/${storeHashF}`;
 
@@ -328,7 +330,7 @@ async function createWebhookToCreateProduct(storeHashF,accessTokenF) {
 
   const webhookPayload = {
     scope: "store/product/created",
-    destination: `${urlGCloud}/createdProduct`,
+    destination: `${urlPage}/createdProduct`,
     is_active: true,
     headers: {},
     store_id: storeHashF,
