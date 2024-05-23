@@ -21,7 +21,7 @@ appRouter.get("/", (req, res) => {
 
 })
 
-appRouter.get("/app/logout", authenticateToken, function (req, res) {
+appRouter.get("/app/logout", authenticateToken,superUsuarioPages, function (req, res) {
   res.clearCookie('accessToken');
   req.session.destroy((err) => {
     if (err) {
@@ -31,7 +31,7 @@ appRouter.get("/app/logout", authenticateToken, function (req, res) {
   });
 });
 
-appRouter.get("/app", authenticateToken, async (req, res, next) => {
+appRouter.get("/app", authenticateToken, superUsuarioPages,async (req, res, next) => {
     const user = res.locals.user;
     const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
     
@@ -48,7 +48,7 @@ appRouter.get("/app/companies", authenticateToken, superUsuarioPages,async funct
     res.render("pages/companies",{ companies: companies });
 });
 
-appRouter.get("/app/feeds", authenticateToken, async function (req, res) {
+appRouter.get("/app/feeds", authenticateToken, superUsuarioPages,async function (req, res) {
     const user = res.locals.user;
     const feeds = await getByIdCompany("feeds",user.company_id);
     const companies = await fetchDataFromTable('companies');
@@ -74,7 +74,7 @@ appRouter.get("/app/feeds", authenticateToken, async function (req, res) {
 });
 
 
-appRouter.get("/app/roles", authenticateToken,async function (req, res) {
+appRouter.get("/app/roles", authenticateToken,superUsuarioPages,async function (req, res) {
     
     const user = res.locals.user;
     const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
@@ -94,7 +94,7 @@ appRouter.get("/app/modules", authenticateToken, superUsuarioPages,async functio
     res.render("pages/modules",{ modules: modules });
 });
 
-appRouter.get("/app/users", authenticateToken, async function (req, res) {
+appRouter.get("/app/users", authenticateToken, superUsuarioPages,async function (req, res) {
 
     const user = res.locals.user;
     const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
