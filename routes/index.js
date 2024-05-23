@@ -32,19 +32,15 @@ appRouter.get("/app/logout", authenticateToken, function (req, res) {
 });
 
 appRouter.get("/app", authenticateToken, async (req, res, next) => {
-
-
     const user = res.locals.user;
     const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
     
-    let users;
-    if(role.role_name == "Superusuario"){
-        permiso = true;
-    }else{
-        permiso = false;
+    let permisos = [];
+    if (role.role_name == "Superusuario") {
+        permisos = ['companies', 'modules']; // Array con los permisos que quieras manejar
     }
 
-    res.render("app", permiso);
+    res.render("app", {permisos: permisos});
 });
 
 appRouter.get("/app/companies", authenticateToken, superUsuarioPages,async function (req, res) {
