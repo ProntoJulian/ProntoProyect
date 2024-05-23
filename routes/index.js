@@ -80,6 +80,11 @@ appRouter.get("/app/roles", authenticateToken,async function (req, res) {
     res.render("pages/roles",{ roles: roles });
 });
 
+appRouter.get("/app/modules", authenticateToken,async function (req, res) {
+    modules = await fetchDataFromTable('modules');
+    res.render("pages/modules",{ modules: modules });
+});
+
 appRouter.get("/app/users", authenticateToken, async function (req, res) {
 
     const user = res.locals.user;
