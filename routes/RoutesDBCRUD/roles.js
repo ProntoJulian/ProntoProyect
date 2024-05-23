@@ -21,23 +21,23 @@ routerRoles.get("/roles/getRoles", authenticateToken, async (req, res) => {
 
 routerRoles.post("/roles/createRole", authenticateToken, async (req, res) => {
     const { roleName, company_Id } = req.body;
-    const columns = ['role_name',
-                    "company_id"];  // Columnas específicas para la tabla roles
+    const columns = ['role_name', "company_id"];  // Columnas específicas para la tabla roles
     if (!roleName || roleName == '') {
-        res.render("app/roles", {error_msg: 'El nombre es requerido'});
-        
+        return res.status(400).send({ message: 'El nombre es requerido' });
     }
     try {
         const result = await insertIntoTable('roles', { role_name: roleName, company_id:company_Id }, columns);
         if (result.affectedRows > 0) {
-            res.send({ message: "Rol creado con éxito" });
+            res.send({ message: "Rol creado con éxito", role_id: result.insertId });
         } else {
-            res.render("app/roles", { error_msg: 'Hubo un error al crear el rol' });
+            res.status(500).send({ message: 'Hubo un error al crear el rol' });
         }
     } catch (error) {
-        res.render("app/roles", { error_msg: 'Hubo un error al insertar el rol' });
+        console.error('Error al insertar el rol:', error);
+        res.status(500).send({ message: 'Hubo un error al insertar el rol' });
     }
 });
+
 
 
 routerRoles.delete("/roles/deleteRole/:roleId", authenticateToken, async (req, res) => {

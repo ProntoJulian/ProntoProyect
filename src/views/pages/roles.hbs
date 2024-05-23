@@ -62,7 +62,7 @@
     <div class="container mt-5">
         <div class="action-buttons">
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">
-                
+
                 <i class="fas fa-plus"></i> Crear
             </button>
         </div>
@@ -81,21 +81,25 @@
                     </thead>
                     <tbody>
                         {{#if company}}
-                            <button class="btn btn-success btn-save editable" hidden data-company-id="{{this.company_id}}">
-                            </button>
+                        <button class="btn btn-success btn-save editable" hidden data-company-id="{{this.company_id}}">
+                        </button>
                         {{/if}}
                         {{#each roles}}
                         <tr>
-                            <td><span class="non-editable">{{this.role_id}}</span><input type="text" class="form-control editable" value="{{this.role_id}}" disabled></td>
-                            <td><span class="non-editable">{{this.role_name}}</span><input type="text" class="form-control editable" value="{{this.role_name}}" data-role-name></td>
+                            <td><span class="non-editable">{{this.role_id}}</span><input type="text"
+                                    class="form-control editable" value="{{this.role_id}}" disabled></td>
+                            <td><span class="non-editable">{{this.role_name}}</span><input type="text"
+                                    class="form-control editable" value="{{this.role_name}}" data-role-name></td>
                             <td class="text-center">
                                 <button class="btn btn-primary btn-edit" title="Actualizar">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-danger btn-delete" title="Eliminar" data-role-id="{{this.role_id}}">
+                                <button class="btn btn-danger btn-delete" title="Eliminar"
+                                    data-role-id="{{this.role_id}}">
                                     <i class="fas fa-trash"></i>
                                 </button>
-                                <button class="btn btn-success btn-save editable" title="Guardar" data-role-id="{{this.role_id}}">
+                                <button class="btn btn-success btn-save editable" title="Guardar"
+                                    data-role-id="{{this.role_id}}">
                                     <i class="fas fa-check"></i>
                                 </button>
                                 <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
@@ -108,7 +112,7 @@
                 </table>
             </div>
         </div>
-    
+
     </div>
 
     <!-- Modal de Confirmación de Guardado -->
@@ -131,7 +135,8 @@
     </div>
 
     <!-- Modal de Confirmación de Eliminación -->
-    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -195,7 +200,6 @@
                 btn.addEventListener('click', function () {
                     var row = btn.closest('tr');
                     var roleId = btn.getAttribute('data-role-id');
-                    var company_Id = btn.getAttribute('data-company-id');
                     var newRoleName = row.querySelector('input[data-role-name]').value;
                     var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
 
@@ -205,23 +209,23 @@
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({newName: newRoleName,companyId: company_Id })
+                            body: JSON.stringify({ newName: newRoleName })
                         })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.message === "Rol actualizado con éxito") {
-                                row.querySelector('.non-editable').innerText = newRoleName;
-                                row.classList.remove('editing');
-                            } else {
-                                alert("Error al actualizar el rol: " + data.message);
-                            }
-                            confirmModal.hide();
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert("Error al actualizar el rol");
-                            confirmModal.hide();
-                        });
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.message === "Rol actualizado con éxito") {
+                                    row.querySelector('.non-editable').innerText = newRoleName;
+                                    row.classList.remove('editing');
+                                } else {
+                                    alert("Error al actualizar el rol: " + data.message);
+                                }
+                                confirmModal.hide();
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert("Error al actualizar el rol");
+                                confirmModal.hide();
+                            });
                     };
 
                     confirmModal.show();
@@ -243,21 +247,20 @@
                             method: 'DELETE',
                             headers: {
                                 'Content-Type': 'application/json'
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.message === "Rol eliminado con éxito") {
-                                var row = btn.closest('tr');
-                                row.remove();
-                            } else {
-                                alert("Error al eliminar el rol: " + data.message);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert("Error al eliminar el rol");
-                        });
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.message === "Rol eliminado con éxito") {
+                                    var row = btn.closest('tr');
+                                    row.remove();
+                                } else {
+                                    alert("Error al eliminar el rol: " + data.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert("Error al eliminar el rol");
+                            });
                         deleteConfirmModal.hide();
                     };
                 });
@@ -266,7 +269,6 @@
             // Funcionalidad de crear nuevo rol
             document.getElementById('createForm').addEventListener('submit', function (event) {
                 event.preventDefault();
-                var companyId = btn.getAttribute('data-company-id');
                 var newRoleName = document.getElementById('newRoleName').value;
 
                 fetch('/roles/createRole', {
@@ -274,45 +276,46 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ roleName: newRoleName, company_Id:companyId })
+                    body: JSON.stringify({ roleName: newRoleName })
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message === "Rol creado con éxito") {
-                        var newRow = `
-                            <tr>
-                                <td class="text-center">
-                                    <button class="btn btn-primary btn-edit" title="Actualizar">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-danger btn-delete" title="Eliminar" data-role-id="${data.role_id}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                    <button class="btn btn-success btn-save editable" title="Guardar" data-role-id="${data.role_id}">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </td>
-                                <td><span class="non-editable">${data.role_id}</span><input type="text" class="form-control editable" value="${data.role_id}" disabled></td>
-                                <td><span class="non-editable">${newRoleName}</span><input type="text" class="form-control editable" value="${newRoleName}" data-role-name></td>
-                            </tr>
-                        `;
-                        document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
-                        var createModal = new bootstrap.Modal(document.getElementById('createModal'));
-                        createModal.hide();
-                        window.location.reload();
-                    } else {
-                        alert("Error al crear el rol: " + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert("Error al crear el rol");
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === "Rol creado con éxito") {
+                            var newRow = `
+                    <tr>
+                        <td><span class="non-editable">${data.role_id}</span><input type="text" class="form-control editable" value="${data.role_id}" disabled></td>
+                        <td><span class="non-editable">${newRoleName}</span><input type="text" class="form-control editable" value="${newRoleName}" data-role-name></td>
+                        <td class="text-center">
+                            <button class="btn btn-primary btn-edit" title="Actualizar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-delete" title="Eliminar" data-role-id="${data.role_id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="btn btn-success btn-save editable" title="Guardar" data-role-id="${data.role_id}">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                            document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
+                            var createModal = new bootstrap.Modal(document.getElementById('createModal'));
+                            createModal.hide();
+                            window.location.reload();
+                        } else {
+                            alert("Error al crear el rol: " + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Error al crear el rol");
+                    });
             });
         });
+
     </script>
 </body>
 
