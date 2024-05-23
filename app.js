@@ -21,6 +21,10 @@ handlebars.registerHelper('ifCond', function (v1, v2, options) {
   return options.inverse(this);
 });
 
+handlebars.registerHelper('includes', function(array, value) {
+    return array.includes(value);
+});
+
 // Setting up Handlebars
 app.set('views', path.join(__dirname,"src","views"));
 app.engine('.hbs', engine({
