@@ -50,7 +50,7 @@ appRouter.get("/app/feeds", authenticateToken, async function (req, res) {
 
     feed.company_name = company ? company.company_name : "Compañía no encontrada";
 
-    res.render("pages/feeds", { feeds: feeds, companies: companies });
+    res.render("pages/feeds", { feeds: feeds, company: company });
 });
 
 
