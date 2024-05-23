@@ -36,6 +36,7 @@ appRouter.get("/app/companies", authenticateToken,async function (req, res) {
 appRouter.get("/app/feeds", authenticateToken, async function (req, res) {
     const user = res.locals.user;
     const feeds = await getFeedByIdCompany(user.company_id);
+    const companies = await fetchDataFromTable('companies');
 
     console.log("Feeds: ", feeds)
     
