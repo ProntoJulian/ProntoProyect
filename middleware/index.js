@@ -23,21 +23,23 @@ function authenticateToken(req, res, next) {
 }
 
 
-async function superUsuarioPages (req, res, next) {
+// Middleware para verificar si el usuario es superusuario
+async function superUsuarioPages(req, res, next) {
     const user = res.locals.user;
-    const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
 
     if (!user) {
-        // Si el usuario no está definido en res.locals, redirigir al login u otra página
-        return res.status(401).redirect('/login'); // O la página que consideres adecuada
+        return res.status(401).redirect('/login');
     }
 
+    const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
+
     if (role.role_name === "Superusuario") {
-        next(); // El usuario es un superusuario, continuar al siguiente middleware o ruta
+        res.locals.permisos = ['companies', 'modules']; // Array con los permisos que quieras manejar
     } else {
-        console.warn(`Access denied for user: ${user.username} on ${req.originalUrl}`);
-        res.status(403).redirect("/app"); // Redirigir a /app con código de estado 403 (Forbidden)
+        res.locals.permisos = [];
     }
+
+    next();
 }
 
 module.exports = {
