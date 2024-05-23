@@ -205,13 +205,13 @@
                             <label for="newCompanyName" class="form-label">Nombre de la Compañía</label>
 
                             {{#if (includes permisos 'modules')}}
-                            <select class="form-control" id="company_id" disabled>
+                            <select class="form-control" id="company_id">
                                 {{#each companies}}
                                 <option value="{{this.company_id}}">{{this.company_name}}</option>
                                 {{/each}}
                             </select>
                             {{else}}
-                            <select class="form-control" id="company_id">
+                            <select class="form-control" id="company_id" disabled>
                                 {{#each companies}}
                                 <option value="{{this.company_id}}">{{this.company_name}}</option>
                                 {{/each}}
