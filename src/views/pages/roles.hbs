@@ -147,6 +147,14 @@
                             <label for="newRoleName" class="form-label">Nombre del Rol</label>
                             <input type="text" class="form-control" id="newRoleName" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="newRoleName" class="form-label">Compañia</label>
+                            <select class="form-control" id="createCompanyId" disabled>
+                                {{#each companies}}
+                                <option value="{{this.company_id}}">{{this.company_name}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
                         <button type="submit" class="btn btn-primary">Crear</button>
                     </form>
                 </div>
@@ -249,17 +257,17 @@
             document.getElementById('createForm').addEventListener('submit', function (event) {
                 event.preventDefault();
                 var newRoleName = document.getElementById('newRoleName').value;
-                //var companyId = row.querySelector('input[data-company]').value;
+                var companyId = document.getElementById('createCompanyId').value;
 
                 console.log("Rol: ", newRoleName)
-                //console.log("Compañia: ", companyId)
+                console.log("Compañia: ", companyId)
 
                 fetch('/roles/createRole', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ roleName: newRoleName})
+                    body: JSON.stringify({ roleName: newRoleName,companyId:companyId })
                 })
                 .then(response => response.json())
                 .then(data => {
