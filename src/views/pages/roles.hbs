@@ -190,7 +190,7 @@
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({ newName: newRoleName })
+                            body: JSON.stringify({ newName: newRoleName, companyId:companyId })
                         })
                         .then(response => response.json())
                         .then(data => {

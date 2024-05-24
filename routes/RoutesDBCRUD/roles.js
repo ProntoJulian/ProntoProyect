@@ -62,6 +62,11 @@ routerRoles.delete("/roles/deleteRole/:roleId", authenticateToken,superUsuarioPa
 routerRoles.put("/roles/updateRole/:roleId", authenticateToken,superUsuarioPages, async (req, res) => {
     const { roleId } = req.params;
     const { newName, companyId } = req.body;
+
+
+    console.log("Rol: ", newName)
+    console.log("Compañia: ", companyId)
+
     if (!newName) {
         return res.status(400).json({ message: "El nuevo nombre del rol es requerido" });
     }
