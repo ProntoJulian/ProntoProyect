@@ -74,7 +74,7 @@
                             <td>{{this.role_name}}</td>
                             <td>{{this.company_name}}</td>
                             <td class="text-center">
-                                <button class="btn btn-primary btn-edit" data-role-id="{{this.role_id}}" data-role-name="{{this.role_name}}" data-company-id="{{this.company_id}}" data-company-name="{{this.company_name}}" data-permissions="{{this.permissions}}" title="Actualizar">
+                                <button class="btn btn-primary btn-edit" data-role-id="{{this.role_id}}" data-role-name="{{this.role_name}}" data-company-id="{{this.company_id}}" data-company-name="{{this.company_name}}" title="Actualizar">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="btn btn-danger btn-delete" data-role-id="{{this.role_id}}" title="Eliminar">
@@ -236,7 +236,6 @@
                     var roleName = btn.getAttribute('data-role-name');
                     var companyId = btn.getAttribute('data-company-id');
                     var companyName = btn.getAttribute('data-company-name');
-                    var permissions = JSON.parse(btn.getAttribute('data-permissions'));
 
                     document.getElementById('editRoleId').value = roleId;
                     document.getElementById('editRoleName').value = roleName;
@@ -244,15 +243,6 @@
                     
                     var editModal = new bootstrap.Modal(document.getElementById('editModal'));
                     editModal.show();
-
-                    // Set permissions in the modal
-                    for (var module in permissions) {
-                        if (permissions[module] === 'full') {
-                            document.querySelector(`input[name="permissions_${module}"][value="full"]`).checked = true;
-                        } else if (permissions[module] === 'read_only') {
-                            document.querySelector(`input[name="permissions_${module}"][value="read_only"]`).checked = true;
-                        }
-                    }
                 });
             });
 
@@ -350,12 +340,12 @@
                         alert("Rol creado con éxito");
                         window.location.reload();
                     } else {
-                        alert("Error al crear el rol: " + data.message);
+                        window.location.reload();
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert("Error al crear el rol");
+                    window.location.reload();
                 });
             });
         });
