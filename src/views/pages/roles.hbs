@@ -74,7 +74,7 @@
                         <tr>
                             <td><span class="non-editable">{{this.role_id}}</span><input type="text" class="form-control editable" value="{{this.role_id}}" disabled></td>
                             <td><span class="non-editable">{{this.role_name}}</span><input type="text" class="form-control editable" value="{{this.role_name}}" data-role-name></td>
-                            <td><span class="non-editable">{{this.company_id}}</span><input type="text" class="form-control editable" value="{{this.company_id}}" data-role-name></td>
+                            <td><span class="non-editable">{{this.company_id}}</span><input type="text" class="form-control editable" value="{{this.company_id}}" data-company></td>
                             <td class="text-center">
                                 <button class="btn btn-primary btn-edit" title="Actualizar">
                                     <i class="fas fa-edit"></i>
@@ -177,6 +177,12 @@
                     var row = btn.closest('tr');
                     var roleId = btn.getAttribute('data-role-id');
                     var newRoleName = row.querySelector('input[data-role-name]').value;
+                    var companyId = row.querySelector('input[data-company]').value;
+
+                    console.log("Rol: ", newRoleName)
+                    console.log("Compañia: ", companyId)
+
+
                     var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
                     document.getElementById('confirmSave').onclick = function () {
                         fetch(`/roles/updateRole/${roleId}`, {
@@ -209,6 +215,8 @@
             document.querySelectorAll('.btn-delete').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     var roleId = btn.getAttribute('data-role-id');
+                    
+
                     var deleteRoleIdSpan = document.getElementById('deleteRoleId');
                     deleteRoleIdSpan.textContent = roleId;
                     var deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
@@ -241,6 +249,11 @@
             document.getElementById('createForm').addEventListener('submit', function (event) {
                 event.preventDefault();
                 var newRoleName = document.getElementById('newRoleName').value;
+                var companyId = row.querySelector('input[data-company]').value;
+
+                console.log("Rol: ", newRoleName)
+                console.log("Compañia: ", companyId)
+
                 fetch('/roles/createRole', {
                     method: 'POST',
                     headers: {
