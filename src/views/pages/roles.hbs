@@ -230,15 +230,49 @@
     <!-- Bootstrap JS bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-
         document.addEventListener('DOMContentLoaded', function () {
-            // Funcionalidad de editar
+            // Funcionalidad de crear nuevo rol
+            document.getElementById('createForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                var newRoleName = document.getElementById('newRoleName').value;
+                var companyId = document.getElementById('createCompanyId').value;
+
+                var permissions = {};
+                document.querySelectorAll('#createModal .permissions-table input[type="radio"]:checked').forEach(function (radio) {
+                    var module = radio.name.split('_')[1];
+                    permissions[module] = radio.value;
+                });
+
+                fetch('/roles/createRole', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ roleName: newRoleName, companyId: companyId, permissions: permissions })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === "Rol creado con éxito") {
+                            alert("Rol creado con éxito");
+                            window.location.reload();
+                        } else {
+                            alert("Error al crear el rol: " + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Error al crear el rol");
+                    });
+            });
+
+            // Funcionalidad de editar rol
             document.querySelectorAll('.btn-edit').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     var roleId = btn.getAttribute('data-role-id');
                     var roleName = btn.getAttribute('data-role-name');
                     var companyId = btn.getAttribute('data-company-id');
                     var companyName = btn.getAttribute('data-company-name');
+
                     document.getElementById('editRoleId').value = roleId;
                     document.getElementById('editRoleName').value = roleName;
                     document.getElementById('editCompanyId').value = companyId;
@@ -248,77 +282,74 @@
                 });
             });
 
-            document.addEventListener('DOMContentLoaded', function () {
-                // Funcionalidad de crear nuevo rol
-                document.getElementById('createForm').addEventListener('submit', function (event) {
-                    event.preventDefault();
-                    var newRoleName = document.getElementById('newRoleName').value;
-                    var companyId = document.getElementById('createCompanyId').value;
+            document.getElementById('editForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                var roleId = document.getElementById('editRoleId').value;
+                var roleName = document.getElementById('editRoleName').value;
+                var companyId = document.getElementById('editCompanyId').value;
 
-                    var permissions = {};
-                    document.querySelectorAll('#createModal .permissions-table input[type="radio"]:checked').forEach(function (radio) {
-                        var module = radio.name.split('_')[1];
-                        permissions[module] = radio.value;
-                    });
-
-                    fetch('/roles/createRole', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ roleName: newRoleName, companyId: companyId, permissions: permissions })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.message === "Rol creado con éxito") {
-                                alert("Rol creado con éxito");
-                                window.location.reload();
-                            } else {
-                                alert("Error al crear el rol: " + data.message);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert("Error al crear el rol");
-                        });
+                var permissions = {};
+                document.querySelectorAll('#editModal .permissions-table input[type="radio"]:checked').forEach(function (radio) {
+                    var module = radio.name.split('_')[1];
+                    permissions[module] = radio.value;
                 });
 
-                // Funcionalidad de editar rol
-                document.getElementById('editForm').addEventListener('submit', function (event) {
-                    event.preventDefault();
-                    /*
-                    var roleId = document.getElementById('editRoleId').value;
-                    var roleName = document.getElementById('editRoleName').value;
-                    var companyId = document.getElementById('editCompanyId').value;
-                    var permissions = {};
-                    document.querySelectorAll('#editModal .permissions-table input[type="radio"]:checked').forEach(function (radio) {
-                        var module = radio.name.split('_')[1];
-                        permissions[module] = radio.value;
-                    });
-    */
-
-                    fetch(`/roles/updateRole/${roleId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ newName: roleName, companyId: companyId, permissions: permissions })
+                fetch(`/roles/updateRole/${roleId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ newName: roleName, companyId: companyId, permissions: permissions })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === "Rol actualizado con éxito") {
+                            alert("Rol actualizado con éxito");
+                            window.location.reload();
+                        } else {
+                            alert("Error al actualizar el rol: " + data.message);
+                        }
                     })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.message === "Rol actualizado con éxito") {
-                                alert("Rol actualizado con éxito");
-                                window.location.reload();
-                            } else {
-                                alert("Error al actualizar el rol: " + data.message);
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Error al actualizar el rol");
+                    });
+            });
+
+            // Funcionalidad de eliminar rol
+            document.querySelectorAll('.btn-delete').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var roleId = btn.getAttribute('data-role-id');
+                    var deleteRoleIdSpan = document.getElementById('deleteRoleId');
+                    deleteRoleIdSpan.textContent = roleId;
+                    var deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+                    deleteConfirmModal.show();
+
+                    document.getElementById('confirmDelete').onclick = function () {
+                        fetch(`/roles/deleteRole/${roleId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
                             }
                         })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert("Error al actualizar el rol");
-                        });
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.message === "Rol eliminado con éxito") {
+                                    var row = btn.closest('tr');
+                                    row.remove();
+                                } else {
+                                    alert("Error al eliminar el rol: " + data.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert("Error al eliminar el rol");
+                            });
+                        deleteConfirmModal.hide();
+                    };
                 });
             });
+        });
 
     </script>
 </body>
