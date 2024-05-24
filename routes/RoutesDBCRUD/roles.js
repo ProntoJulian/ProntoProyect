@@ -23,7 +23,7 @@ routerRoles.post("/roles/createRole", authenticateToken, superUsuarioPages, asyn
     const { roleName, companyId, permissions } = req.body;
     const columns = ['role_name', 'company_id'];  // Columnas específicas para la tabla roles
 
-    if (!roleName || roleName == '') {
+    if (!roleName || roleName === '') {
         return res.status(400).send({ message: 'El nombre es requerido' });
     }
 
@@ -37,10 +37,9 @@ routerRoles.post("/roles/createRole", authenticateToken, superUsuarioPages, asyn
             const roleId = result.insertId;  // Obtener el ID del rol recién creado
 
             // Crear entradas en role_modules basadas en los permisos seleccionados
-            for (const [moduleId, accessType] of Object.entries(permissions)) {
-                console.log(`Crear role_module para role_id: ${roleId}, module_id: ${moduleId}, access_type: ${accessType}`);
-                // Aquí es donde insertarías en la tabla role_modules
-                // await insertIntoTable('role_modules', { role_id: roleId, module_id: moduleId, access_type: accessType }, ['role_id', 'module_id', 'access_type']);
+            for (const permission of permissions) {
+                console.log(`Crear role_module para role_id: ${roleId}, module_id: ${permission.module}, access_type: ${permission.permission}`);
+                await insertIntoTableMultiple('role_modules', { role_id: roleId, module_id: permission.module, access_type: permission.permission }, ['role_id', 'module_id', 'access_type']);
             }
 
             res.send({ message: "Rol creado con éxito" });
@@ -52,6 +51,7 @@ routerRoles.post("/roles/createRole", authenticateToken, superUsuarioPages, asyn
         res.status(500).send({ message: 'Hubo un error al insertar el rol' });
     }
 });
+
 
 
 
@@ -86,8 +86,15 @@ routerRoles.put("/roles/updateRole/:roleId", authenticateToken, superUsuarioPage
     try {
         const result = await updateTable('roles', { role_name: newName, company_id: companyId }, 'role_id', roleId);
         if (result.affectedRows > 0) {
-            // Actualizar entradas en role_modules basadas en los permisos seleccionados
-           
+            // Eliminar las entradas existentes en role_modules para este rol
+            await deleteFromTableMultiple('role_modules', ['role_id'], [roleId]);
+
+            // Insertar nuevas entradas en role_modules basadas en los permisos seleccionados
+            for (const permission of permissions) {
+                console.log(`Crear role_module para role_id: ${roleId}, module_id: ${permission.module}, access_type: ${permission.permission}`);
+                await insertIntoTableMultiple('role_modules', { role_id: roleId, module_id: permission.module, access_type: permission.permission }, ['role_id', 'module_id', 'access_type']);
+            }
+
             res.send({ message: "Rol actualizado con éxito" });
         } else {
             res.status(404).json({ message: "Rol no encontrado" });
