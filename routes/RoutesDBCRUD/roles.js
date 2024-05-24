@@ -5,7 +5,8 @@ const {insertIntoTable,
     fetchDataFromTable,
     deleteFromTable,
     fetchOneFromTable,
-    insertIntoTableMultiple} = require("../../databases/CRUD");
+    insertIntoTableMultiple,
+    deleteFromTableMultiple} = require("../../databases/CRUD");
 const routerRoles = express.Router();
 
 
