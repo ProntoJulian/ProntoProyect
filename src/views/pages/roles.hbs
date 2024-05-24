@@ -249,10 +249,10 @@
             document.getElementById('createForm').addEventListener('submit', function (event) {
                 event.preventDefault();
                 var newRoleName = document.getElementById('newRoleName').value;
-                var companyId = row.querySelector('input[data-company]').value;
+                //var companyId = row.querySelector('input[data-company]').value;
 
                 console.log("Rol: ", newRoleName)
-                console.log("Compañia: ", companyId)
+                //console.log("Compañia: ", companyId)
 
                 fetch('/roles/createRole', {
                     method: 'POST',
