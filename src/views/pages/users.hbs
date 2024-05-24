@@ -214,27 +214,16 @@
                         </div>
                         <div class="mb-3">
                             <label for="newCompanyName" class="form-label">Nombre de la Compañía</label>
-
-                            {{#if (includes permisos 'modules')}}
                             <select class="form-control" id="company_id">
-                                {{#each companies}}
-                                <option value="{{this.company_id}}">{{this.company_name}}</option>
-                                {{/each}}
+                                <option value="1">Coca Cola</option>
+                                <option value="2">Pepsi</option>
                             </select>
-                            {{else}}
-                            <select class="form-control" id="company_id" disabled>
-                                {{#each companies}}
-                                <option value="{{this.company_id}}">{{this.company_name}}</option>
-                                {{/each}}
-                            </select>
-                            {{/if}}
                         </div>
                         <div class="mb-3">
                             <label for="newRoleName" class="form-label">Rol</label>
                             <select class="form-control" id="rol_id">
-                                {{#each roles}}
-                                <option value="{{this.role_id}}">{{this.role_name}}</option>
-                                {{/each}}
+                                <option value="1">Admin</option>
+                                <option value="2">User</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -248,13 +237,21 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{#each modules}}
                                     <tr>
-                                        <td>{{this.module_name}}</td>
-                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="full"></td>
-                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="read_only"></td>
+                                        <td>Users</td>
+                                        <td><input type="radio" name="permissions_users" value="full"></td>
+                                        <td><input type="radio" name="permissions_users" value="read_only"></td>
                                     </tr>
-                                    {{/each}}
+                                    <tr>
+                                        <td>Feeds</td>
+                                        <td><input type="radio" name="permissions_feeds" value="full"></td>
+                                        <td><input type="radio" name="permissions_feeds" value="read_only"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Roles</td>
+                                        <td><input type="radio" name="permissions_roles" value="full"></td>
+                                        <td><input type="radio" name="permissions_roles" value="read_only"></td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -334,13 +331,21 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{#each modules}}
                                     <tr>
-                                        <td>{{this.module_name}}</td>
-                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="full"></td>
-                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="read_only"></td>
+                                        <td>Users</td>
+                                        <td><input type="radio" name="permissions_users" value="full"></td>
+                                        <td><input type="radio" name="permissions_users" value="read_only"></td>
                                     </tr>
-                                    {{/each}}
+                                    <tr>
+                                        <td>Feeds</td>
+                                        <td><input type="radio" name="permissions_feeds" value="full"></td>
+                                        <td><input type="radio" name="permissions_feeds" value="read_only"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Roles</td>
+                                        <td><input type="radio" name="permissions_roles" value="full"></td>
+                                        <td><input type="radio" name="permissions_roles" value="read_only"></td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -468,12 +473,18 @@
                     return;
                 }
 
+                var permissions = {};
+                document.querySelectorAll('.permissions-table input[type="radio"]:checked').forEach(function (radio) {
+                    var module = radio.name.split('_')[1];
+                    permissions[module] = radio.value;
+                });
+
                 fetch('/users/createUser', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ company_id: newCompanyName, username: newUsername, password_hash: password, role_id: newRoleName })
+                    body: JSON.stringify({ company_id: newCompanyName, username: newUsername, password_hash: password, role_id: newRoleName, permissions: permissions })
                 })
                     .then(response => response.json())
                     .then(data => {
