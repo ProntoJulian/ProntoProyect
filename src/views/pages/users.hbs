@@ -59,6 +59,16 @@
             margin-bottom: 15px;
             text-align: left;
         }
+
+        .permissions-table th,
+        .permissions-table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .permissions-table input[type="radio"] {
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -179,6 +189,7 @@
                 </div>
                 <div class="modal-body">
                     <form id="createForm">
+                        <input type="hidden" id="createUserId">
                         <div class="mb-3">
                             <label for="newUsername" class="form-label">Nombre de Usuario</label>
                             <input type="text" class="form-control" id="newUsername" required>
@@ -225,6 +236,27 @@
                                 <option value="{{this.role_id}}">{{this.role_name}}</option>
                                 {{/each}}
                             </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="permissions" class="form-label">Permisos</label>
+                            <table class="table permissions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Module</th>
+                                        <th>Full</th>
+                                        <th>Read Only</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each modules}}
+                                    <tr>
+                                        <td>{{this.module_name}}</td>
+                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="full"></td>
+                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="read_only"></td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
                         </div>
                         <button type="submit" class="btn btn-primary">Crear</button>
                     </form>
@@ -290,6 +322,27 @@
                                 <option value="{{this.role_id}}">{{this.role_name}}</option>
                                 {{/each}}
                             </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="permissions" class="form-label">Permisos</label>
+                            <table class="table permissions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Module</th>
+                                        <th>Full</th>
+                                        <th>Read Only</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each modules}}
+                                    <tr>
+                                        <td>{{this.module_name}}</td>
+                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="full"></td>
+                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="read_only"></td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                     </form>
