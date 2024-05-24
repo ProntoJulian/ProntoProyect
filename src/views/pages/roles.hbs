@@ -237,9 +237,16 @@
                 var newRoleName = document.getElementById('newRoleName').value;
                 var companyId = document.getElementById('createCompanyId').value;
 
+                var permissions = {};
+                document.querySelectorAll('#createModal .permissions-table input[type="radio"]:checked').forEach(function (radio) {
+                    var module = radio.name.split('_')[1];
+                    permissions[module] = radio.value;
+                });
+
                 var permissions = [];
                 document.querySelectorAll('#createModal .permissions-table input[type="radio"]:checked').forEach(function (radio) {
-                    permissions.push({ module: radio.getAttribute('data-module-id'), permission: radio.value });
+                    var module = radio.name.split('_')[1];
+                    permissions.push({ module: permissions[module], permission: radio.value });
                 });
 
                 fetch('/roles/createRole', {
@@ -289,7 +296,8 @@
 
                 var permissions = [];
                 document.querySelectorAll('#editModal .permissions-table input[type="radio"]:checked').forEach(function (radio) {
-                    permissions.push({ module: radio.getAttribute('data-module-id'), permission: radio.value });
+                    var module = radio.name.split('_')[1];
+                    permissions.push({ module: permissions[module], permission: radio.value });
                 });
 
                 fetch(`/roles/updateRole/${roleId}`, {
