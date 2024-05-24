@@ -96,6 +96,14 @@ appRouter.get("/app/roles", authenticateToken,superUsuarioPages,async function (
         roles = await getByIdCompany("roles", user.company_id);
     }
 
+    for (let rol of roles) {
+        // Obtener el nombre de la compañía
+        if (rol.company_id) {
+            rol.company_name = company.company_name;
+        }
+
+    }
+
     res.render("pages/roles",{ roles: roles,company:[company ] });
 });
 
