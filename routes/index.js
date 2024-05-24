@@ -51,6 +51,7 @@ appRouter.get("/app/companies", authenticateToken, superUsuarioPages,async funct
 appRouter.get("/app/feeds", authenticateToken, superUsuarioPages,async function (req, res) {
     const user = res.locals.user;
     const feeds = await getByIdCompany("feeds",user.company_id);
+    const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
 
     let users;
     let companies;
