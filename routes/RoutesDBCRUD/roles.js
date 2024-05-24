@@ -4,7 +4,8 @@ const {insertIntoTable,
     updateTable,
     fetchDataFromTable,
     deleteFromTable,
-    fetchOneFromTable} = require("../../databases/CRUD");
+    fetchOneFromTable,
+    insertIntoTableMultiple} = require("../../databases/CRUD");
 const routerRoles = express.Router();
 
 
@@ -92,7 +93,7 @@ routerRoles.put("/roles/updateRole/:roleId", authenticateToken, superUsuarioPage
             // Insertar nuevas entradas en role_modules basadas en los permisos seleccionados
             for (const permission of permissions) {
                 console.log(`Crear role_module para role_id: ${roleId}, module_id: ${permission.module}, access_type: ${permission.permission}`);
-                await insertIntoTableMultiple('role_modules', { role_id: roleId, module_id: permission.module, access_type: permission.permission }, ['role_id', 'module_id', 'access_type']);
+                await insertIntoTableMultiple('role_modules', { module_id: permission.module, role_id: roleId, access_type: permission.permission }, [ 'module_id','role_id', 'access_type']);
             }
 
             res.send({ message: "Rol actualizado con éxito" });
