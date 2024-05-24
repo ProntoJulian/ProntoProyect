@@ -67,6 +67,7 @@ const routerModules = require("./routes/RoutesDBCRUD/modules.js");
 const routerFeeds = require("./routes/RoutesDBCRUD/feeds");
 const routerRoles = require("./routes/RoutesDBCRUD/roles");
 const routerUsers = require("./routes/RoutesDBCRUD/users");
+const routerRoleModules = require("./routes/RoutesDBCRUD/roleModules.js");
 const routerUserFeeds = require("./routes/RoutesDBCRUD/userFeed");
 const routerAuth = require("./routes/auth.js");
 const routerMerchant = require("./routes/Merchant/googleMerchant");
@@ -79,6 +80,7 @@ const appRouter = require("./routes/index");
 // Register routers
 app.use(routerOrders);
 app.use(routerProducts);
+app.use(routerRoleModules);
 app.use(routerModules);
 app.use(routerMerchant);
 app.use(routerImages);

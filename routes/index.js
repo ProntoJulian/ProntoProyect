@@ -88,6 +88,7 @@ appRouter.get("/app/roles", authenticateToken,superUsuarioPages,async function (
     const user = res.locals.user;
     const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
     const company = await fetchOneFromTable('companies', user.company_id , 'company_id');
+    const modules = await fetchDataFromTable('modules');
     
     let roles;
     if(role.role_name == "Superusuario"){
@@ -104,7 +105,7 @@ appRouter.get("/app/roles", authenticateToken,superUsuarioPages,async function (
 
     }
 
-    res.render("pages/roles",{ roles: roles,company:[company ] });
+    res.render("pages/roles",{ roles: roles,company:[company ],modules:modules });
 });
 
 appRouter.get("/app/modules", authenticateToken, superUsuarioPages,async function (req, res) {

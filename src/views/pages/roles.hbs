@@ -181,21 +181,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {{/each modules}}
                                     <tr>
-                                        <td>Users</td>
-                                        <td><input type="radio" name="permissions_users" value="full"></td>
-                                        <td><input type="radio" name="permissions_users" value="read_only"></td>
+                                        <td>this.module_name</td>
+                                        <td><input type="radio" name="permissions_users" value="Full"></td>
+                                        <td><input type="radio" name="permissions_users" value="Read_only"></td>
                                     </tr>
-                                    <tr>
-                                        <td>Feeds</td>
-                                        <td><input type="radio" name="permissions_feeds" value="full"></td>
-                                        <td><input type="radio" name="permissions_feeds" value="read_only"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Roles</td>
-                                        <td><input type="radio" name="permissions_roles" value="full"></td>
-                                        <td><input type="radio" name="permissions_roles" value="read_only"></td>
-                                    </tr>
+                                    {{#each}}
                                 </tbody>
                             </table>
                         </div>
