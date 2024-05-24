@@ -59,16 +59,6 @@
             margin-bottom: 15px;
             text-align: left;
         }
-
-        .permissions-table th,
-        .permissions-table td {
-            text-align: center;
-            vertical-align: middle;
-        }
-
-        .permissions-table input[type="radio"] {
-            cursor: pointer;
-        }
     </style>
 </head>
 
@@ -189,7 +179,6 @@
                 </div>
                 <div class="modal-body">
                     <form id="createForm">
-                        <input type="hidden" id="createUserId">
                         <div class="mb-3">
                             <label for="newUsername" class="form-label">Nombre de Usuario</label>
                             <input type="text" class="form-control" id="newUsername" required>
@@ -214,46 +203,28 @@
                         </div>
                         <div class="mb-3">
                             <label for="newCompanyName" class="form-label">Nombre de la Compañía</label>
+
+                            {{#if (includes permisos 'modules')}}
                             <select class="form-control" id="company_id">
-                                <option value="1">Coca Cola</option>
-                                <option value="2">Pepsi</option>
+                                {{#each companies}}
+                                <option value="{{this.company_id}}">{{this.company_name}}</option>
+                                {{/each}}
                             </select>
+                            {{else}}
+                            <select class="form-control" id="company_id" disabled>
+                                {{#each companies}}
+                                <option value="{{this.company_id}}">{{this.company_name}}</option>
+                                {{/each}}
+                            </select>
+                            {{/if}}
                         </div>
                         <div class="mb-3">
                             <label for="newRoleName" class="form-label">Rol</label>
                             <select class="form-control" id="rol_id">
-                                <option value="1">Admin</option>
-                                <option value="2">User</option>
+                                {{#each roles}}
+                                <option value="{{this.role_id}}">{{this.role_name}}</option>
+                                {{/each}}
                             </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="permissions" class="form-label">Permisos</label>
-                            <table class="table permissions-table">
-                                <thead>
-                                    <tr>
-                                        <th>Module</th>
-                                        <th>Full</th>
-                                        <th>Read Only</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Users</td>
-                                        <td><input type="radio" name="permissions_users" value="full"></td>
-                                        <td><input type="radio" name="permissions_users" value="read_only"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Feeds</td>
-                                        <td><input type="radio" name="permissions_feeds" value="full"></td>
-                                        <td><input type="radio" name="permissions_feeds" value="read_only"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Roles</td>
-                                        <td><input type="radio" name="permissions_roles" value="full"></td>
-                                        <td><input type="radio" name="permissions_roles" value="read_only"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
                         </div>
                         <button type="submit" class="btn btn-primary">Crear</button>
                     </form>
@@ -319,35 +290,6 @@
                                 <option value="{{this.role_id}}">{{this.role_name}}</option>
                                 {{/each}}
                             </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="permissions" class="form-label">Permisos</label>
-                            <table class="table permissions-table">
-                                <thead>
-                                    <tr>
-                                        <th>Module</th>
-                                        <th>Full</th>
-                                        <th>Read Only</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Users</td>
-                                        <td><input type="radio" name="permissions_users" value="full"></td>
-                                        <td><input type="radio" name="permissions_users" value="read_only"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Feeds</td>
-                                        <td><input type="radio" name="permissions_feeds" value="full"></td>
-                                        <td><input type="radio" name="permissions_feeds" value="read_only"></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Roles</td>
-                                        <td><input type="radio" name="permissions_roles" value="full"></td>
-                                        <td><input type="radio" name="permissions_roles" value="read_only"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                     </form>
@@ -473,18 +415,12 @@
                     return;
                 }
 
-                var permissions = {};
-                document.querySelectorAll('.permissions-table input[type="radio"]:checked').forEach(function (radio) {
-                    var module = radio.name.split('_')[1];
-                    permissions[module] = radio.value;
-                });
-
                 fetch('/users/createUser', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ company_id: newCompanyName, username: newUsername, password_hash: password, role_id: newRoleName, permissions: permissions })
+                    body: JSON.stringify({ company_id: newCompanyName, username: newUsername, password_hash: password, role_id: newRoleName })
                 })
                     .then(response => response.json())
                     .then(data => {

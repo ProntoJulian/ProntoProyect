@@ -32,14 +32,13 @@
         .highlight-row {
             background-color: #f8f9fa;
         }
-        .editable {
-            display: none;
+        .permissions-table th,
+        .permissions-table td {
+            text-align: center;
+            vertical-align: middle;
         }
-        .editing .editable {
-            display: inline;
-        }
-        .editing .non-editable {
-            display: none;
+        .permissions-table input[type="radio"] {
+            cursor: pointer;
         }
         .action-buttons {
             margin-bottom: 15px;
@@ -51,7 +50,6 @@
     <div class="container mt-5">
         <div class="action-buttons">
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">
-                
                 <i class="fas fa-plus"></i> Crear
             </button>
         </div>
@@ -72,21 +70,15 @@
                     <tbody>
                         {{#each roles}}
                         <tr>
-                            <td><span class="non-editable">{{this.role_id}}</span><input type="text" class="form-control editable" value="{{this.role_id}}" disabled></td>
-                            <td><span class="non-editable">{{this.role_name}}</span><input type="text" class="form-control editable" value="{{this.role_name}}" data-role-name></td>
-                            <td><span class="non-editable">{{this.company_name}}</span><input type="text" class="form-control editable" disabled value="{{this.company_id}}" data-company></td>
+                            <td>{{this.role_id}}</td>
+                            <td>{{this.role_name}}</td>
+                            <td>{{this.company_name}}</td>
                             <td class="text-center">
-                                <button class="btn btn-primary btn-edit" title="Actualizar">
+                                <button class="btn btn-primary btn-edit" data-role-id="{{this.role_id}}" data-role-name="{{this.role_name}}" data-company-id="{{this.company_id}}" data-company-name="{{this.company_name}}" data-permissions="{{this.permissions}}" title="Actualizar">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-danger btn-delete" title="Eliminar" data-role-id="{{this.role_id}}">
+                                <button class="btn btn-danger btn-delete" data-role-id="{{this.role_id}}" title="Eliminar">
                                     <i class="fas fa-trash"></i>
-                                </button>
-                                <button class="btn btn-success btn-save editable" title="Guardar" data-role-id="{{this.role_id}}">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                                <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
-                                    <i class="fas fa-times"></i>
                                 </button>
                             </td>
                         </tr>
@@ -95,26 +87,125 @@
                 </table>
             </div>
         </div>
-    
     </div>
-    <!-- Modal de Confirmación de Guardado -->
-    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    
+    <!-- Modal para Crear Rol -->
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="confirmModalLabel">Confirmación</h5>
+                    <h5 class="modal-title" id="createModalLabel">Crear Nuevo Rol</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    ¿Seguro que quiere guardar los cambios?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="confirmSave">Guardar</button>
+                    <form id="createForm">
+                        <div class="mb-3">
+                            <label for="newRoleName" class="form-label">Nombre del Rol</label>
+                            <input type="text" class="form-control" id="newRoleName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="createCompanyId" class="form-label">Compañía</label>
+                            <select class="form-control" id="createCompanyId" disabled>
+                                {{#each company}}
+                                <option value="{{this.company_id}}">{{this.company_name}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="permissions" class="form-label">Permisos</label>
+                            <table class="table permissions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Module</th>
+                                        <th>Full</th>
+                                        <th>Read Only</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Users</td>
+                                        <td><input type="radio" name="permissions_users" value="full"></td>
+                                        <td><input type="radio" name="permissions_users" value="read_only"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Feeds</td>
+                                        <td><input type="radio" name="permissions_feeds" value="full"></td>
+                                        <td><input type="radio" name="permissions_feeds" value="read_only"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Roles</td>
+                                        <td><input type="radio" name="permissions_roles" value="full"></td>
+                                        <td><input type="radio" name="permissions_roles" value="read_only"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Crear</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal para Editar Rol -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Editar Rol</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm">
+                        <input type="hidden" id="editRoleId">
+                        <div class="mb-3">
+                            <label for="editRoleName" class="form-label">Nombre del Rol</label>
+                            <input type="text" class="form-control" id="editRoleName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCompanyId" class="form-label">Compañía</label>
+                            <select class="form-control" id="editCompanyId" disabled>
+                                {{#each company}}
+                                <option value="{{this.company_id}}">{{this.company_name}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="permissions" class="form-label">Permisos</label>
+                            <table class="table permissions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Module</th>
+                                        <th>Full</th>
+                                        <th>Read Only</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Users</td>
+                                        <td><input type="radio" name="permissions_users" value="full"></td>
+                                        <td><input type="radio" name="permissions_users" value="read_only"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Feeds</td>
+                                        <td><input type="radio" name="permissions_feeds" value="full"></td>
+                                        <td><input type="radio" name="permissions_feeds" value="read_only"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Roles</td>
+                                        <td><input type="radio" name="permissions_roles" value="full"></td>
+                                        <td><input type="radio" name="permissions_roles" value="read_only"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal de Confirmación de Eliminación -->
     <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -133,34 +224,7 @@
             </div>
         </div>
     </div>
-    <!-- Modal para Crear Rol -->
-    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createModalLabel">Crear Nuevo Rol</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="createForm">
-                        <div class="mb-3">
-                            <label for="newRoleName" class="form-label">Nombre del Rol</label>
-                            <input type="text" class="form-control" id="newRoleName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="newRoleName" class="form-label">Compañia</label>
-                            <select class="form-control" id="createCompanyId" disabled>
-                                {{#each company}}
-                                <option value="{{this.company_id}}">{{this.company_name}}</option>
-                                {{/each}}
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Crear</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <!-- Bootstrap JS bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -168,67 +232,74 @@
             // Funcionalidad de editar
             document.querySelectorAll('.btn-edit').forEach(function (btn) {
                 btn.addEventListener('click', function () {
-                    var row = btn.closest('tr');
-                    row.classList.add('editing');
-                });
-            });
-            // Funcionalidad de cancelar edición
-            document.querySelectorAll('.btn-cancel').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    var row = btn.closest('tr');
-                    row.classList.remove('editing');
-                });
-            });
-            // Funcionalidad de guardar cambios
-            document.querySelectorAll('.btn-save').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    var row = btn.closest('tr');
                     var roleId = btn.getAttribute('data-role-id');
-                    var newRoleName = row.querySelector('input[data-role-name]').value;
-                    var companyId = row.querySelector('input[data-company]').value;
+                    var roleName = btn.getAttribute('data-role-name');
+                    var companyId = btn.getAttribute('data-company-id');
+                    var companyName = btn.getAttribute('data-company-name');
+                    var permissions = JSON.parse(btn.getAttribute('data-permissions'));
 
-                    console.log("Rol: ", newRoleName)
-                    console.log("Compañia: ", companyId)
+                    document.getElementById('editRoleId').value = roleId;
+                    document.getElementById('editRoleName').value = roleName;
+                    document.getElementById('editCompanyId').value = companyId;
+                    
+                    var editModal = new bootstrap.Modal(document.getElementById('editModal'));
+                    editModal.show();
 
-
-                    var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-                    document.getElementById('confirmSave').onclick = function () {
-                        fetch(`/roles/updateRole/${roleId}`, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ newName: newRoleName, companyId:companyId })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.message === "Rol actualizado con éxito") {
-                                row.querySelector('.non-editable').innerText = newRoleName;
-                                row.classList.remove('editing');
-                            } else {
-                                alert("Error al actualizar el rol: " + data.message);
-                            }
-                            confirmModal.hide();
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert("Error al actualizar el rol");
-                            confirmModal.hide();
-                        });
-                    };
-                    confirmModal.show();
+                    // Set permissions in the modal
+                    for (var module in permissions) {
+                        if (permissions[module] === 'full') {
+                            document.querySelector(`input[name="permissions_${module}"][value="full"]`).checked = true;
+                        } else if (permissions[module] === 'read_only') {
+                            document.querySelector(`input[name="permissions_${module}"][value="read_only"]`).checked = true;
+                        }
+                    }
                 });
             });
+
+            // Funcionalidad de guardar cambios
+            document.getElementById('editForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                var roleId = document.getElementById('editRoleId').value;
+                var roleName = document.getElementById('editRoleName').value;
+                var companyId = document.getElementById('editCompanyId').value;
+
+                var permissions = {};
+                document.querySelectorAll('#editModal .permissions-table input[type="radio"]:checked').forEach(function (radio) {
+                    var module = radio.name.split('_')[1];
+                    permissions[module] = radio.value;
+                });
+
+                fetch(`/roles/updateRole/${roleId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ roleName, companyId, permissions })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === "Rol actualizado con éxito") {
+                        alert("Rol actualizado con éxito");
+                        window.location.reload();
+                    } else {
+                        alert("Error al actualizar el rol: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("Error al actualizar el rol");
+                });
+            });
+
             // Funcionalidad de eliminar
             document.querySelectorAll('.btn-delete').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     var roleId = btn.getAttribute('data-role-id');
-                    
-
                     var deleteRoleIdSpan = document.getElementById('deleteRoleId');
                     deleteRoleIdSpan.textContent = roleId;
                     var deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
                     deleteConfirmModal.show();
+
                     document.getElementById('confirmDelete').onclick = function () {
                         fetch(`/roles/deleteRole/${roleId}`, {
                             method: 'DELETE',
@@ -253,57 +324,38 @@
                     };
                 });
             });
+
             // Funcionalidad de crear nuevo rol
             document.getElementById('createForm').addEventListener('submit', function (event) {
                 event.preventDefault();
                 var newRoleName = document.getElementById('newRoleName').value;
                 var companyId = document.getElementById('createCompanyId').value;
 
-                console.log("Rol: ", newRoleName)
-                console.log("Compañia: ", companyId)
+                var permissions = {};
+                document.querySelectorAll('#createModal .permissions-table input[type="radio"]:checked').forEach(function (radio) {
+                    var module = radio.name.split('_')[1];
+                    permissions[module] = radio.value;
+                });
 
                 fetch('/roles/createRole', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ roleName: newRoleName,companyId:companyId })
+                    body: JSON.stringify({ roleName: newRoleName, companyId: companyId, permissions: permissions })
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.message === "Rol creado con éxito") {
-                        var newRow = `
-                            <tr>
-                                <td class="text-center">
-                                    <button class="btn btn-primary btn-edit" title="Actualizar">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-danger btn-delete" title="Eliminar" data-role-id="${data.role_id}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                    <button class="btn btn-success btn-save editable" title="Guardar" data-role-id="${data.role_id}">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button class="btn btn-secondary btn-cancel editable" title="Cancelar">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </td>
-                                <td><span class="non-editable">${data.role_id}</span><input type="text" class="form-control editable" value="${data.role_id}" disabled></td>
-                                <td><span class="non-editable">${newRoleName}</span><input type="text" class="form-control editable" value="${newRoleName}" data-role-name></td>
-                            </tr>
-                        `;
-                        document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
-                        var createModal = bootstrap.Modal(document.getElementById('createModal'));
-                        var createModal = new bootstrap.Modal(document.getElementById('createModal'));
-                        createModal.hide();
+                        alert("Rol creado con éxito");
                         window.location.reload();
                     } else {
-                        window.location.reload();
+                        alert("Error al crear el rol: " + data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    window.location.reload();
+                    alert("Error al crear el rol");
                 });
             });
         });
