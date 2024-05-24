@@ -177,6 +177,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Función para agregar event listeners a los botones
             function addEventListeners() {
                 // Funcionalidad de editar
                 document.querySelectorAll('.btn-edit').forEach(function (btn) {
@@ -201,6 +202,8 @@
                         var roleId = btn.getAttribute('data-role-id');
                         var newRoleName = row.querySelector('input[data-role-name]').value;
                         var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+
+                        console.log("Si escucha el evento de guardar cambios")
 
                         document.getElementById('confirmSave').onclick = function () {
                             fetch(`/roles/updateRole/${roleId}`, {
@@ -238,6 +241,8 @@
                         var deleteRoleIdSpan = document.getElementById('deleteRoleId');
                         deleteRoleIdSpan.textContent = roleId;
 
+                        console.log("Si escucha el evento de eliminar")
+
                         var deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
                         deleteConfirmModal.show();
 
@@ -269,7 +274,9 @@
                 document.getElementById('createForm').addEventListener('submit', function (event) {
                     event.preventDefault();
                     var newRoleName = document.getElementById('newRoleName').value;
-                    var companyId = document.getElementById('data-company-id').value;
+                    var companyId = document.getElementById('data-company-id') ? document.getElementById('data-company-id').value : null;
+
+                    console.log("Si escucha el evento de crear")
 
                     console.log("Datos del formulario enviados:", { roleName: newRoleName, company_Id: companyId });
 
@@ -306,7 +313,7 @@
                                 document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
                                 var createModal = new bootstrap.Modal(document.getElementById('createModal'));
                                 createModal.hide();
-                                window.location.reload();
+                                addEventListeners();  // Volver a añadir los event listeners a los nuevos elementos
                             } else {
                                 alert("Error al crear el rol: " + data.message);
                             }
