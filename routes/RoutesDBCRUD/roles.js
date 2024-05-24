@@ -20,16 +20,16 @@ routerRoles.get("/roles/getRoles", authenticateToken,superUsuarioPages, async (r
 
 
 routerRoles.post("/roles/createRole", authenticateToken,superUsuarioPages, async (req, res) => {
-    const { roleName, company_Id } = req.body;
+    const { roleName, companyId } = req.body;
     const columns = ['role_name', "company_id"];  // Columnas específicas para la tabla roles
     if (!roleName || roleName == '') {
         return res.status(400).send({ message: 'El nombre es requerido' });
     }
 
     console.log("Role Name: ", roleName)
-    console.log("Company ID: ", company_Id)
+    console.log("Company ID: ", companyId)
     try {
-        const result = await insertIntoTable('roles', { role_name: roleName, company_id:company_Id }, columns);
+        const result = await insertIntoTable('roles', { role_name: roleName, company_id:companyId }, columns);
         if (result.affectedRows > 0) {
             res.send({ message: "Rol creado con éxito", role_id: result.insertId });
         } else {
