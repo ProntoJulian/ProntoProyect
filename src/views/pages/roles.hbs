@@ -150,9 +150,9 @@
                         <div class="mb-3">
                             <label for="newRoleName" class="form-label">Compañia</label>
                             <select class="form-control" id="createCompanyId" disabled>
-                                {{#if company}}
+                                {{#each company}}
                                 <option value="{{this.company_id}}">{{this.company_name}}</option>
-                                {{/if}}
+                                {{/each}}
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary">Crear</button>
