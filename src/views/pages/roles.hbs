@@ -268,10 +268,11 @@
             // Funcionalidad de editar rol
             document.getElementById('editForm').addEventListener('submit', function (event) {
                 event.preventDefault();
+                /*
                 var roleId = document.getElementById('editRoleId').value;
                 var roleName = document.getElementById('editRoleName').value;
                 var companyId = document.getElementById('editCompanyId').value;
-
+*/
                 var permissions = {};
                 document.querySelectorAll('#editModal .permissions-table input[type="radio"]:checked').forEach(function (radio) {
                     var module = radio.name.split('_')[1];
