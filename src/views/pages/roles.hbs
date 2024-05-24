@@ -74,7 +74,7 @@
                         <tr>
                             <td><span class="non-editable">{{this.role_id}}</span><input type="text" class="form-control editable" value="{{this.role_id}}" disabled></td>
                             <td><span class="non-editable">{{this.role_name}}</span><input type="text" class="form-control editable" value="{{this.role_name}}" data-role-name></td>
-                            <td><span class="non-editable">{{this.company_id}}</span><input type="text" class="form-control editable" value="{{this.company_id}}" data-company></td>
+                            <td><span class="non-editable">{{this.company_id}}</span><input type="text" class="form-control editable" value="{{this.company_name}}" data-company></td>
                             <td class="text-center">
                                 <button class="btn btn-primary btn-edit" title="Actualizar">
                                     <i class="fas fa-edit"></i>
@@ -298,12 +298,12 @@
                         createModal.hide();
                         window.location.reload();
                     } else {
-                        alert("Error al crear el rol: " + data.message);
+                        window.location.reload();
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert("Error al crear el rol");
+                    window.location.reload();
                 });
             });
         });
