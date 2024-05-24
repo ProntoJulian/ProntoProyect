@@ -290,12 +290,12 @@
                     var roleId = document.getElementById('editRoleId').value;
                     var roleName = document.getElementById('editRoleName').value;
                     var companyId = document.getElementById('editCompanyId').value;
-    */
                     var permissions = {};
                     document.querySelectorAll('#editModal .permissions-table input[type="radio"]:checked').forEach(function (radio) {
                         var module = radio.name.split('_')[1];
                         permissions[module] = radio.value;
                     });
+    */
 
                     fetch(`/roles/updateRole/${roleId}`, {
                         method: 'PUT',
