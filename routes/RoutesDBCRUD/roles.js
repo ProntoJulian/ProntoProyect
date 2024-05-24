@@ -19,19 +19,31 @@ routerRoles.get("/roles/getRoles", authenticateToken,superUsuarioPages, async (r
 });
 
 
-routerRoles.post("/roles/createRole", authenticateToken,superUsuarioPages, async (req, res) => {
-    const { roleName, companyId } = req.body;
-    const columns = ['role_name', "company_id"];  // Columnas específicas para la tabla roles
+routerRoles.post("/roles/createRole", authenticateToken, superUsuarioPages, async (req, res) => {
+    const { roleName, companyId, permissions } = req.body;
+    const columns = ['role_name', 'company_id'];  // Columnas específicas para la tabla roles
+
     if (!roleName || roleName == '') {
         return res.status(400).send({ message: 'El nombre es requerido' });
     }
 
-    console.log("Role Name: ", roleName)
-    console.log("Company ID: ", companyId)
+    console.log("Role Name: ", roleName);
+    console.log("Company ID: ", companyId);
+    console.log("Permissions: ", permissions);
+
     try {
-        const result = await insertIntoTable('roles', { role_name: roleName, company_id:companyId }, columns);
+        const result = await insertIntoTable('roles', { role_name: roleName, company_id: companyId }, columns);
         if (result.affectedRows > 0) {
-            res.send({ message: "Rol creado con éxito"});
+            const roleId = result.insertId;  // Obtener el ID del rol recién creado
+
+            // Crear entradas en role_modules basadas en los permisos seleccionados
+            for (const [moduleId, accessType] of Object.entries(permissions)) {
+                console.log(`Crear role_module para role_id: ${roleId}, module_id: ${moduleId}, access_type: ${accessType}`);
+                // Aquí es donde insertarías en la tabla role_modules
+                // await insertIntoTable('role_modules', { role_id: roleId, module_id: moduleId, access_type: accessType }, ['role_id', 'module_id', 'access_type']);
+            }
+
+            res.send({ message: "Rol creado con éxito" });
         } else {
             res.status(500).send({ message: 'Hubo un error al crear el rol' });
         }
@@ -40,6 +52,7 @@ routerRoles.post("/roles/createRole", authenticateToken,superUsuarioPages, async
         res.status(500).send({ message: 'Hubo un error al insertar el rol' });
     }
 });
+
 
 
 
@@ -59,13 +72,13 @@ routerRoles.delete("/roles/deleteRole/:roleId", authenticateToken,superUsuarioPa
 });
 
 
-routerRoles.put("/roles/updateRole/:roleId", authenticateToken,superUsuarioPages, async (req, res) => {
+routerRoles.put("/roles/updateRole/:roleId", authenticateToken, superUsuarioPages, async (req, res) => {
     const { roleId } = req.params;
-    const { newName, companyId } = req.body;
+    const { newName, companyId, permissions } = req.body;
 
-
-    console.log("Rol: ", newName)
-    console.log("Compañia: ", companyId)
+    console.log("Rol: ", newName);
+    console.log("Compañia: ", companyId);
+    console.log("Permissions: ", permissions);
 
     if (!newName) {
         return res.status(400).json({ message: "El nuevo nombre del rol es requerido" });
@@ -73,6 +86,8 @@ routerRoles.put("/roles/updateRole/:roleId", authenticateToken,superUsuarioPages
     try {
         const result = await updateTable('roles', { role_name: newName, company_id: companyId }, 'role_id', roleId);
         if (result.affectedRows > 0) {
+            // Actualizar entradas en role_modules basadas en los permisos seleccionados
+           
             res.send({ message: "Rol actualizado con éxito" });
         } else {
             res.status(404).json({ message: "Rol no encontrado" });
@@ -82,6 +97,7 @@ routerRoles.put("/roles/updateRole/:roleId", authenticateToken,superUsuarioPages
         res.status(500).json({ message: "Error al actualizar el rol" });
     }
 });
+
 
 
 routerRoles.get("/roles/getRole/:roleId", authenticateToken,superUsuarioPages, async (req, res) => {
