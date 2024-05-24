@@ -51,7 +51,17 @@ appRouter.get("/app/companies", authenticateToken, superUsuarioPages,async funct
 appRouter.get("/app/feeds", authenticateToken, superUsuarioPages,async function (req, res) {
     const user = res.locals.user;
     const feeds = await getByIdCompany("feeds",user.company_id);
-    const companies = await fetchDataFromTable('companies');
+
+    let users;
+    let companies;
+
+    if (role.role_name === "Superusuario") {
+        users = await fetchDataFromTable('users');
+        companies = await fetchDataFromTable('companies');
+    } else {
+        users = await getByIdCompany("users", user.company_id);
+        companies = [await fetchOneFromTable('companies', user.company_id, 'company_id')];
+    }
     
     // Formatear la fecha y obtener el nombre de la compañía
     for (let feed of feeds) {
@@ -98,13 +108,16 @@ appRouter.get("/app/users", authenticateToken, superUsuarioPages,async function 
     const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
     
     let users;
-    if(role.role_name == "Superusuario"){
+    let companies;
+
+    if (role.role_name === "Superusuario") {
         users = await fetchDataFromTable('users');
-    }else{
+        companies = await fetchDataFromTable('companies');
+    } else {
         users = await getByIdCompany("users", user.company_id);
+        companies = [await fetchOneFromTable('companies', user.company_id, 'company_id')];
     }
 
-    const companies = await fetchDataFromTable('companies');
     const roles = await fetchDataFromTable('roles');
 
     for (let user of users) {
