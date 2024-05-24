@@ -31,7 +31,7 @@ routerRoles.post("/roles/createRole", authenticateToken,superUsuarioPages, async
     try {
         const result = await insertIntoTable('roles', { role_name: roleName, company_id:companyId }, columns);
         if (result.affectedRows > 0) {
-            res.send({ message: "Rol creado con éxito", role_id: result.insertId });
+            res.send({ message: "Rol creado con éxito"});
         } else {
             res.status(500).send({ message: 'Hubo un error al crear el rol' });
         }
