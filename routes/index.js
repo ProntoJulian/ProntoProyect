@@ -95,7 +95,7 @@ appRouter.get("/app/roles", authenticateToken,superUsuarioPages,async function (
         roles = await getByIdCompany("roles", user.company_id);
     }
 
-    res.render("pages/roles",{ roles: roles,company:company  });
+    res.render("pages/roles",{ roles: roles,company:[company ] });
 });
 
 appRouter.get("/app/modules", authenticateToken, superUsuarioPages,async function (req, res) {
