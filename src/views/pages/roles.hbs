@@ -138,9 +138,10 @@
                                     {{#each modules}}
                                     <tr>
                                         <td>{{this.module_name}}</td>
-                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="Full"></td>
-                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="Read_only">
-                                        </td>
+                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="Full"
+                                                data-module-id="{{this.module_id}}"></td>
+                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="Read_only"
+                                                data-module-id="{{this.module_id}}"></td>
                                     </tr>
                                     {{/each}}
                                 </tbody>
@@ -148,6 +149,7 @@
                         </div>
                         <button type="submit" class="btn btn-primary">Crear</button>
                     </form>
+
 
                 </div>
             </div>
@@ -191,9 +193,10 @@
                                     {{#each modules}}
                                     <tr>
                                         <td>{{this.module_name}}</td>
-                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="Full"></td>
-                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="Read_only">
-                                        </td>
+                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="Full"
+                                                data-module-id="{{this.module_id}}"></td>
+                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="Read_only"
+                                                data-module-id="{{this.module_id}}"></td>
                                     </tr>
                                     {{/each}}
                                 </tbody>
@@ -201,6 +204,7 @@
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                     </form>
+
 
                 </div>
             </div>
@@ -245,8 +249,7 @@
 
                 var permissions = [];
                 document.querySelectorAll('#createModal .permissions-table input[type="radio"]:checked').forEach(function (radio) {
-                    var module = radio.name.split('_')[1];
-                    permissions.push({ module: permissions[module], permission: radio.value });
+                    permissions.push({ module: radio.getAttribute('data-module-id'), permission: radio.value });
                 });
 
                 fetch('/roles/createRole', {
@@ -296,8 +299,7 @@
 
                 var permissions = [];
                 document.querySelectorAll('#editModal .permissions-table input[type="radio"]:checked').forEach(function (radio) {
-                    var module = radio.name.split('_')[1];
-                    permissions.push({ module: permissions[module], permission: radio.value });
+                    permissions.push({ module: radio.getAttribute('data-module-id'), permission: radio.value });
                 });
 
                 fetch(`/roles/updateRole/${roleId}`, {
