@@ -61,6 +61,15 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!');
 });
 
+// Middleware para capturar errores no capturados
+process.on('uncaughtException', function (err) {
+    console.error('Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', function (reason, p) {
+    console.error('Unhandled Rejection:', reason);
+});
+
 // Global Variables
 app.use((req, res, next) => {
   res.locals.success_msg = req.flash("success_msg");
