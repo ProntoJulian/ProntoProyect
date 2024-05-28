@@ -139,6 +139,8 @@ appRouter.get("/app/roles", authenticateToken, superUsuarioPages, async function
             return rol;
         });
 
+        console.log("Roles: ", roles)
+
         res.render("pages/roles", { roles: roles, company: [company], modules: modules, roleModule: [roleModule] });
     } catch (error) {
         console.error("Error en la ruta /app/roles:", error);
