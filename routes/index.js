@@ -5,7 +5,8 @@ const {
     updateTable,
     fetchDataFromTable,
     deleteFromTable,
-    fetchOneFromTable
+    fetchOneFromTable,
+    fetchOneFromTableMultiple
 } = require("../databases/CRUD");
 
 const {getByIdCompany} = require("../databases/consultas")
