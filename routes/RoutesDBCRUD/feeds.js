@@ -1,5 +1,6 @@
 const express = require("express");
 const {authenticateToken} = require("../../middleware/index");
+const {encrypt,decrypt} = require("../../helpers/helpers");
 const {insertIntoTable,
     updateTable,
     fetchDataFromTable,
@@ -32,16 +33,20 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
         'company_id',
         'active_products_gm', 
         'total_products_bc', 
-        'preorder_products' 
+        'preorder_products',
+        'client_email', 
+        'private_key'
     ]; // Ajusta según sea necesario
 
     feedData.active_products_gm = feedData.active_products_gm || 0;
     feedData.total_products_bc = feedData.total_products_bc || 0;
     feedData.preorder_products = feedData.preorder_products || 0;
 
-    console.log("Datos enviamos: ", feedData)
-
     try {
+        // Encriptar la private_key antes de insertar
+        const encryptedKey = encrypt(feedData.private_key);
+        feedData.private_key = JSON.stringify(encryptedKey);
+
         const result = await insertIntoTable('feeds', feedData, columns);
         if (result.affectedRows > 0) {
             res.status(201).json({ message: "Feed creado con éxito" });
@@ -53,6 +58,7 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
         res.status(500).json({ message: "Error al crear el feed" });
     }
 });
+
 
 
 
@@ -92,13 +98,18 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
     const updateData = req.body;
 
     const lastUpdate = new Date(updateData.last_update);
-
     const formattedLastUpdate = lastUpdate.toISOString().replace('T', ' ').substring(0, 19);
-    updateData.last_update = formattedLastUpdate
+    updateData.last_update = formattedLastUpdate;
 
     try {
+        // Encriptar la private_key antes de actualizar
+        if (updateData.private_key) {
+            const encryptedKey = encrypt(updateData.private_key);
+            updateData.private_key = JSON.stringify(encryptedKey);
+        }
+
         const result = await updateTable('feeds', updateData, 'feed_id', feedId);
-        console.log('Resultado de la consulta:', result); // Registro del feedId recibido
+        console.log('Resultado de la consulta:', result); // Registro del resultado de la consulta
         if (result.affectedRows > 0) {
             res.status(200).json({ message: "Feed actualizado con éxito" });
         } else {

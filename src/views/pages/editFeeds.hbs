@@ -80,6 +80,19 @@
                             </div>
                         </div>
                         <div class="mb-3">
+                            <label for="client_email" class="form-label">Client Email</label>
+                            <input type="text" class="form-control" id="client_email" value="{{this.client_email}}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="private_key" class="form-label">Private Key</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="private_key" value="{{this.private_key}}">
+                                <span class="input-group-text toggle-password" data-toggle="private_key">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
                             <label for="formulas" class="form-label">Formulas</label>
                             <input type="text" class="form-control" id="formulas" value="{{this.formulas}}">
                         </div>
@@ -151,6 +164,8 @@
                     x_auth_token: document.getElementById('x_auth_token').value,
                     client_id: document.getElementById('client_id').value,
                     client_secret: document.getElementById('client_secret').value,
+                    client_email: document.getElementById('client_email').value,
+                    private_key: document.getElementById('private_key').value,
                     formulas: document.getElementById('formulas').value,
                     last_update: document.getElementById('last_update').value,
                     active_products_gm: document.getElementById('active_products_gm').value,

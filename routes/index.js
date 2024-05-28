@@ -139,7 +139,7 @@ appRouter.get("/app/roles", authenticateToken, superUsuarioPages, async function
             return rol;
         });
 
-        console.log("Roles: ", JSON.stringify(roles, null, 2));
+       
 
         res.render("pages/roles", { roles: roles, company: [company], modules: modules, roleModule: [roleModule] });
     } catch (error) {
