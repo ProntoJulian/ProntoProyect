@@ -29,8 +29,12 @@ handlebars.registerHelper('eq', function (a, b) {
 });
 
 handlebars.registerHelper('includes', function(array, value) {
-    return array.includes(value);
+  if (!Array.isArray(array)) {
+      return false;
+  }
+  return array.includes(value);
 });
+
 
 // Setting up Handlebars
 app.set('views', path.join(__dirname,"src","views"));
