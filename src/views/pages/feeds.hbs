@@ -104,7 +104,7 @@
                                     class="form-control editable" value="{{this.total_products_bc}}"></td>
                             <td><span class="non-editable">{{this.preorder_products}}</span><input type="text"
                                     class="form-control editable" value="{{this.preorder_products}}"></td>
-                            {{#unless (eq roleModule.0.access_type "Read Only")}}
+                            {{#unless (eq ../../roleModule.0.access_type "Read Only")}}
                             <td class="text-center">
                                 <button class="btn btn-primary btn-edit" title="Update" data-feed-id="{{this.feed_id}}">
                                     <i class="fas fa-edit"></i>
@@ -132,6 +132,7 @@
             </div>
         </div>
     </div>
+
 
 
     <!-- Modal de Confirmación -->
