@@ -117,9 +117,11 @@ appRouter.get("/app/modules", authenticateToken, superUsuarioPages,async functio
     res.render("pages/modules",{ modules: modules });
 });
 
-appRouter.get("/app/users", authenticateToken, superUsuarioPages,async function (req, res) {
-
+appRouter.get("/app/users", authenticateToken, superUsuarioPages, async function (req, res) {
     const user = res.locals.user;
+    const moduleId = 10; // Ajusta el módulo ID si es necesario
+    const roleModule = await fetchOneFromTableMultiple('role_modules', ['role_id', 'module_id'], [user.role_id, moduleId]);
+
     const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
     
     let users;
@@ -149,8 +151,9 @@ appRouter.get("/app/users", authenticateToken, superUsuarioPages,async function 
         }
     }
 
-    res.render("pages/users", { users: users, companies: companies, roles: roles });
+    res.render("pages/users", { users: users, companies: companies, roles: roles, roleModule: [roleModule] });
 });
+
 
 
 
