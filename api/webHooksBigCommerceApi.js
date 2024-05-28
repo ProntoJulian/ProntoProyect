@@ -162,8 +162,7 @@ async function createWebhookToUpdateProduct(storeHashF, accessTokenF) {
   const dataToHash = {
     store_id: storeHashF,
     data: {
-      type: "product",
-      id: productID,
+      type: "product"
     },
     created_at: currentTimestamp,
     producer: producer,
