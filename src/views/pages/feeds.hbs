@@ -133,6 +133,8 @@
         </div>
     </div>
 
+
+
     <!-- Modal de Confirmación -->
     <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -223,6 +225,19 @@
                             </div>
                         </div>
                         <div class="mb-3">
+                            <label for="formulas" class="form-label">Formulas</label>
+                            <input type="text" class="form-control" id="formulas">
+                        </div>
+                        <div class="mb-3">
+                            <label for="company_id" class="form-label">Company</label>
+                            <select class="form-control" id="company_id" disabled>
+                                {{#each companies}}
+                                <option value="{{this.company_id}}">{{this.company_name}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
                             <label for="client_email" class="form-label">Client Email</label>
                             <input type="email" class="form-control" id="client_email">
                         </div>
@@ -235,107 +250,10 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="formulas" class="form-label">Formulas</label>
-                            <input type="text" class="form-control" id="formulas">
-                        </div>
-                        <div class="mb-3">
-                            <label for="company_id" class="form-label">Company</label>
-                            <select class="form-control" id="company_id" disabled>
-                                {{#each companies}}
-                                <option value="{{this.company_id}}">{{this.company_name}}</option>
-                                {{/each}}
-                            </select>
-                        </div>
+
                         <div class="action-buttons">
                             <button type="button" class="btn btn-primary" id="createButton">Create</button>
                             <button type="button" class="btn btn-secondary" id="cancelButton">Cancel</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para Editar Feed -->
-    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Edit Feed</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editForm">
-                        <input type="hidden" id="edit_feed_id">
-                        <div class="mb-3">
-                            <label for="edit_feed_name" class="form-label">Feed Name</label>
-                            <input type="text" class="form-control" id="edit_feed_name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_store_hash" class="form-label">Store Hash</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="edit_store_hash" required>
-                                <span class="input-group-text toggle-password" data-toggle="edit_store_hash">
-                                    <i class="fas fa-eye"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_x_auth_token" class="form-label">x_auth_token</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="edit_x_auth_token" required>
-                                <span class="input-group-text toggle-password" data-toggle="edit_x_auth_token">
-                                    <i class="fas fa-eye"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_client_id" class="form-label">Client ID</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="edit_client_id" required>
-                                <span class="input-group-text toggle-password" data-toggle="edit_client_id">
-                                    <i class="fas fa-eye"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_client_secret" class="form-label">Client Secret</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="edit_client_secret" required>
-                                <span class="input-group-text toggle-password" data-toggle="edit_client_secret">
-                                    <i class="fas fa-eye"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_client_email" class="form-label">Client Email</label>
-                            <input type="email" class="form-control" id="edit_client_email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_private_key" class="form-label">Private Key</label>
-                            <div class="input-group">
-                                <textarea class="form-control" id="edit_private_key" rows="3" required></textarea>
-                                <span class="input-group-text toggle-password" data-toggle="edit_private_key">
-                                    <i class="fas fa-eye"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_formulas" class="form-label">Formulas</label>
-                            <input type="text" class="form-control" id="edit_formulas" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit_company_id" class="form-label">Company</label>
-                            <select class="form-control" id="edit_company_id" disabled>
-                                {{#each companies}}
-                                <option value="{{this.company_id}}">{{this.company_name}}</option>
-                                {{/each}}
-                            </select>
-                        </div>
-                        <div class="action-buttons">
-                            <button type="button" class="btn btn-primary" id="editButton">Save</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         </div>
                     </form>
                 </div>
@@ -351,31 +269,7 @@
             document.querySelectorAll('.btn-edit').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     var feedId = btn.getAttribute('data-feed-id');
-                    fetch(`/feeds/getFeed/${feedId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data) {
-                                document.getElementById('edit_feed_id').value = data.feed_id;
-                                document.getElementById('edit_feed_name').value = data.feed_name;
-                                document.getElementById('edit_store_hash').value = data.store_hash;
-                                document.getElementById('edit_x_auth_token').value = data.x_auth_token;
-                                document.getElementById('edit_client_id').value = data.client_id;
-                                document.getElementById('edit_client_secret').value = data.client_secret;
-                                document.getElementById('edit_client_email').value = data.client_email;
-                                document.getElementById('edit_private_key').value = data.private_key;
-                                document.getElementById('edit_formulas').value = data.formulas;
-                                document.getElementById('edit_company_id').value = data.company_id;
-
-                                var editModal = new bootstrap.Modal(document.getElementById('editModal'));
-                                editModal.show();
-                            } else {
-                                alert('Error loading feed data.');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('Error loading feed data.');
-                        });
+                    window.location.href = `/feeds/updateFeed/${feedId}`;
                 });
             });
 
@@ -450,10 +344,10 @@
                     x_auth_token: document.getElementById('x_auth_token').value,
                     client_id: document.getElementById('client_id').value,
                     client_secret: document.getElementById('client_secret').value,
-                    client_email: document.getElementById('client_email').value,
-                    private_key: document.getElementById('private_key').value,
                     formulas: document.getElementById('formulas').value,
                     company_id: document.getElementById('company_id').value,
+                    client_email: document.getElementById('client_email').value,
+                    private_key: document.getElementById('private_key').value,
                 };
 
                 // Verificar que ningún campo esté vacío
