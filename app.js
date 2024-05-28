@@ -21,6 +21,10 @@ handlebars.registerHelper('ifCond', function (v1, v2, options) {
   return options.inverse(this);
 });
 
+Handlebars.registerHelper('eq', function (a, b) {
+  return a === b;
+});
+
 handlebars.registerHelper('includes', function(array, value) {
     return array.includes(value);
 });
