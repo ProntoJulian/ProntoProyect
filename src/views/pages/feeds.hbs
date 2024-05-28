@@ -55,6 +55,10 @@
             margin-bottom: 15px;
             text-align: left;
         }
+
+        .password-protected {
+            -webkit-text-security: disc;
+        }
     </style>
 </head>
 
@@ -273,6 +277,23 @@
                 });
             });
 
+            const togglePassword = (fieldId) => {
+                const field = document.getElementById(fieldId);
+                if (field.classList.contains('password-protected')) {
+                    field.classList.remove('password-protected');
+                } else {
+                    field.classList.add('password-protected');
+                }
+            };
+
+            document.querySelectorAll('.toggle-password').forEach(function (toggle) {
+                toggle.addEventListener('click', function () {
+                    var fieldId = toggle.getAttribute('data-toggle');
+                    togglePassword(fieldId);
+                });
+            });
+
+
             // Funcionalidad de cancelar edición
             document.querySelectorAll('.btn-cancel').forEach(function (btn) {
                 btn.addEventListener('click', function () {
@@ -310,22 +331,6 @@
 
                     var deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
                     deleteConfirmModal.show();
-
-                    const togglePassword = (fieldId) => {
-                        const field = document.getElementById(fieldId);
-                        if (field.classList.contains('password-protected')) {
-                            field.classList.remove('password-protected');
-                        } else {
-                            field.classList.add('password-protected');
-                        }
-                    };
-
-                    document.querySelectorAll('.toggle-password').forEach(btn => {
-                        btn.addEventListener('click', function () {
-                            const fieldId = btn.getAttribute('data-toggle');
-                            togglePassword(fieldId);
-                        });
-                    });
 
                     document.getElementById('confirmDelete').onclick = function () {
                         fetch(`/feeds/deleteFeed/${feedId}`, {
