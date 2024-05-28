@@ -149,6 +149,9 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
         if (feed) {
             const storeHash = feed.store_hash;
             const accessToken = feed.x_auth_token;
+
+            console.log("Store Hash: ", storeHash)
+            console.log("Access Token: ", accessToken)
             
             // Agregar una demora de 15 segundos
             setTimeout(async () => {

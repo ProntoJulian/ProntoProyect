@@ -200,16 +200,10 @@
                                     {{#each modules}}
                                     <tr>
                                         <td>{{this.module_name}}</td>
-                                        <td>
-                                            <input type="radio" name="permissions_{{this.module_id}}" value="Full"
-                                                data-module-id="{{this.module_id}}" {{#ifCond this.access_type "Full"
-                                                }}checked{{/ifCond}}>
-                                        </td>
-                                        <td>
-                                            <input type="radio" name="permissions_{{this.module_id}}" value="Read Only"
-                                                data-module-id="{{this.module_id}}" {{#ifCond
-                                                this.access_type "Read Only" }}checked{{/ifCond}}>
-                                        </td>
+                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="Full"
+                                                data-module-id="{{this.module_id}}"></td>
+                                        <td><input type="radio" name="permissions_{{this.module_id}}" value="Read Only"
+                                                data-module-id="{{this.module_id}}"></td>
                                     </tr>
                                     {{/each}}
                                 </tbody>
@@ -217,11 +211,12 @@
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                     </form>
+
+
                 </div>
             </div>
         </div>
     </div>
-
 
     <!-- Modal de Confirmación de Eliminación -->
     <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
