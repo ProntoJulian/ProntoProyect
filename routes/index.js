@@ -55,63 +55,66 @@ appRouter.get("/app/companies", authenticateToken, superUsuarioPages,async funct
     res.render("pages/companies",{ companies: companies });
 });
 
-appRouter.get("/app/feeds", authenticateToken, superUsuarioPages,async function (req, res) {
-    const user = res.locals.user;
-    const moduleId = 8;
-    const roleModule = [await fetchOneFromTableMultiple('role_modules', ['role_id', 'module_id'], [user.role_id, moduleId])];
+appRouter.get("/app/feeds", authenticateToken, superUsuarioPages, async function (req, res) {
+    try {
+        const user = res.locals.user;
+        const moduleId = 8;
 
-    const feeds = await getByIdCompany("feeds",user.company_id);
-    const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
+        // Ejecutar consultas en paralelo
+        const [roleModule, feeds, role] = await Promise.all([
+            fetchOneFromTableMultiple('role_modules', ['role_id', 'module_id'], [user.role_id, moduleId]),
+            getByIdCompany("feeds", user.company_id),
+            fetchOneFromTable('roles', user.role_id, 'role_id')
+        ]);
 
-    let users;
-    let companies;
+        let usersPromise, companiesPromise;
 
-    if (role.role_name === "Superusuario") {
-        users = await fetchDataFromTable('users');
-        companies = await fetchDataFromTable('companies');
-    } else {
-        users = await getByIdCompany("users", user.company_id);
-        companies = [await fetchOneFromTable('companies', user.company_id, 'company_id')];
-    }
-    
-    // Formatear la fecha y obtener el nombre de la compañía
-    for (let feed of feeds) {
-        // Formatear la fecha
-        if (feed.last_update) {
-            const date = new Date(feed.last_update);
-            feed.last_update = date.toLocaleDateString();
+        if (role.role_name === "Superusuario") {
+            usersPromise = fetchDataFromTable('users');
+            companiesPromise = fetchDataFromTable('companies');
+        } else {
+            usersPromise = getByIdCompany("users", user.company_id);
+            companiesPromise = fetchOneFromTable('companies', user.company_id, 'company_id').then(company => [company]);
         }
 
-        if (feed.company_id) {
-            const company = companies.find(c => c.company_id === feed.company_id);
-            feed.company_name = company ? company.company_name : "Compañía no encontrada";
-        }
-        
-    }
+        // Ejecutar las consultas de users y companies en paralelo
+        const [users, companies] = await Promise.all([usersPromise, companiesPromise]);
 
-    res.render("pages/feeds", { feeds: feeds, companies:companies,roleModule:roleModule  });
+        // Formatear la fecha y obtener el nombre de la compañía
+        feeds.forEach(feed => {
+            if (feed.last_update) {
+                const date = new Date(feed.last_update);
+                feed.last_update = date.toLocaleDateString();
+            }
+
+            if (feed.company_id) {
+                const company = companies.find(c => c.company_id === feed.company_id);
+                feed.company_name = company ? company.company_name : "Compañía no encontrada";
+            }
+        });
+
+        res.render("pages/feeds", { feeds: feeds, companies: companies, roleModule: [roleModule] });
+    } catch (error) {
+        console.error("Error en la ruta /app/feeds:", error);
+        res.status(500).send("Error en el servidor");
+    }
 });
+
 
 
 appRouter.get("/app/roles", authenticateToken, superUsuarioPages, async function (req, res) {
     try {
-        //console.log("Request received for /app/roles");
-        
         const user = res.locals.user;
-        //console.log("User: ", user);
-        
-        const moduleId = 8; // Ajusta el módulo ID si es necesario
-        const roleModule = await fetchOneFromTableMultiple('role_modules', ['role_id', 'module_id'], [user.role_id, moduleId]);
-        //console.log("Role Module: ", roleModule);
+        const moduleId = 8;
 
-        const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
-        //console.log("Role: ", role);
-        
-        const company = await fetchOneFromTable('companies', user.company_id, 'company_id');
-        //console.log("Company: ", company);
-        
-        const modules = await fetchDataFromTable('modules');
-        //console.log("Modules: ", modules);
+        // Ejecutar consultas en paralelo
+        const [roleModule, role, company, modules, roleModules] = await Promise.all([
+            fetchOneFromTableMultiple('role_modules', ['role_id', 'module_id'], [user.role_id, moduleId]),
+            fetchOneFromTable('roles', user.role_id, 'role_id'),
+            fetchOneFromTable('companies', user.company_id, 'company_id'),
+            fetchDataFromTable('modules'),
+            fetchDataFromTable('role_modules')
+        ]);
 
         let roles;
         if (role.role_name === "Superusuario") {
@@ -120,12 +123,21 @@ appRouter.get("/app/roles", authenticateToken, superUsuarioPages, async function
             roles = await getByIdCompany("roles", user.company_id);
         }
 
-        for (let rol of roles) {
-            // Obtener el nombre de la compañía
+        // Mapear roles con el nombre de la compañía
+        roles = roles.map(rol => {
             if (rol.company_id) {
                 rol.company_name = company.company_name;
             }
-        }
+            // Agregar permisos a cada rol
+            rol.modules = modules.map(module => {
+                const roleModule = roleModules.find(rm => rm.role_id === rol.role_id && rm.module_id === module.module_id);
+                return {
+                    ...module,
+                    access_type: roleModule ? roleModule.access_type : null
+                };
+            });
+            return rol;
+        });
 
         res.render("pages/roles", { roles: roles, company: [company], modules: modules, roleModule: [roleModule] });
     } catch (error) {
@@ -133,6 +145,8 @@ appRouter.get("/app/roles", authenticateToken, superUsuarioPages, async function
         res.status(500).send("Error en el servidor");
     }
 });
+
+
 
 
 appRouter.get("/app/modules", authenticateToken, superUsuarioPages,async function (req, res) {
