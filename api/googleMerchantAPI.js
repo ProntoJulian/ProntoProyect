@@ -53,7 +53,7 @@ const merchantId = 5314272709;
  * facilitando la gestión y sincronización de productos en un entorno de comercio electrónico.
  */
 
-async function insertProductToGoogleMerchant(product) { 
+async function insertProductToGoogleMerchant(product) {
 
   try {
     const response = await content.products.insert({
@@ -215,7 +215,7 @@ async function getProductStatusByProductId(productId) {
 
 async function listAllProductStatuses() {
   let totalProducts = 0;
-  let nextPageToken = null ; // Inicializamos el nextPageToken como null
+  let nextPageToken = null; // Inicializamos el nextPageToken como null
   const maxResults = 250; // Máximo de resultados por página
 
   console.time("Duración del listado de productos"); // Inicia el temporizador
@@ -265,7 +265,19 @@ async function listAllProductStatuses() {
  * Esta función es esencial para obtener un recuento completo de todos los productos listados en Google Shopping, proporcionando una visión global del inventario disponible y ayudando en la gestión y análisis del mismo.
  */
 
-async function listAllProducts() { // Asegúrate de reemplazar este con tu Merchant ID real
+async function listAllProducts(client_email, private_key,merchantId) { 
+  const auth = new google.auth.JWT(
+    client_email,
+    null,
+    private_key,
+    scopes
+  );
+
+  const content = google.content({
+    version: "v2.1",
+    auth: auth, 
+  });
+
   let totalProducts = 0;
   let nextPageToken = null; // Inicializamos el nextPageToken como null
   const maxResults = 250; // Máximo de resultados por página
@@ -299,6 +311,7 @@ async function listAllProducts() { // Asegúrate de reemplazar este con tu Merch
     throw error;
   }
 }
+
 
 /**
  * Función asíncrona para buscar un producto específico en Google Merchant mediante su ID de BigCommerce.
