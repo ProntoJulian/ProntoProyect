@@ -244,7 +244,7 @@
                         <div class="mb-3">
                             <label for="private_key" class="form-label">Private Key</label>
                             <div class="input-group">
-                                <textarea class="form-control" id="private_key" rows="3"></textarea>
+                                <textarea class="form-control password-protected" id="private_key" rows="3"></textarea>
                                 <span class="input-group-text toggle-password" data-toggle="private_key">
                                     <i class="fas fa-eye"></i>
                                 </span>
@@ -311,6 +311,22 @@
                     var deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
                     deleteConfirmModal.show();
 
+                    const togglePassword = (fieldId) => {
+                        const field = document.getElementById(fieldId);
+                        if (field.classList.contains('password-protected')) {
+                            field.classList.remove('password-protected');
+                        } else {
+                            field.classList.add('password-protected');
+                        }
+                    };
+
+                    document.querySelectorAll('.toggle-password').forEach(btn => {
+                        btn.addEventListener('click', function () {
+                            const fieldId = btn.getAttribute('data-toggle');
+                            togglePassword(fieldId);
+                        });
+                    });
+
                     document.getElementById('confirmDelete').onclick = function () {
                         fetch(`/feeds/deleteFeed/${feedId}`, {
                             method: 'DELETE',
@@ -325,11 +341,12 @@
                                     row.remove();
                                 } else {
                                     alert("Error deleting feed: " + data.message);
+                                    window.location.reload();
                                 }
                             })
                             .catch(error => {
                                 console.error('Error:', error);
-                                alert("Error deleting feed");
+                                window.location.reload();
                             });
                         deleteConfirmModal.hide();
                     };
@@ -372,12 +389,12 @@
                             window.location.href = "/app/feeds";
                             window.location.reload();
                         } else {
-                            alert("Error creating feed: " + data.message);
+                            window.location.reload();
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert("Error creating feed");
+                        window.location.reload();
                     });
             });
 
