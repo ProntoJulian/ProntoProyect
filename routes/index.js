@@ -87,17 +87,19 @@ appRouter.get("/app/feeds", authenticateToken, superUsuarioPages,async function 
 });
 
 
-appRouter.get("/app/roles", authenticateToken,superUsuarioPages,async function (req, res) {
-    
+appRouter.get("/app/roles", authenticateToken, superUsuarioPages, async function (req, res) {
     const user = res.locals.user;
+    const moduleId = 9; // Ajusta el módulo ID si es necesario
+    const roleModule = await fetchOneFromTableMultiple('role_modules', ['role_id', 'module_id'], [user.role_id, moduleId]);
+
     const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
-    const company = await fetchOneFromTable('companies', user.company_id , 'company_id');
+    const company = await fetchOneFromTable('companies', user.company_id, 'company_id');
     const modules = await fetchDataFromTable('modules');
     
     let roles;
-    if(role.role_name == "Superusuario"){
+    if (role.role_name == "Superusuario") {
         roles = await fetchDataFromTable('roles');
-    }else{
+    } else {
         roles = await getByIdCompany("roles", user.company_id);
     }
 
@@ -106,11 +108,11 @@ appRouter.get("/app/roles", authenticateToken,superUsuarioPages,async function (
         if (rol.company_id) {
             rol.company_name = company.company_name;
         }
-
     }
 
-    res.render("pages/roles",{ roles: roles,company:[company ],modules:modules });
+    res.render("pages/roles", { roles: roles, company: [company], modules: modules, roleModule: [roleModule] });
 });
+
 
 appRouter.get("/app/modules", authenticateToken, superUsuarioPages,async function (req, res) {
     modules = await fetchDataFromTable('modules');

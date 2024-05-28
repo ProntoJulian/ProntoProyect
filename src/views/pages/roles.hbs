@@ -58,11 +58,13 @@
 
 <body>
     <div class="container mt-5">
+        {{#unless (eq roleModule.0.access_type "Read Only")}}
         <div class="action-buttons">
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">
                 <i class="fas fa-plus"></i> Crear
             </button>
         </div>
+        {{/unless}}
         <div class="card">
             <div class="card-header">
                 <h2><i class="fas fa-user-tag table-icon"></i> Lista de Roles</h2>
@@ -74,7 +76,9 @@
                             <th class="col-id"><i class="fas fa-id-badge table-icon"></i>ID Rol</th>
                             <th class="col-name"><i class="fas fa-user-tag table-icon"></i>Rol</th>
                             <th class="col-name"><i class="fas fa-user-tag table-icon"></i>Compañía</th>
+                            {{#unless (eq roleModule.0.access_type "Read Only")}}
                             <th class="text-center"><i class="fas fa-tools table-icon"></i>Acciones</th>
+                            {{/unless}}
                         </tr>
                     </thead>
                     <tbody>
@@ -83,6 +87,7 @@
                             <td>{{this.role_id}}</td>
                             <td>{{this.role_name}}</td>
                             <td>{{this.company_name}}</td>
+                            {{#unless (eq ../roleModule.0.access_type "Read Only")}}
                             <td class="text-center">
                                 <button class="btn btn-primary btn-edit" data-role-id="{{this.role_id}}"
                                     data-role-name="{{this.role_name}}" data-company-id="{{this.company_id}}"
@@ -94,6 +99,7 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
+                            {{/unless}}
                         </tr>
                         {{/each}}
                     </tbody>
@@ -101,6 +107,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Modal para Crear Rol -->
     <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
