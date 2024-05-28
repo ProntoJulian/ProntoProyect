@@ -88,28 +88,45 @@ appRouter.get("/app/feeds", authenticateToken, superUsuarioPages,async function 
 
 
 appRouter.get("/app/roles", authenticateToken, superUsuarioPages, async function (req, res) {
-    const user = res.locals.user;
-    const moduleId = 9; // Ajusta el módulo ID si es necesario
-    const roleModule = await fetchOneFromTableMultiple('role_modules', ['role_id', 'module_id'], [user.role_id, moduleId]);
-    const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
-    const company = await fetchOneFromTable('companies', user.company_id, 'company_id');
-    const modules = await fetchDataFromTable('modules');
-    
-    let roles;
-    if (role.role_name == "Superusuario") {
-        roles = await fetchDataFromTable('roles');
-    } else {
-        roles = await getByIdCompany("roles", user.company_id);
-    }
+    try {
+        //console.log("Request received for /app/roles");
+        
+        const user = res.locals.user;
+        //console.log("User: ", user);
+        
+        const moduleId = 8; // Ajusta el módulo ID si es necesario
+        const roleModule = await fetchOneFromTableMultiple('role_modules', ['role_id', 'module_id'], [user.role_id, moduleId]);
+        //console.log("Role Module: ", roleModule);
 
-    for (let rol of roles) {
-        // Obtener el nombre de la compañía
-        if (rol.company_id) {
-            rol.company_name = company.company_name;
+        const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
+        //console.log("Role: ", role);
+        
+        const company = await fetchOneFromTable('companies', user.company_id, 'company_id');
+        //console.log("Company: ", company);
+        
+        const modules = await fetchDataFromTable('modules');
+        //console.log("Modules: ", modules);
+
+        let roles;
+        if (role.role_name === "Superusuario") {
+            roles = await fetchDataFromTable('roles');
+        } else {
+            roles = await getByIdCompany("roles", user.company_id);
         }
-    }
 
-    res.render("pages/roles", { roles: roles, company: [company], modules: modules, roleModule: [roleModule] });
+        for (let rol of roles) {
+            // Obtener el nombre de la compañía
+            if (rol.company_id) {
+                rol.company_name = company.company_name;
+            }
+        }
+
+        console.log("Roles: ", roles);
+        res.render("pages/roles", { roles: roles, company: [company], modules: modules, roleModule: [roleModule] });
+    } catch (error) {
+        console.error("Error en la ruta /app/roles:", error);
+        res.status(500).send("Error en el servidor");
+    }
 });
 
 
