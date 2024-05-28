@@ -32,17 +32,23 @@ appRouter.get("/app/logout", authenticateToken,superUsuarioPages, function (req,
   });
 });
 
-appRouter.get("/app", authenticateToken, superUsuarioPages,async (req, res, next) => {
-    const user = res.locals.user;
-    const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
-    
-    let permisos = [];
-    if (role.role_name == "Superusuario") {
-        permisos = ['companies', 'modules']; // Array con los permisos que quieras manejar
-    }
+appRouter.get("/app", authenticateToken, superUsuarioPages, async (req, res, next) => {
+    try {
+        const user = res.locals.user;
+        const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
 
-    res.render("app", {permisos: permisos});
+        let permisos = [];
+        if (role.role_name == "Superusuario") {
+            permisos = ['companies', 'modules']; // Array con los permisos que quieras manejar
+        }
+
+        res.render("app", { permisos: permisos });
+    } catch (error) {
+        console.error("Error en la ruta /app:", error);
+        res.status(500).send("Error en el servidor");
+    }
 });
+
 
 appRouter.get("/app/companies", authenticateToken, superUsuarioPages,async function (req, res) {
     const companies = await fetchDataFromTable('companies');
