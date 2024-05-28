@@ -60,11 +60,13 @@
 
 <body>
     <div class="container mt-5">
+        {{#unless (eq roleModule.0.access_type "Read Only")}}
         <div class="action-buttons">
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">
                 <i class="fas fa-plus"></i> Create
             </button>
         </div>
+        {{/unless}}
         <div class="card">
             <div class="card-header">
                 <h2><i class="fas fa-rss table-icon"></i> Feed List</h2>
@@ -80,24 +82,35 @@
                             <th><i class="fas fa-box-open table-icon"></i>GM Products</th>
                             <th><i class="fas fa-box table-icon"></i>BC Products</th>
                             <th><i class="fas fa-clipboard-list table-icon"></i>Preorder Products</th>
+                            {{#unless (eq roleModule.0.access_type "Read Only")}}
                             <th class="text-center"><i class="fas fa-tools table-icon"></i>Actions</th>
+                            {{/unless}}
                         </tr>
                     </thead>
                     <tbody>
                         {{#each feeds}}
                         <tr>
-                            <td><span class="non-editable">{{this.feed_id}}</span><span class="editable">{{this.feed_id}}</span></td>
-                            <td><span class="non-editable">{{this.feed_name}}</span><input type="text" class="form-control editable" value="{{this.feed_name}}"></td>
-                            <td><span class="non-editable">{{this.formulas}}</span><input type="text" class="form-control editable" value="{{this.formulas}}"></td>
-                            <td><span class="non-editable">{{this.last_update}}</span><input type="text" class="form-control editable" value="{{this.last_update}}"></td>
-                            <td><span class="non-editable">{{this.active_products_gm}}</span><input type="text" class="form-control editable" value="{{this.active_products_gm}}"></td>
-                            <td><span class="non-editable">{{this.total_products_bc}}</span><input type="text" class="form-control editable" value="{{this.total_products_bc}}"></td>
-                            <td><span class="non-editable">{{this.preorder_products}}</span><input type="text" class="form-control editable" value="{{this.preorder_products}}"></td>
+                            <td><span class="non-editable">{{this.feed_id}}</span><span
+                                    class="editable">{{this.feed_id}}</span></td>
+                            <td><span class="non-editable">{{this.feed_name}}</span><input type="text"
+                                    class="form-control editable" value="{{this.feed_name}}"></td>
+                            <td><span class="non-editable">{{this.formulas}}</span><input type="text"
+                                    class="form-control editable" value="{{this.formulas}}"></td>
+                            <td><span class="non-editable">{{this.last_update}}</span><input type="text"
+                                    class="form-control editable" value="{{this.last_update}}"></td>
+                            <td><span class="non-editable">{{this.active_products_gm}}</span><input type="text"
+                                    class="form-control editable" value="{{this.active_products_gm}}"></td>
+                            <td><span class="non-editable">{{this.total_products_bc}}</span><input type="text"
+                                    class="form-control editable" value="{{this.total_products_bc}}"></td>
+                            <td><span class="non-editable">{{this.preorder_products}}</span><input type="text"
+                                    class="form-control editable" value="{{this.preorder_products}}"></td>
+                            {{#unless (eq ../../roleModule.0.access_type "Read Only")}}
                             <td class="text-center">
                                 <button class="btn btn-primary btn-edit" title="Update" data-feed-id="{{this.feed_id}}">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-danger btn-delete" title="Delete" data-feed-id="{{this.feed_id}}">
+                                <button class="btn btn-danger btn-delete" title="Delete"
+                                    data-feed-id="{{this.feed_id}}">
                                     <i class="fas fa-trash"></i>
                                 </button>
                                 <button class="btn btn-success btn-save editable" title="Save">
@@ -106,10 +119,12 @@
                                 <button class="btn btn-secondary btn-cancel editable" title="Cancel">
                                     <i class="fas fa-times"></i>
                                 </button>
-                                <button class="btn btn-info btn-sync" title="Synchronize" data-feed-id="{{this.feed_id}}">
+                                <button class="btn btn-info btn-sync" title="Synchronize"
+                                    data-feed-id="{{this.feed_id}}">
                                     <i class="fas fa-sync-alt"></i>
                                 </button>
                             </td>
+                            {{/unless}}
                         </tr>
                         {{/each}}
                     </tbody>
@@ -117,6 +132,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Modal de Confirmación -->
     <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
@@ -138,7 +154,8 @@
     </div>
 
     <!-- Modal de Confirmación de Eliminación -->
-    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">

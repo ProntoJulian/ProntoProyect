@@ -50,6 +50,9 @@ appRouter.get("/app/companies", authenticateToken, superUsuarioPages,async funct
 
 appRouter.get("/app/feeds", authenticateToken, superUsuarioPages,async function (req, res) {
     const user = res.locals.user;
+    const moduleId = 8;
+    const roleModule = [await fetchOneFromTableMultiple('role_modules', ['role_id', 'module_id'], [user.role_id, moduleId])];
+
     const feeds = await getByIdCompany("feeds",user.company_id);
     const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
 
@@ -79,7 +82,7 @@ appRouter.get("/app/feeds", authenticateToken, superUsuarioPages,async function 
         
     }
 
-    res.render("pages/feeds", { feeds: feeds, companies:companies  });
+    res.render("pages/feeds", { feeds: feeds, companies:companies,roleModule:roleModule  });
 });
 
 

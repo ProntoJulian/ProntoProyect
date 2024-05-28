@@ -4,7 +4,8 @@ const {insertIntoTableMultiple,
     updateTableMultiple,
     fetchDataFromTable,
     deleteFromTableMultiple,
-    fetchOneFromTableMultiple} = require("../../databases/CRUD");
+    fetchOneFromTableMultiple,
+    fetchAllFromTableByRoleId} = require("../../databases/CRUD");
 
 const routerRoleModules = express.Router();
 
@@ -79,6 +80,21 @@ routerRoleModules.get("/roleModules/getRoleModule/:roleId/:moduleId", /*authenti
     const { roleId, moduleId } = req.params;
     try {
         const roleModule = await fetchOneFromTableMultiple('role_modules', ['role_id', 'module_id'], [roleId, moduleId]);
+        if (roleModule) {
+            res.status(200).json(roleModule);
+        } else {
+            res.status(404).json({ message: "Role-Module no encontrado" });
+        }
+    } catch (error) {
+        console.error('Error al obtener el Role-Module:', error);
+        res.status(500).json({ message: "Error al obtener el Role-Module" });
+    }
+});
+
+routerRoleModules.get("/roleModules/getRoleModuleByID/:roleId", /*authenticateToken,*/ async (req, res) => {
+    const { roleId } = req.params;
+    try {
+        const roleModule = await fetchAllFromTableByRoleId(roleId);
         if (roleModule) {
             res.status(200).json(roleModule);
         } else {

@@ -151,6 +151,17 @@ async function fetchOneFromTableMultiple(tableName, idColumns, ids) {
     }
 }
 
+async function fetchAllFromTableByRoleId(roleId) {
+    const sql = `SELECT * FROM \`role_modules\` WHERE \`role_id\` = ?`;
+    try {
+        const [results] = await pool.promise().query(sql, [roleId]);
+        return results;
+    } catch (error) {
+        console.error(`Error al obtener registros de role_modules con role_id = ${roleId}:`, error);
+        throw error;
+    }
+}
+
 
 
 module.exports = {
@@ -162,5 +173,6 @@ module.exports = {
     deleteFromTableMultiple,
     updateTableMultiple,
     insertIntoTableMultiple,
-    fetchOneFromTableMultiple
+    fetchOneFromTableMultiple,
+    fetchAllFromTableByRoleId
 };
