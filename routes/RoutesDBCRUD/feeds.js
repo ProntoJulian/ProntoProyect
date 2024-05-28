@@ -31,11 +31,11 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
         'client_secret', 
         'formulas', 
         'company_id',
+        'client_email', 
+        'private_key',
         'active_products_gm', 
         'total_products_bc', 
-        'preorder_products',
-        'client_email', 
-        'private_key'
+        'preorder_products'
     ]; // Ajusta según sea necesario
 
     feedData.active_products_gm = feedData.active_products_gm || 0;
