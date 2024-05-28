@@ -91,7 +91,6 @@ appRouter.get("/app/roles", authenticateToken, superUsuarioPages, async function
     const user = res.locals.user;
     const moduleId = 9; // Ajusta el módulo ID si es necesario
     const roleModule = await fetchOneFromTableMultiple('role_modules', ['role_id', 'module_id'], [user.role_id, moduleId]);
-
     const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
     const company = await fetchOneFromTable('companies', user.company_id, 'company_id');
     const modules = await fetchDataFromTable('modules');
