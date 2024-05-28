@@ -22,6 +22,9 @@ handlebars.registerHelper('ifCond', function (v1, v2, options) {
 });
 
 handlebars.registerHelper('eq', function (a, b) {
+  if (a === undefined || b === undefined) {
+      return false;
+  }
   return a === b;
 });
 
@@ -52,6 +55,11 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
 // Global Variables
 app.use((req, res, next) => {
