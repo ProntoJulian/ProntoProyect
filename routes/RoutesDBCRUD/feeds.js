@@ -7,7 +7,7 @@ const {insertIntoTable,
     deleteFromTable,
     fetchOneFromTable} = require("../../databases/CRUD");
 const {createWebhookToCreateProduct, createWebhookToUpdateProduct} = require("../../api/webHooksBigCommerceApi")
-const {listAllProducts} = require("../../api/googleMerchantAPI")
+const {getProductInfoGoogleMerchant} = require("../../api/googleMerchantAPI")
 const routerFeeds = express.Router();
 
 
