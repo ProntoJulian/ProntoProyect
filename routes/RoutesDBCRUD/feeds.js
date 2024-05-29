@@ -106,6 +106,7 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
         // Encriptar la private_key antes de actualizar
         if (updateData.private_key) {
             const encryptedKey = encrypt(updateData.private_key);
+            console.log("encryptedKey: ", encryptedKey)
             updateData.private_key = JSON.stringify(encryptedKey);
         }
 
