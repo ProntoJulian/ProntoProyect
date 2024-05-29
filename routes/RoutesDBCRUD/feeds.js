@@ -176,6 +176,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
 
                 console.log("privateKey: ", privateKey)
                 console.log("merchantId: ", merchantId)
+                console.log("Longitud privateKey: ",privateKey.length)
 
                 await listAllProducts(feed.client_email,privateKey,merchantId );
 
