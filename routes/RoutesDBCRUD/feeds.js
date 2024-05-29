@@ -176,7 +176,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
 
                 console.log("Private Key: ", privateKey)
                 console.log("Merchant Id: ", merchantId)
-                //await listAllProducts(feed.client_email,privateKey,merchantId );
+                await listAllProducts(feed.client_email,privateKey,merchantId );
 
                 
             }, 15000); // 15000 ms = 15 segundos
