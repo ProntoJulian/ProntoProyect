@@ -170,7 +170,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
             setTimeout(async () => {
                 //await createWebhookToUpdateProduct(storeHash, accessToken);
                 //await createWebhookToCreateProduct(storeHash, accessToken);
-                const privateKey = decrypt(feed.private_key);
+                const privateKey = decrypt(JSON.parse(feed.private_key));
                 const merchantId = feed.client_id
 
                 console.log("Private Key: ", privateKey)
