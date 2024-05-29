@@ -178,6 +178,10 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
                 const privateKey = feed.private_key //decrypt(JSON.parse(feed.private_key));
                 const merchantId = feed.client_id
 
+                console.log("Cliente Email: ", feed.client_email)
+                console.log("merchantId: ", merchantId)
+                console.log("privateKey: ", privateKey)
+
                 await getProductInfoGoogleMerchant(feed.client_email,privateKey,merchantId,"127-3804");
 
                 
