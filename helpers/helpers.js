@@ -114,7 +114,6 @@ function cleanPrivateKey(privateKey) {
 
 
 function encrypt(text) {
-  text = cleanPrivateKey(text);
   console.log('Texto a encriptar:', text);
   let cipher = crypto.createCipheriv(algorithm, key, iv);
   let encrypted = cipher.update(text, 'utf8', 'hex');
