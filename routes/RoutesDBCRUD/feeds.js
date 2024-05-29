@@ -174,11 +174,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
                 const privateKey = decrypt(JSON.parse(feed.private_key));
                 const merchantId = feed.client_id
 
-                console.log("privateKey: ", privateKey)
-                console.log("merchantId: ", merchantId)
-                console.log("Longitud privateKey: ",privateKey.length)
-
-                await listAllProducts(feed.client_email,privateKey,merchantId );
+                await getProductInfoGoogleMerchant(feed.client_email,privateKey,merchantId,"127-3804");
 
                 
             }, 15000); // 15000 ms = 15 segundos

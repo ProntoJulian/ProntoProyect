@@ -19,6 +19,7 @@ const credentials = {
 const { transformProduct } = require("../helpers/helpers");
 
 // Define los alcances de la API a los que tu cuenta de servicio necesita acceder
+/*
 const scopes = ["https://www.googleapis.com/auth/content"];
 
 // Crea un cliente de autenticación JWT utilizando las credenciales de la cuenta de servicio
@@ -35,6 +36,7 @@ const content = google.content({
 });
 
 const merchantId = 5314272709;
+*/
 
 /**
  * Función asíncrona para insertar un producto en Google Merchant mediante la API de Google Content.
@@ -266,7 +268,8 @@ async function listAllProductStatuses() {
  */
 
 async function listAllProducts(client_email, private_key, merchantId) {
-  
+  const { google } = require("googleapis");
+
   const auth = new google.auth.JWT(
     client_email,
     null,
@@ -441,7 +444,19 @@ async function updateGoogleMerchantProduct(googleProductId, bcProduct) {
  * Esta función es útil para obtener información actualizada y detallada de los productos listados en Google Merchant, permitiendo a los administradores y desarrolladores verificar la exactitud y la integridad de la información del producto en el inventario de Google Merchant.
  */
 
-async function getProductInfoGoogleMerchant(productId) { // Usa tu Merchant ID real aquí
+async function getProductInfoGoogleMerchant(client_email, private_key, merchantId, productId) { // Usa tu Merchant ID real aquí
+
+  const auth = new google.auth.JWT(
+    client_email,
+    null,
+    private_key,
+    ["https://www.googleapis.com/auth/content"]
+  );
+
+  const content = google.content({
+    version: "v2.1",
+    auth: auth,
+  });
 
   console.log("SKU recibido desde Info Google Merchant: ", productId)
 
