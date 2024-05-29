@@ -115,6 +115,7 @@ function encrypt(text) {
   return { iv: iv.toString('hex'), encryptedData: encrypted.toString('hex') };
 }
 
+
 function decrypt(text) {
   if (!text || !text.iv || !text.encryptedData) {
     throw new Error("Invalid encrypted data format");

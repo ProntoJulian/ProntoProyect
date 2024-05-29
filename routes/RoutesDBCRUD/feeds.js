@@ -46,6 +46,7 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
     try {
         // Encriptar la private_key antes de insertar
         const encryptedKey = encrypt(feedData.private_key);
+        console.log("Encrypted Key: ", encryptedKey); // Verificar el valor cifrado antes de almacenar
         feedData.private_key = JSON.stringify(encryptedKey);
 
         const result = await insertIntoTable('feeds', feedData, columns);
@@ -106,7 +107,7 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
         // Encriptar la private_key antes de actualizar
         if (updateData.private_key) {
             const encryptedKey = encrypt(updateData.private_key);
-            console.log("encryptedKey: ", encryptedKey)
+            console.log("Encrypted Key: ", encryptedKey); // Verificar el valor cifrado antes de almacenar
             updateData.private_key = JSON.stringify(encryptedKey);
         }
 
