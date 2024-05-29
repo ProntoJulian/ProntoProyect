@@ -401,6 +401,7 @@ async function findProductByBigCommerceId(bigCommerceId) { // Asegúrate de reem
  */
 
 async function updateGoogleMerchantProduct(googleProductId, bcProduct) {
+  
 
   console.log("Google Product Id: ", googleProductId);
 
@@ -445,11 +446,12 @@ async function updateGoogleMerchantProduct(googleProductId, bcProduct) {
  */
 
 async function getProductInfoGoogleMerchant(client_email, private_key, merchantId, productId) { // Usa tu Merchant ID real aquí
+  const { google } = require("googleapis");
 
   const auth = new google.auth.JWT(
     client_email,
     null,
-    private_key,
+    process.env.PRIVATE_KEY,
     ["https://www.googleapis.com/auth/content"]
   );
 

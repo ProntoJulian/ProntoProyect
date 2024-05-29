@@ -182,7 +182,9 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
                 console.log("merchantId: ", merchantId)
                 console.log("privateKey: ", privateKey)
 
-                await getProductInfoGoogleMerchant(feed.client_email,privateKey,merchantId,"127-3804");
+                const respuesta = await getProductInfoGoogleMerchant(feed.client_email,privateKey,merchantId,"127-3804");
+
+                console.log("Respuesta: ", respuesta);
 
                 
             }, 15000); // 15000 ms = 15 segundos
