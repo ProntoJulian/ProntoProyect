@@ -109,18 +109,25 @@ const key = crypto.randomBytes(32);
 const iv = crypto.randomBytes(16);
 
 function encrypt(text) {
+  console.log('Texto a encriptar:', text);
   let cipher = crypto.createCipheriv(algorithm, key, iv);
   let encrypted = cipher.update(text, 'utf8', 'hex');
   encrypted += cipher.final('hex');
+  console.log('Texto encriptado:', encrypted);
   return { iv: iv.toString('hex'), encryptedData: encrypted };
 }
 
 function decrypt(text) {
+  console.log('Texto a desencriptar:', text);
+  if (!text || !text.iv || !text.encryptedData) {
+    throw new Error("Invalid encrypted data format");
+  }
   let iv = Buffer.from(text.iv, 'hex');
   let encryptedText = Buffer.from(text.encryptedData, 'hex');
   let decipher = crypto.createDecipheriv(algorithm, key, iv);
   let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
   decrypted += decipher.final('utf8');
+  console.log('Texto desencriptado:', decrypted);
   return decrypted;
 }
 
