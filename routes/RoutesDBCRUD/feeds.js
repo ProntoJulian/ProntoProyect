@@ -45,9 +45,11 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
 
     try {
         // Encriptar la private_key antes de insertar
+        /*
         const encryptedKey = encrypt(feedData.private_key);
         console.log("Encrypted Key: ", encryptedKey); // Verificar el valor cifrado antes de almacenar
         feedData.private_key = JSON.stringify(encryptedKey);
+        */
 
         const result = await insertIntoTable('feeds', feedData, columns);
         if (result.affectedRows > 0) {
@@ -105,12 +107,14 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
 
     try {
         // Encriptar la private_key antes de actualizar
+        /*
         if (updateData.private_key) {
             const encryptedKey = encrypt(updateData.private_key);
             console.log("Encrypted Key: ", encryptedKey); // Verificar el valor cifrado antes de almacenar
             updateData.private_key = JSON.stringify(encryptedKey);
-        }
 
+        }
+*/
         const result = await updateTable('feeds', updateData, 'feed_id', feedId);
         console.log('Resultado de la consulta:', result); // Registro del resultado de la consulta
         if (result.affectedRows > 0) {
@@ -171,7 +175,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
             setTimeout(async () => {
                 //await createWebhookToUpdateProduct(storeHash, accessToken);
                 //await createWebhookToCreateProduct(storeHash, accessToken);
-                const privateKey = decrypt(JSON.parse(feed.private_key));
+                const privateKey = feed.private_key //decrypt(JSON.parse(feed.private_key));
                 const merchantId = feed.client_id
 
                 await getProductInfoGoogleMerchant(feed.client_email,privateKey,merchantId,"127-3804");
