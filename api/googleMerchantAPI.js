@@ -448,6 +448,8 @@ async function updateGoogleMerchantProduct(googleProductId, bcProduct) {
 async function getProductInfoGoogleMerchant(client_email, private_key, merchantId, productId) { // Usa tu Merchant ID real aquí
   const { google } = require("googleapis");
 
+  console.log("Private Key: ", process.env.PRIVATE_KEY)
+
   const auth = new google.auth.JWT(
     client_email,
     null,
