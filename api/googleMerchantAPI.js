@@ -265,24 +265,25 @@ async function listAllProductStatuses() {
  * Esta función es esencial para obtener un recuento completo de todos los productos listados en Google Shopping, proporcionando una visión global del inventario disponible y ayudando en la gestión y análisis del mismo.
  */
 
-async function listAllProducts(client_email, private_key,merchantId) { 
+async function listAllProducts(client_email, private_key, merchantId) {
+  
   const auth = new google.auth.JWT(
     client_email,
     null,
     private_key,
-    scopes
+    ["https://www.googleapis.com/auth/content"]
   );
 
   const content = google.content({
     version: "v2.1",
-    auth: auth, 
+    auth: auth,
   });
 
   let totalProducts = 0;
-  let nextPageToken = null; // Inicializamos el nextPageToken como null
-  const maxResults = 250; // Máximo de resultados por página
+  let nextPageToken = null;
+  const maxResults = 250;
 
-  console.time("Duración del listado de productos"); // Inicia el temporizador
+  console.time("Duración del listado de productos");
 
   try {
     do {
@@ -291,26 +292,27 @@ async function listAllProducts(client_email, private_key,merchantId) {
         maxResults
       };
       if (nextPageToken) {
-        params.pageToken = nextPageToken; // Añade el pageToken solo si existe
+        params.pageToken = nextPageToken;
       }
 
       const response = await content.products.list(params);
 
       if (response.data.resources) {
-        totalProducts += response.data.resources.length; // Sumamos la cantidad de productos de esta página
-        nextPageToken = response.data.nextPageToken; // Actualizamos el nextPageToken con el nuevo valor
+        totalProducts += response.data.resources.length;
+        nextPageToken = response.data.nextPageToken;
       }
-    } while (nextPageToken); // Continúa mientras haya un nextPageToken
+    } while (nextPageToken);
 
     console.log("Total de productos listados: ", totalProducts);
-    console.timeEnd("Duración del listado de productos"); // Detiene el temporizador y muestra la duración
+    console.timeEnd("Duración del listado de productos");
     return totalProducts;
   } catch (error) {
     console.error("Error al listar todos los productos: ", error);
-    console.timeEnd("Duración del listado de productos"); // Asegúrate de detener el temporizador si hay un error
+    console.timeEnd("Duración del listado de productos");
     throw error;
   }
 }
+
 
 
 /**
