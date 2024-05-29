@@ -116,6 +116,9 @@ function encrypt(text) {
 }
 
 function decrypt(text) {
+  if (!text || !text.iv || !text.encryptedData) {
+    throw new Error("Invalid encrypted data format");
+  }
   let iv = Buffer.from(text.iv, 'hex');
   let encryptedText = Buffer.from(text.encryptedData, 'hex');
   let decipher = crypto.createDecipheriv(algorithm, Buffer.from(key), iv);
