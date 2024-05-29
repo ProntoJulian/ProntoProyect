@@ -171,9 +171,12 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
                 //await createWebhookToCreateProduct(storeHash, accessToken);
                 const privateKey = decrypt(feed.private_key);
                 const merchantId = feed.client_id
+
+                console.log("Private Key: ", privateKey)
+                console.log("Merchant Id: ", merchantId)
                 await listAllProducts(feed.client_email,privateKey,merchantId );
 
-                res.status(200).json(feed);
+                
             }, 15000); // 15000 ms = 15 segundos
         } else {
             res.status(404).json({ message: "Feed no encontrado" });
