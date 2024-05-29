@@ -108,7 +108,13 @@ const algorithm = 'aes-256-cbc';  // Puedes elegir otro algoritmo
 const key = crypto.randomBytes(32);
 const iv = crypto.randomBytes(16);
 
+function cleanPrivateKey(privateKey) {
+  return privateKey.replace(/\\n/g, '\n').trim();
+}
+
+
 function encrypt(text) {
+  text = cleanPrivateKey(text);
   console.log('Texto a encriptar:', text);
   let cipher = crypto.createCipheriv(algorithm, key, iv);
   let encrypted = cipher.update(text, 'utf8', 'hex');
