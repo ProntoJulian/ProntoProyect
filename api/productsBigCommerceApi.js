@@ -138,6 +138,7 @@ async function getAvailableProducts(startPage, endPage) {
 
 
 async function processPages(taskStartPage, taskEndPage) {
+  const baseUrl = `https://api.bigcommerce.com/stores/${storeHash}/v3/catalog/products`;
   let validProductIds = [];
   let count = 0;
   for (let page = taskStartPage; page <= taskEndPage; page++) {
@@ -341,14 +342,22 @@ async function manageDeleteProductsProcessing(totalPages, googleMerchantSKUs) {
 
 
 async function countPages() {
-  
   const baseUrl = `https://api.bigcommerce.com/stores/${storeHash}/v3/catalog/products`;
+
+  const options = {
+    method: "GET",
+    headers: {
+      "X-Auth-Token": accessToken,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  };
 
   console.time("countPagesConcurrently");
 
   // Inicialmente, haz una petición para obtener la primera página y determinar el total de páginas
   const initialUrl = `${baseUrl}?price:min=0.01&availability=available&page=1&limit=300`;
-  const initialResponse = await fetch(initialUrl, optionsGET);
+  const initialResponse = await fetch(initialUrl, options);
   const initialData = await initialResponse.json();
   const totalPages = initialData.meta.pagination.total_pages;
 
@@ -356,7 +365,7 @@ async function countPages() {
   let promises = [];
   for (let page = 1; page <= totalPages; page++) {
     const pageUrl = `${baseUrl}?price:min=0.01&availability=available&page=${page}&limit=300`;
-    promises.push(fetch(pageUrl, optionsGET).then((response) => response.json()));
+    promises.push(fetch(pageUrl, options).then((response) => response.json()));
   }
 
   // Esperamos a que todas las promesas se resuelvan

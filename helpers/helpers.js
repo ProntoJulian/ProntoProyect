@@ -2,9 +2,7 @@ const fetch = require('node-fetch');
 const crypto = require('crypto');
 
 async function transformProduct(bcProduct) {
-  const { getBrandNameById } = require("../api/brandsBigCommerceApi");
   const { getProductImages } = require("../api/imagesBigCommerceApi");
-  const { fetchCategoryNameById } = require("../api/categoriesBigCommerceApi");
 
   const {primerImagen, ImagenesRestantes} = await getProductImages(bcProduct.id);
 

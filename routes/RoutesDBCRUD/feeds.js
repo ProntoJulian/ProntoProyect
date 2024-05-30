@@ -169,31 +169,29 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
             const storeHash = feed.store_hash;
             const accessToken = feed.x_auth_token;
 
-            console.log("Store Hash: ", storeHash)
-            console.log("Access Token: ", accessToken)
-            
-            // Agregar una demora de 15 segundos
-            setTimeout(async () => {
-                //await createWebhookToUpdateProduct(storeHash, accessToken);
-                //await createWebhookToCreateProduct(storeHash, accessToken);
-                const privateKey = feed.private_key //decrypt(JSON.parse(feed.private_key));
-                const merchantId = feed.client_id
+            console.log("Store Hash: ", storeHash);
+            console.log("Access Token: ", accessToken);
 
-                //console.log("Cliente Email: ", feed.client_email)
-                //console.log("merchantId: ", merchantId)
-                //console.log("privateKey: ", privateKey)
-                getConfig(storeHash,accessToken)
-                initializeGoogleAuth(feed.client_email,privateKey, merchantId)
+            const privateKey = feed.private_key; // decrypt(JSON.parse(feed.private_key));
+            const merchantId = feed.client_id;
 
-                //const respuesta = await getProductInfoGoogleMerchant("125-6962");
-                const conteoPages= await countPages();
-                const conteoByTipo = await manageProductProcessing(conteoPages);  
+            // Inicializar configuraciones
+            getConfig(accessToken, storeHash);
+            initializeGoogleAuth(feed.client_email, privateKey, merchantId);
 
-                console.log("Respuesta: ", respuesta);
+            try {
+                // Esperar a que las funciones asincrónicas terminen
+                const conteoPages = await countPages();
+                const conteoByTipo = await manageProductProcessing(conteoPages);
 
-                
-            }, 15000); // 15000 ms = 15 segundos
-            res.status(404).json({ message: "Feed encontrado" });
+                console.log("Conteo: ", conteoPages);
+
+                // Enviar la respuesta después de que las operaciones hayan terminado
+                res.status(200).json({ message: "Feed sincronizado exitosamente", conteoPages, conteoByTipo });
+            } catch (error) {
+                console.error('Error durante la sincronización:', error);
+                res.status(500).json({ message: "Error durante la sincronización", error: error.message });
+            }
         } else {
             res.status(404).json({ message: "Feed no encontrado" });
         }
@@ -202,6 +200,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
         res.status(500).json({ message: "Error interno del servidor al intentar obtener el feed" });
     }
 });
+
 
 
 module.exports = routerFeeds;
