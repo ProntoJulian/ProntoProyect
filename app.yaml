@@ -2,12 +2,3 @@ runtime: nodejs
 env: flex
 beta_settings:
   cloud_sql_instances: sincere-stack-421919:us-central1:google-merchant-feed-manager
-
-
-# Configuración de DNS alternativo
-network:
-  instance_tag: my-app-tag
-  subnetwork_name: default
-  name_servers:
-    - 8.8.8.8
-    - 8.8.4.4
