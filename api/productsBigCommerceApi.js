@@ -155,7 +155,6 @@ async function processPages(taskStartPage, taskEndPage) {
       }
     }
   }
-  console.log("Conteo: ", count);
   return { validProductIds, count };
 }
 

@@ -77,7 +77,7 @@ function delay(time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-async function fetchWithRetry(url, options, retries = 3, backoff = 4000) { //800 bien hasta 6 1200 con 8 //1500 Para El 2
+async function fetchWithRetry(url, options, retries = 3, backoff = 5000) { //800 bien hasta 6 1200 con 8 //1500 Para El 2
     try {
         const response = await fetch(url, options);
         if (!response.ok && retries > 0) {

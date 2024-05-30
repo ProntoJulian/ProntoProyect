@@ -131,7 +131,8 @@ async function insertBatchProducts(products) {
       resource: batchRequest,
     });
     console.timeEnd("InsertProductBatchTime"); // Termina el temporizador y muestra el tiempo
-    console.log(response.data); // Ver la respuesta de la API
+    console.log("Se subieron los productos a Google Merchant"); // Ver la respuesta de la API
+    console.log("----------------------------------");
   } catch (error) {
     console.log("Hubo un error");
     console.timeEnd("InsertProductBatchTime"); // Asegúrate de detener el temporizador si hay un error
