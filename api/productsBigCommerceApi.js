@@ -268,7 +268,9 @@ async function manageProductProcessing(totalPages) {
   console.log(
     `Total valid products in manageProductProcessing: ${totalValidCount}`
   ); // Muestra el total de productos válidos procesados
+
   console.timeEnd("manageProductProcessing");
+  return totalValidCount;
 }
 
 /**
@@ -534,6 +536,53 @@ async function getProductCustomFields(productId) {
   }
 }
 
+
+async function countProductsByAvailability(availability) {
+  const baseUrl = `https://api.bigcommerce.com/stores/${storeHash}/v3/catalog/products`;
+  let totalCount = 0;
+  let page = 1;
+  let hasMorePages = true;
+
+  console.time(`countProductsByAvailability-${availability}`);
+
+  while (hasMorePages) {
+    let url = `${baseUrl}?availability=${availability}&page=${page}&limit=250`; // Asumiendo que 250 es el límite máximo soportado
+
+    try {
+      const response = await fetch(url, optionsGET);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const responseData = await response.json();
+      totalCount += responseData.data.length;
+
+      if (
+        !responseData.meta ||
+        !responseData.meta.pagination ||
+        responseData.meta.pagination.current_page >=
+          responseData.meta.pagination.total_pages
+      ) {
+        hasMorePages = false;
+      } else {
+        page++;
+      }
+    } catch (error) {
+      console.error(
+        `Error fetching products with availability ${availability}:`,
+        error
+      );
+      hasMorePages = false; // Detiene el bucle si hay un error
+    }
+  }
+
+  console.timeEnd(`countProductsByAvailability-${availability}`);
+  console.log(
+    `Total de productos con la disponibilidad '${availability}': ${totalCount}`
+  );
+
+  return totalCount;
+}
+
 module.exports = {
   fetchProductById,
   checkCustomField,
@@ -544,5 +593,6 @@ module.exports = {
   manageProductProcessing,
   getLimitedValidProducts,
   manageDeleteProductsProcessing,
-  getConfig
+  getConfig,
+  countProductsByAvailability
 };

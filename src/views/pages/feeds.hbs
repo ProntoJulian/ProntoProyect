@@ -407,7 +407,11 @@
             document.querySelectorAll('.btn-sync').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     var feedId = btn.getAttribute('data-feed-id');
-                    btn.disabled = true;
+
+                    // Desactivar todos los botones de sincronización
+                    document.querySelectorAll('.btn-sync').forEach(function (syncBtn) {
+                        syncBtn.disabled = true;
+                    });
 
                     fetch(`/feeds/synchronize/${feedId}`, {
                         method: 'GET',
@@ -419,8 +423,10 @@
                         .then(data => {
                             if (data.message) {
                                 alert(data.message);
+                                window.location.reload();
                             } else {
                                 alert("Feed synchronized successfully");
+                                window.location.reload();
                             }
                         })
                         .catch(error => {
@@ -428,10 +434,14 @@
                             alert("Error synchronizing feed");
                         })
                         .finally(() => {
-                            btn.disabled = false;
+                            // Volver a activar todos los botones de sincronización
+                            document.querySelectorAll('.btn-sync').forEach(function (syncBtn) {
+                                syncBtn.disabled = false;
+                            });
                         });
                 });
             });
+
 
             // Toggle password visibility
             document.querySelectorAll('.toggle-password').forEach(function (toggle) {

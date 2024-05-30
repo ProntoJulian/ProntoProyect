@@ -5,12 +5,12 @@ const { insertIntoTable,
     updateTable,
     fetchDataFromTable,
     deleteFromTable,
-    fetchOneFromTable } = require("../../databases/CRUD");
+    fetchOneFromTable,updateFeed } = require("../../databases/CRUD");
 const { createWebhookToCreateProduct, createWebhookToUpdateProduct } = require("../../api/webHooksBigCommerceApi")
-const { getProductInfoGoogleMerchant, initializeGoogleAuth } = require("../../api/googleMerchantAPI")
+const { getProductInfoGoogleMerchant, initializeGoogleAuth,listAllProducts } = require("../../api/googleMerchantAPI")
 const routerFeeds = express.Router();
 
-const { countPages, manageProductProcessing, getConfig } = require("../../api/productsBigCommerceApi")
+const { countPages,countProductsByAvailability, manageProductProcessing, getConfig } = require("../../api/productsBigCommerceApi")
 
 routerFeeds.get("/feeds/getFeeds", authenticateToken, async (req, res) => {
     try {
@@ -194,10 +194,20 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
 
                 console.log("Conteo: ", conteoPages);
 
-                // Puedes almacenar el resultado en una base de datos o log para seguimiento
-                // Por ejemplo:
-                // await storeSyncResult(feedId, conteoPages, conteoByTipo);
-                res.status(200).json({ message: "Sincronización iniciada" });
+                await createWebhookToCreateProduct(storeHash,accessToken);
+                await createWebhookToUpdateProduct(storeHash, accessToken);
+
+                const totalProducts = await listAllProducts();
+                const preorderProducts = await countProductsByAvailability("preorder");
+
+                const updateData = {
+                    total_products_bc: conteoByTipo,
+                    active_products_gm:totalProducts
+                };
+
+                await updateFeed(feedId, updateData)
+
+                res.status(200).json({ message: "Sincronización Finalizada" });
             } catch (error) {
                 console.error('Error durante la sincronización en segundo plano:', error);
                 // Manejo de errores adicional si es necesario

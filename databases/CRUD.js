@@ -163,6 +163,22 @@ async function fetchAllFromTableByRoleId(roleId) {
 }
 
 
+async function updateFeed(feedId, updateData) {
+    const lastUpdate = new Date(updateData.last_update);
+    const formattedLastUpdate = lastUpdate.toISOString().replace('T', ' ').substring(0, 19);
+    updateData.last_update = formattedLastUpdate;
+
+    try {
+        const result = await updateTable('feeds', updateData, 'feed_id', feedId);
+        console.log('Resultado de la consulta:', result); // Registro del resultado de la consulta
+        return result.affectedRows > 0 ? { success: true, message: "Feed actualizado con éxito" } : { success: false, message: "Feed no encontrado" };
+    } catch (error) {
+        console.error('Error al actualizar feed:', error);
+        throw new Error("Error al actualizar el feed");
+    }
+}
+
+
 
 module.exports = {
     insertIntoTable,
@@ -174,5 +190,6 @@ module.exports = {
     updateTableMultiple,
     insertIntoTableMultiple,
     fetchOneFromTableMultiple,
-    fetchAllFromTableByRoleId
+    fetchAllFromTableByRoleId,
+    updateFeed
 };
