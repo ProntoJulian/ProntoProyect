@@ -179,31 +179,36 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
             getConfig(accessToken, storeHash);
             initializeGoogleAuth(feed.client_email, privateKey, merchantId);
 
-            try {
-                // Esperar a que las funciones asincrónicas terminen
-                logMemoryUsage("Antes de countPages");
-                const conteoPages = await countPages();
-                logMemoryUsage("Después de countPages");
+            // Enviar respuesta inmediata
+            res.status(200).json({ message: "Feed sincronización iniciada, recibirá una notificación cuando se complete" });
 
-                const conteoByTipo = await manageProductProcessing(conteoPages);
-                logMemoryUsage("Después de manageProductProcessing");
+            // Ejecutar en segundo plano
+            (async () => {
+                try {
+                    logMemoryUsage("Antes de countPages");
+                    const conteoPages = await countPages();
+                    logMemoryUsage("Después de countPages");
 
-                console.log("Conteo: ", conteoPages);
+                    const conteoByTipo = await manageProductProcessing(conteoPages);
+                    logMemoryUsage("Después de manageProductProcessing");
 
-                // Enviar la respuesta después de que las operaciones hayan terminado
-                res.status(200).json({ message: "Feed sincronizado exitosamente", conteoPages, conteoByTipo });
-            } catch (error) {
-                console.error('Error durante la sincronización:', error);
-                res.status(500).json({ message: "Error durante la sincronización", error: error.message });
-            }
+                    console.log("Conteo: ", conteoPages);
+
+                    // Aquí puedes manejar la lógica adicional como enviar una notificación o actualizar la base de datos
+                } catch (error) {
+                    console.error('Error durante la sincronización en segundo plano:', error);
+                    // Manejar errores de segundo plano si es necesario, como notificar al administrador
+                }
+            })();
         } else {
             res.status(404).json({ message: "Feed no encontrado" });
         }
     } catch (error) {
         console.error('Error al obtener el feed:', error);
-        res.status(500).json({ message: "Error interno del servidor al intentar obtener el feed" });
+        res.status(500).json({ message: "Error interno del servidor al intentar obtener el feed", error: error.message });
     }
 });
+
 
 
 
