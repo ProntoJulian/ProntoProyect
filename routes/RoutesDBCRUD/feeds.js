@@ -185,9 +185,9 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
                 getConfig(storeHash,accessToken)
                 initializeGoogleAuth(feed.client_email,privateKey, merchantId)
 
-                const respuesta = await getProductInfoGoogleMerchant("125-6962");
-                //const conteoPages= await countPages();
-                //const conteoByTipo = await manageProductProcessing(conteoPages);  
+                //const respuesta = await getProductInfoGoogleMerchant("125-6962");
+                const conteoPages= await countPages();
+                const conteoByTipo = await manageProductProcessing(conteoPages);  
 
                 console.log("Respuesta: ", respuesta);
 
