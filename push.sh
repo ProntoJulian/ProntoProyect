@@ -19,7 +19,7 @@ git add .
 # Hace el commit con el mensaje proporcionado
 git commit -m "$commit_message"
 
-git pull origin main
+git pull origin main --no-rebase
 
 # Empuja los cambios a la rama main
 git push origin main
