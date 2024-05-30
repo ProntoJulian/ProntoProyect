@@ -7,9 +7,10 @@ const {insertIntoTable,
     deleteFromTable,
     fetchOneFromTable} = require("../../databases/CRUD");
 const {createWebhookToCreateProduct, createWebhookToUpdateProduct} = require("../../api/webHooksBigCommerceApi")
-const {getProductInfoGoogleMerchant} = require("../../api/googleMerchantAPI")
+const {getProductInfoGoogleMerchant, initializeGoogleAuth} = require("../../api/googleMerchantAPI")
 const routerFeeds = express.Router();
 
+const {countPages,manageProductProcessing,getConfig} = require("../../api/productsBigCommerceApi")
 
 routerFeeds.get("/feeds/getFeeds", authenticateToken, async (req, res) => {
     try {
@@ -107,13 +108,13 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
 
     try {
         // Encriptar la private_key antes de actualizar
+        /*
         if (updateData.private_key) {
             const encryptedKey = encrypt(updateData.private_key);
             console.log("Encrypted Key: ", encryptedKey); // Verificar el valor cifrado antes de almacenar
             updateData.private_key = JSON.stringify(encryptedKey);
-            
+
         }
-            /*
 */
         const result = await updateTable('feeds', updateData, 'feed_id', feedId);
         console.log('Resultado de la consulta:', result); // Registro del resultado de la consulta
@@ -175,14 +176,18 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
             setTimeout(async () => {
                 //await createWebhookToUpdateProduct(storeHash, accessToken);
                 //await createWebhookToCreateProduct(storeHash, accessToken);
-                const privateKey = decrypt(JSON.parse(feed.private_key));
+                const privateKey = feed.private_key //decrypt(JSON.parse(feed.private_key));
                 const merchantId = feed.client_id
 
                 //console.log("Cliente Email: ", feed.client_email)
                 //console.log("merchantId: ", merchantId)
                 //console.log("privateKey: ", privateKey)
+                getConfig(storeHash,accessToken)
+                initializeGoogleAuth(feed.client_email,privateKey, merchantId)
 
-                const respuesta = await getProductInfoGoogleMerchant(feed.client_email,privateKey,"125-6962");
+                const respuesta = await getProductInfoGoogleMerchant("125-6962");
+                //const conteoPages= await countPages();
+                //const conteoByTipo = await manageProductProcessing(conteoPages);  
 
                 console.log("Respuesta: ", respuesta);
 

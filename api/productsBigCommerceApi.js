@@ -5,17 +5,24 @@ const {
   fetchWithRetry,
 } = require("../helpers/helpers");
 
-const accessToken = process.env.ACCESS_TOKEN;
-const storeHash = process.env.STOREHASH;
+let accessToken; 
+let storeHash;
+let optionsGET;
 
-const optionsGET = {
-  method: "GET",
-  headers: {
-    "X-Auth-Token": accessToken,
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  },
-};
+function getConfig(accessToken1, storeHash1) {
+  accessToken = accessToken1;
+  storeHash = storeHash1;
+
+  optionsGET = {
+    method: "GET",
+    headers: {
+      "X-Auth-Token": accessToken,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  };
+
+}
 
 /**
  * Función asíncrona para recuperar los detalles de un producto específico por su ID desde la API de BigCommerce.
@@ -528,5 +535,6 @@ module.exports = {
   getAvailableProducts,
   manageProductProcessing,
   getLimitedValidProducts,
-  manageDeleteProductsProcessing
+  manageDeleteProductsProcessing,
+  getConfig
 };

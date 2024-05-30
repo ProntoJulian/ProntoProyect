@@ -20,6 +20,27 @@ const { transformProduct } = require("../helpers/helpers");
 
 // Define los alcances de la API a los que tu cuenta de servicio necesita acceder
 
+let auth;
+let content;
+let merchantId;
+
+function initializeGoogleAuth(client_email, private_key, merchant_Id) {
+  merchantId = merchant_Id;
+
+  const formattedPrivateKeyFromDb = private_key.replace(/\\n/g, '\n');
+
+  auth = new google.auth.JWT(
+    client_email,
+    null,
+    formattedPrivateKeyFromDb,
+    ["https://www.googleapis.com/auth/content"]
+  );
+
+  content = google.content({
+    version: "v2.1",
+    auth: auth,
+  });
+}
 
 
 /**
@@ -75,6 +96,22 @@ async function insertProductToGoogleMerchant(product) {
 
 
 async function insertBatchProducts(products) {
+  const { google } = require("googleapis");
+
+  /*
+
+  const auth = new google.auth.JWT(
+    client_email,
+    null,
+    private_key,
+    ["https://www.googleapis.com/auth/content"]
+  );
+
+  const content = google.content({
+    version: "v2.1",
+    auth: auth,
+  });
+  */
 
   const batchRequest = { entries: [] };
 
@@ -123,7 +160,6 @@ async function insertBatchProducts(products) {
 
 
 async function deleteBatchProducts(productIds) {
-  const merchantId = 5314272709;
 
   const batchRequest = { entries: [] };
 
@@ -251,9 +287,10 @@ async function listAllProductStatuses() {
  * Esta función es esencial para obtener un recuento completo de todos los productos listados en Google Shopping, proporcionando una visión global del inventario disponible y ayudando en la gestión y análisis del mismo.
  */
 
-async function listAllProducts(client_email, private_key, merchantId) {
+async function listAllProducts(merchantId) {
   const { google } = require("googleapis");
 
+  /*
   const auth = new google.auth.JWT(
     client_email,
     null,
@@ -265,7 +302,7 @@ async function listAllProducts(client_email, private_key, merchantId) {
     version: "v2.1",
     auth: auth,
   });
-
+*/
   let totalProducts = 0;
   let nextPageToken = null;
   const maxResults = 250;
@@ -429,12 +466,10 @@ async function updateGoogleMerchantProduct(googleProductId, bcProduct) {
  * Esta función es útil para obtener información actualizada y detallada de los productos listados en Google Merchant, permitiendo a los administradores y desarrolladores verificar la exactitud y la integridad de la información del producto en el inventario de Google Merchant.
  */
 
-async function getProductInfoGoogleMerchant(client_email, private_key, productId) { // Usa tu Merchant ID real aquí
-
-  const formattedPrivateKeyFromDb = private_key.replace(/\\n/g, '\n');
+async function getProductInfoGoogleMerchant(productId) { // Usa tu Merchant ID real aquí
 
   const scopes = ["https://www.googleapis.com/auth/content"];
-
+/*
   // Crea un cliente de autenticación JWT utilizando las credenciales de la cuenta de servicio
   const auth = new google.auth.JWT(
     client_email,
@@ -449,7 +484,7 @@ async function getProductInfoGoogleMerchant(client_email, private_key, productId
   });
 
   const merchantId = 5314272709;
-
+*/
 
   console.log("SKU recibido desde Info Google Merchant: ", productId)
 
@@ -516,5 +551,6 @@ module.exports = {
   updateGoogleMerchantProduct,
   getProductInfoGoogleMerchant,
   deleteGoogleMerchantProduct,
-  deleteBatchProducts
+  deleteBatchProducts,
+  initializeGoogleAuth
 };
