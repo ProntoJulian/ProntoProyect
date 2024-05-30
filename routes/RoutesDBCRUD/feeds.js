@@ -202,7 +202,8 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
 
                 const updateData = {
                     total_products_bc: conteoByTipo,
-                    active_products_gm:totalProducts
+                    active_products_gm:totalProducts,
+                    preorder_products:preorderProducts
                 };
 
                 await updateFeed(feedId, updateData)
