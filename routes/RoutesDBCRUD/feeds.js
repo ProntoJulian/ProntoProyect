@@ -107,13 +107,13 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
 
     try {
         // Encriptar la private_key antes de actualizar
-        /*
         if (updateData.private_key) {
             const encryptedKey = encrypt(updateData.private_key);
             console.log("Encrypted Key: ", encryptedKey); // Verificar el valor cifrado antes de almacenar
             updateData.private_key = JSON.stringify(encryptedKey);
-
+            
         }
+            /*
 */
         const result = await updateTable('feeds', updateData, 'feed_id', feedId);
         console.log('Resultado de la consulta:', result); // Registro del resultado de la consulta
@@ -175,7 +175,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
             setTimeout(async () => {
                 //await createWebhookToUpdateProduct(storeHash, accessToken);
                 //await createWebhookToCreateProduct(storeHash, accessToken);
-                const privateKey = feed.private_key //decrypt(JSON.parse(feed.private_key));
+                const privateKey = decrypt(JSON.parse(feed.private_key));
                 const merchantId = feed.client_id
 
                 //console.log("Cliente Email: ", feed.client_email)

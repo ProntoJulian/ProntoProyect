@@ -114,6 +114,7 @@ function cleanPrivateKey(privateKey) {
 
 
 function encrypt(text) {
+  text = text.replace(/\\n/g, '\n');
   console.log('Texto a encriptar:', text);
   let cipher = crypto.createCipheriv(algorithm, key, iv);
   let encrypted = cipher.update(text, 'utf8', 'hex');
@@ -123,7 +124,6 @@ function encrypt(text) {
 }
 
 function decrypt(text) {
-  console.log('Texto a desencriptar:', text);
   if (!text || !text.iv || !text.encryptedData) {
     throw new Error("Invalid encrypted data format");
   }
