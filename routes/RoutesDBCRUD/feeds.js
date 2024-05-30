@@ -176,8 +176,8 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
             const merchantId = feed.client_id;
 
             // Inicializar configuraciones
-            getConfig(accessToken, storeHash);
-            initializeGoogleAuth(feed.client_email, privateKey, merchantId);
+            await getConfig(accessToken, storeHash);
+            await initializeGoogleAuth(feed.client_email, privateKey, merchantId);
 
             // Responder inmediatamente al cliente
             

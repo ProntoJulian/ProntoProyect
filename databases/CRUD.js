@@ -164,10 +164,6 @@ async function fetchAllFromTableByRoleId(roleId) {
 
 
 async function updateFeed(feedId, updateData) {
-    const lastUpdate = new Date(updateData.last_update);
-    const formattedLastUpdate = lastUpdate.toISOString().replace('T', ' ').substring(0, 19);
-    updateData.last_update = formattedLastUpdate;
-
     try {
         const result = await updateTable('feeds', updateData, 'feed_id', feedId);
         console.log('Resultado de la consulta:', result); // Registro del resultado de la consulta

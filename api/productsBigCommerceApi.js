@@ -9,7 +9,7 @@ let accessToken;
 let storeHash;
 let optionsGET;
 
-function getConfig(accessToken1, storeHash1) {
+async function getConfig(accessToken1, storeHash1) {
   accessToken = accessToken1;
   storeHash = storeHash1;
 

@@ -24,7 +24,7 @@ let auth;
 let content;
 let merchantId;
 
-function initializeGoogleAuth(client_email, private_key, merchant_Id) {
+async function initializeGoogleAuth(client_email, private_key, merchant_Id) {
   merchantId = merchant_Id;
 
   const formattedPrivateKeyFromDb = private_key.replace(/\\n/g, '\n');
