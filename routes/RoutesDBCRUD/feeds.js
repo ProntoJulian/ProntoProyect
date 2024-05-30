@@ -160,7 +160,7 @@ routerFeeds.get("/feeds/getFeed/:feedId", authenticateToken, async (req, res) =>
     }
 });
 
-routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res) => {
+routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
     const { feedId } = req.params;
     try {
         const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
@@ -178,16 +178,17 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
                 const privateKey = feed.private_key //decrypt(JSON.parse(feed.private_key));
                 const merchantId = feed.client_id
 
-                console.log("Cliente Email: ", feed.client_email)
-                console.log("merchantId: ", merchantId)
-                console.log("privateKey: ", privateKey)
+                //console.log("Cliente Email: ", feed.client_email)
+                //console.log("merchantId: ", merchantId)
+                //console.log("privateKey: ", privateKey)
 
-                const respuesta = await getProductInfoGoogleMerchant(feed.client_email,privateKey,merchantId,"127-3804");
+                const respuesta = await getProductInfoGoogleMerchant(feed.client_email,privateKey,"125-6962");
 
                 console.log("Respuesta: ", respuesta);
 
                 
             }, 15000); // 15000 ms = 15 segundos
+            res.status(404).json({ message: "Feed encontrado" });
         } else {
             res.status(404).json({ message: "Feed no encontrado" });
         }

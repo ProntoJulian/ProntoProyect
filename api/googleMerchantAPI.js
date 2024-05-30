@@ -19,24 +19,8 @@ const credentials = {
 const { transformProduct } = require("../helpers/helpers");
 
 // Define los alcances de la API a los que tu cuenta de servicio necesita acceder
-/*
-const scopes = ["https://www.googleapis.com/auth/content"];
 
-// Crea un cliente de autenticación JWT utilizando las credenciales de la cuenta de servicio
-const auth = new google.auth.JWT(
-  credentials.client_email,
-  null,
-  credentials.private_key,
-  scopes
-);
 
-const content = google.content({
-  version: "v2.1",
-  auth: auth, // Pasa el cliente de autenticación JWT aquí
-});
-
-const merchantId = 5314272709;
-*/
 
 /**
  * Función asíncrona para insertar un producto en Google Merchant mediante la API de Google Content.
@@ -401,7 +385,7 @@ async function findProductByBigCommerceId(bigCommerceId) { // Asegúrate de reem
  */
 
 async function updateGoogleMerchantProduct(googleProductId, bcProduct) {
-  
+
 
   console.log("Google Product Id: ", googleProductId);
 
@@ -445,24 +429,31 @@ async function updateGoogleMerchantProduct(googleProductId, bcProduct) {
  * Esta función es útil para obtener información actualizada y detallada de los productos listados en Google Merchant, permitiendo a los administradores y desarrolladores verificar la exactitud y la integridad de la información del producto en el inventario de Google Merchant.
  */
 
-async function getProductInfoGoogleMerchant(client_email, private_key, merchantId, productId) { // Usa tu Merchant ID real aquí
-  const { google } = require("googleapis");
+async function getProductInfoGoogleMerchant(client_email, private_key, productId) { // Usa tu Merchant ID real aquí
 
-  console.log("Private Key: ", process.env.PRIVATE_KEY)
+  const formattedPrivateKeyFromDb = private_key.replace(/\\n/g, '\n');
 
+  const scopes = ["https://www.googleapis.com/auth/content"];
+
+  // Crea un cliente de autenticación JWT utilizando las credenciales de la cuenta de servicio
   const auth = new google.auth.JWT(
     client_email,
     null,
-    process.env.PRIVATE_KEY,
-    ["https://www.googleapis.com/auth/content"]
+    formattedPrivateKeyFromDb,
+    scopes
   );
 
   const content = google.content({
     version: "v2.1",
-    auth: auth,
+    auth: auth, // Pasa el cliente de autenticación JWT aquí
   });
 
+  const merchantId = 5314272709;
+
+
   console.log("SKU recibido desde Info Google Merchant: ", productId)
+
+  console.time("Duración de la obtención del producto"); // Inicia el temporizador
 
   try {
     const response = await content.products.get({
@@ -470,9 +461,11 @@ async function getProductInfoGoogleMerchant(client_email, private_key, merchantI
       productId: `online:en:US:${productId}`, // Asegúrate de que el ID del producto esté formateado correctamente
     });
 
-    //console.log("Información del producto: ", response.data);
+    console.log("Información del producto: ", response.data);
+    console.timeEnd("Duración de la obtención del producto"); // Detiene el temporizador y muestra la duración
     return response.data;
   } catch (error) {
+    console.error("Error al obtener la información del producto: ", error);
     console.timeEnd("Duración de la obtención del producto"); // Detiene el temporizador si hay un error
     throw error;
   }
