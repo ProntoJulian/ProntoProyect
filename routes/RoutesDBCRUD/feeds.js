@@ -1,6 +1,6 @@
 const express = require("express");
 const {authenticateToken} = require("../../middleware/index");
-const {encrypt,decrypt} = require("../../helpers/helpers");
+const {encrypt,decrypt,logMemoryUsage} = require("../../helpers/helpers");
 const {insertIntoTable,
     updateTable,
     fetchDataFromTable,
@@ -181,8 +181,12 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
 
             try {
                 // Esperar a que las funciones asincrónicas terminen
+                logMemoryUsage("Antes de countPages");
                 const conteoPages = await countPages();
+                logMemoryUsage("Después de countPages");
+
                 const conteoByTipo = await manageProductProcessing(conteoPages);
+                logMemoryUsage("Después de manageProductProcessing");
 
                 console.log("Conteo: ", conteoPages);
 

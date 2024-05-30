@@ -77,7 +77,7 @@ function delay(time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-async function fetchWithRetry(url, options, retries = 3, backoff = 500) { //800 bien hasta 6 1200 con 8 //1500 Para El 2
+async function fetchWithRetry(url, options, retries = 3, backoff = 800) { //800 bien hasta 6 1200 con 8 //1500 Para El 2
     try {
         const response = await fetch(url, options);
         if (!response.ok && retries > 0) {
@@ -134,7 +134,10 @@ function decrypt(text) {
   return decrypted;
 }
 
-
+function logMemoryUsage(label) {
+  const memoryUsage = process.memoryUsage();
+  console.log(`${label} - Memory Usage: RSS: ${memoryUsage.rss / 1024 / 1024} MB, Heap Total: ${memoryUsage.heapTotal / 1024 / 1024} MB, Heap Used: ${memoryUsage.heapUsed / 1024 / 1024} MB, External: ${memoryUsage.external / 1024 / 1024} MB`);
+}
 
 
 
@@ -147,5 +150,6 @@ module.exports = {
   fetchWithRetry,
   generateHash,
   encrypt,
-  decrypt
+  decrypt,
+  logMemoryUsage
 };
