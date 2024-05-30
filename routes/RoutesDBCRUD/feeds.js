@@ -179,11 +179,11 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
             getConfig(accessToken, storeHash);
             initializeGoogleAuth(feed.client_email, privateKey, merchantId);
 
-            // Enviar respuesta inmediata
-            res.status(200).json({ message: "Feed sincronización iniciada, recibirá una notificación cuando se complete" });
+            // Responder inmediatamente al cliente
+            res.status(200).json({ message: "Sincronización iniciada" });
 
-            // Ejecutar en segundo plano
-            (async () => {
+            // Ejecutar las operaciones asíncronas en segundo plano
+            setImmediate(async () => {
                 try {
                     logMemoryUsage("Antes de countPages");
                     const conteoPages = await countPages();
@@ -194,21 +194,23 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
 
                     console.log("Conteo: ", conteoPages);
 
-                    // Aquí puedes manejar la lógica adicional como enviar una notificación o actualizar la base de datos
+                    // Puedes almacenar el resultado en una base de datos o log para seguimiento
+                    // Por ejemplo:
+                    // await storeSyncResult(feedId, conteoPages, conteoByTipo);
                 } catch (error) {
                     console.error('Error durante la sincronización en segundo plano:', error);
-                    // Manejar errores de segundo plano si es necesario, como notificar al administrador
+                    // Manejo de errores adicional si es necesario
                 }
-            })();
+            });
+
         } else {
             res.status(404).json({ message: "Feed no encontrado" });
         }
     } catch (error) {
         console.error('Error al obtener el feed:', error);
-        res.status(500).json({ message: "Error interno del servidor al intentar obtener el feed", error: error.message });
+        res.status(500).json({ message: "Error interno del servidor al intentar obtener el feed" });
     }
 });
-
 
 
 
