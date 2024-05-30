@@ -212,7 +212,5 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
     }
 });
 
-
-
 module.exports = routerFeeds;
 
