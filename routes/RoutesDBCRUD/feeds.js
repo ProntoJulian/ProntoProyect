@@ -194,10 +194,10 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
 
                 console.log("Conteo: ", conteoPages);
 
-                await createWebhookToCreateProduct(storeHash,accessToken);
+                await createWebhookToCreateProduct(storeHash, accessToken);
                 await createWebhookToUpdateProduct(storeHash, accessToken);
 
-                const totalProducts = await listAllProducts();
+                const totalProducts = await listAllProducts(merchantId);
                 const preorderProducts = await countProductsByAvailability("preorder");
 
                 const updateData = {
