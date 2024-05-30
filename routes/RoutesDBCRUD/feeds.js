@@ -1,16 +1,16 @@
 const express = require("express");
-const {authenticateToken} = require("../../middleware/index");
-const {encrypt,decrypt,logMemoryUsage} = require("../../helpers/helpers");
-const {insertIntoTable,
+const { authenticateToken } = require("../../middleware/index");
+const { encrypt, decrypt, logMemoryUsage } = require("../../helpers/helpers");
+const { insertIntoTable,
     updateTable,
     fetchDataFromTable,
     deleteFromTable,
-    fetchOneFromTable} = require("../../databases/CRUD");
-const {createWebhookToCreateProduct, createWebhookToUpdateProduct} = require("../../api/webHooksBigCommerceApi")
-const {getProductInfoGoogleMerchant, initializeGoogleAuth} = require("../../api/googleMerchantAPI")
+    fetchOneFromTable } = require("../../databases/CRUD");
+const { createWebhookToCreateProduct, createWebhookToUpdateProduct } = require("../../api/webHooksBigCommerceApi")
+const { getProductInfoGoogleMerchant, initializeGoogleAuth } = require("../../api/googleMerchantAPI")
 const routerFeeds = express.Router();
 
-const {countPages,manageProductProcessing,getConfig} = require("../../api/productsBigCommerceApi")
+const { countPages, manageProductProcessing, getConfig } = require("../../api/productsBigCommerceApi")
 
 routerFeeds.get("/feeds/getFeeds", authenticateToken, async (req, res) => {
     try {
@@ -26,17 +26,17 @@ routerFeeds.get("/feeds/getFeeds", authenticateToken, async (req, res) => {
 routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
     const feedData = req.body;
     const columns = [
-        'feed_name', 
-        'store_hash', 
-        'x_auth_token', 
-        'client_id', 
-        'client_secret', 
-        'formulas', 
+        'feed_name',
+        'store_hash',
+        'x_auth_token',
+        'client_id',
+        'client_secret',
+        'formulas',
         'company_id',
-        'client_email', 
+        'client_email',
         'private_key',
-        'active_products_gm', 
-        'total_products_bc', 
+        'active_products_gm',
+        'total_products_bc',
         'preorder_products'
     ]; // Ajusta según sea necesario
 
@@ -75,7 +75,7 @@ routerFeeds.get("/feeds/updateFeed/:feedId", authenticateToken, async (req, res)
     try {
         const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
         if (feed) {
-            res.render("pages/editFeeds",{feed:[feed], companies:companies});
+            res.render("pages/editFeeds", { feed: [feed], companies: companies });
         } else {
             res.status(404).json({ message: "Feed no encontrado" });
         }
@@ -89,12 +89,12 @@ routerFeeds.get("/feeds/createFeed", authenticateToken, async (req, res) => {
 
     try {
         const companies = await fetchDataFromTable('companies');
-        res.render("pages/createFeed", {companies: companies });
+        res.render("pages/createFeed", { companies: companies });
     } catch (error) {
         console.error('Error al obtener compañías:', error);
         res.status(500).json({ message: "Error al obtener las compañías" });
     }
-    
+
 });
 
 routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => {
@@ -183,25 +183,24 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
             res.status(200).json({ message: "Sincronización iniciada" });
 
             // Ejecutar las operaciones asíncronas en segundo plano
-            setImmediate(async () => {
-                try {
-                    logMemoryUsage("Antes de countPages");
-                    const conteoPages = await countPages();
-                    logMemoryUsage("Después de countPages");
 
-                    const conteoByTipo = await manageProductProcessing(conteoPages);
-                    logMemoryUsage("Después de manageProductProcessing");
+            try {
+                logMemoryUsage("Antes de countPages");
+                const conteoPages = await countPages();
+                logMemoryUsage("Después de countPages");
 
-                    console.log("Conteo: ", conteoPages);
+                const conteoByTipo = await manageProductProcessing(conteoPages);
+                logMemoryUsage("Después de manageProductProcessing");
 
-                    // Puedes almacenar el resultado en una base de datos o log para seguimiento
-                    // Por ejemplo:
-                    // await storeSyncResult(feedId, conteoPages, conteoByTipo);
-                } catch (error) {
-                    console.error('Error durante la sincronización en segundo plano:', error);
-                    // Manejo de errores adicional si es necesario
-                }
-            });
+                console.log("Conteo: ", conteoPages);
+
+                // Puedes almacenar el resultado en una base de datos o log para seguimiento
+                // Por ejemplo:
+                // await storeSyncResult(feedId, conteoPages, conteoByTipo);
+            } catch (error) {
+                console.error('Error durante la sincronización en segundo plano:', error);
+                // Manejo de errores adicional si es necesario
+            }
 
         } else {
             res.status(404).json({ message: "Feed no encontrado" });
