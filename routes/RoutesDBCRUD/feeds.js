@@ -105,6 +105,14 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
     const formattedLastUpdate = lastUpdate.toISOString().replace('T', ' ').substring(0, 19);
     updateData.last_update = formattedLastUpdate;
 
+    const storeHash = feed.store_hash;
+    const accessToken = feed.x_auth_token;
+    const privateKey = feed.private_key;
+    const merchantId = feed.client_id;
+
+    await getConfig(accessToken, storeHash);
+    await initializeGoogleAuth(feed.client_email, privateKey, merchantId);
+
     try {
         
         const merchantId = feed.client_id;
