@@ -316,22 +316,6 @@
                 });
             });
 
-            const togglePassword = (fieldId) => {
-                const field = document.getElementById(fieldId);
-                if (field.classList.contains('password-protected')) {
-                    field.classList.remove('password-protected');
-                } else {
-                    field.classList.add('password-protected');
-                }
-            };
-
-            document.querySelectorAll('.toggle-password').forEach(function (toggle) {
-                toggle.addEventListener('click', function () {
-                    var fieldId = toggle.getAttribute('data-toggle');
-                    togglePassword(fieldId);
-                });
-            });
-
 
             // Funcionalidad de cancelar edición
             document.querySelectorAll('.btn-cancel').forEach(function (btn) {
