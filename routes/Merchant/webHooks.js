@@ -111,8 +111,9 @@ routerWebHooks.post("/createdProduct/:feedID", async (req, res) => {
     const merchantId = feed.client_id;
 
     await getConfig(accessToken, storeHash);
+    
     await initializeGoogleAuth(feed.client_email, privateKey, merchantId);
-    /s
+
     try {
         const productData = req.body;
         const idProduct = productData.data.id;
