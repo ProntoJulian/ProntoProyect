@@ -50,6 +50,8 @@ routerWebHooks.post("/updatedProduct/:feedID", async (req, res) => {
     const privateKey = feed.private_key;
     const merchantId = feed.client_id;
 
+    console.log("Store Hash: ", storeHash)
+
     await getConfig(accessToken, storeHash);
     await initializeGoogleAuth(feed.client_email, privateKey, merchantId);
 

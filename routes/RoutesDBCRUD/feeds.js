@@ -188,7 +188,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
             await initializeGoogleAuth(feed.client_email, privateKey, merchantId);
 
             // Responder inmediatamente al cliente
-            //res.status(200).json({ message: "Sincronización iniciada" });
+            
 
             // Ejecutar las operaciones asíncronas en segundo plano
             setImmediate(async () => {
@@ -217,6 +217,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
                     await updateFeed(feedId, updateData);
 
                     console.log('Sincronización completada y feed actualizado');
+                    res.status(200).json({ message: "Sincronización completada y feed actualizado" });
                 } catch (error) {
                     console.error('Error durante la sincronización en segundo plano:', error);
                     // Manejo de errores adicional si es necesario
