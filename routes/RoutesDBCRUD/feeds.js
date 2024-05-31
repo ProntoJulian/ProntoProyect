@@ -198,8 +198,8 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
 
                     console.log("Conteo: ", conteoPages);
 
-                    await createWebhookToCreateProduct(storeHash, accessToken);
-                    await createWebhookToUpdateProduct(storeHash, accessToken);
+                    await createWebhookToCreateProduct(storeHash, accessToken,feedId);
+                    await createWebhookToUpdateProduct(storeHash, accessToken,feedId);
 
                     // Ejecutar las operaciones de conteo en paralelo
                     const [totalProductsGM, totalProductsBC, preorderProducts] = await Promise.all([

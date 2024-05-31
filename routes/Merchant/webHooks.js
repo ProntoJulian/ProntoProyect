@@ -1,16 +1,19 @@
 const express = require("express");
 const routerWebHooks = express.Router();
 
-const { fetchWebHooks, createWebhookToUpdateProduct, deleteWebhook, activateAllWebHooks} = require("../../api/webHooksBigCommerceApi");
+const { fetchWebHooks, createWebhookToUpdateProduct, deleteWebhook, activateAllWebHooks } = require("../../api/webHooksBigCommerceApi");
 const { findProductByBigCommerceId,
     getProductInfoGoogleMerchant,
     updateGoogleMerchantProduct,
     deleteGoogleMerchantProduct,
-    insertProductToGoogleMerchant } = require("../../api/googleMerchantAPI");
+    insertProductToGoogleMerchant,
+    initializeGoogleAuth } = require("../../api/googleMerchantAPI");
+
+const {fetchOneFromTable } = require("../../databases/CRUD");
 
 const { transformProduct } = require("../../helpers/helpers")
 
-const { fetchProductById, checkCustomField } = require("../../api/productsBigCommerceApi");
+const { fetchProductById, checkCustomField,getConfig } = require("../../api/productsBigCommerceApi");
 
 routerWebHooks.get("/webhooks/fetchWebHooks", async (req, res) => {
     res.send("Se ha hecho una consulta de las ordenes");
@@ -22,7 +25,7 @@ routerWebHooks.get("/webhooks/activateAllWebHooks", async (req, res) => {
     res.send("Se ha hecho una consulta de las ordenes");
     const totalWebHooks = await activateAllWebHooks();
     //console.log("WebHooks: ", totalWebHooks);
-  });
+});
 
 routerWebHooks.get("/webhooks/createWebhookToUpdateProduct", async (req, res) => {
     res.send("Se ha hecho una consulta de las ordenes");
@@ -36,7 +39,21 @@ routerWebHooks.get("/webhooks/createWebhookToDeleteProduct", async (req, res) =>
     const totalWebHooks = await createWebhookToDeleteProduct();
 })
 
-routerWebHooks.post("/updatedProduct", async (req, res) => {
+
+
+routerWebHooks.post("/updatedProduct/:feedID", async (req, res) => {
+    const { feedId } = req.params;
+    const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
+
+    const storeHash = feed.store_hash;
+    const accessToken = feed.x_auth_token;
+    const privateKey = feed.private_key;
+    const merchantId = feed.client_id;
+
+    await getConfig(accessToken, storeHash);
+    await initializeGoogleAuth(feed.client_email, privateKey, merchantId);
+
+
     console.clear();
     const productData = req.body;
     const productId = productData.data.id;
@@ -84,7 +101,18 @@ routerWebHooks.post("/updatedProduct", async (req, res) => {
 });
 
 
-routerWebHooks.post("/createdProduct", async (req, res) => {
+routerWebHooks.post("/createdProduct/:feedID", async (req, res) => {
+    const { feedId } = req.params;
+    const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
+
+    const storeHash = feed.store_hash;
+    const accessToken = feed.x_auth_token;
+    const privateKey = feed.private_key;
+    const merchantId = feed.client_id;
+
+    await getConfig(accessToken, storeHash);
+    await initializeGoogleAuth(feed.client_email, privateKey, merchantId);
+    /s
     try {
         const productData = req.body;
         const idProduct = productData.data.id;

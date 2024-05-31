@@ -150,7 +150,7 @@ async function createWebhook(scope, destination) {
  * La función asegura que cualquier error en la creación del webhook es registrado y muestra información detallada sobre el problema.
  */
 
-async function createWebhookToUpdateProduct(storeHashF, accessTokenF) {
+async function createWebhookToUpdateProduct(storeHashF, accessTokenF, feedID) {
   const urlPage = "https://pronto-proyect-4gzkueldfa-uc.a.run.app";
   const url = `https://api.bigcommerce.com/stores/${storeHashF}/v3/hooks`;
   const producer = `stores/${storeHashF}`;
@@ -172,7 +172,7 @@ async function createWebhookToUpdateProduct(storeHashF, accessTokenF) {
 
   const webhookPayload = {
     scope: "store/product/updated",
-    destination: `${urlPage}/updatedProduct`,
+    destination: `${urlPage}/updatedProduct/${feedID}`,
     is_active: true,
     headers: {},
     store_id: storeHashF,
@@ -310,7 +310,7 @@ async function createWebhookToDeleteProduct() {
 }
 
 
-async function createWebhookToCreateProduct(storeHashF,accessTokenF) {
+async function createWebhookToCreateProduct(storeHashF,accessTokenF,feedId) {
   const urlPage = "https://pronto-proyect-4gzkueldfa-uc.a.run.app";
   const url = `https://api.bigcommerce.com/stores/${storeHashF}/v3/hooks`;
   const producer = `stores/${storeHashF}`;
@@ -329,7 +329,7 @@ async function createWebhookToCreateProduct(storeHashF,accessTokenF) {
 
   const webhookPayload = {
     scope: "store/product/created",
-    destination: `${urlPage}/createdProduct`,
+    destination: `${urlPage}/createdProduct/${feedId}`,
     is_active: true,
     headers: {},
     store_id: storeHashF,
