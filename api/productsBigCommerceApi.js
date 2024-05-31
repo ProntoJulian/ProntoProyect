@@ -583,6 +583,48 @@ async function countProductsByAvailability(availability) {
   return totalCount;
 }
 
+
+async function countTotalProducts() {
+  const baseUrl = `https://api.bigcommerce.com/stores/${storeHash}/v3/catalog/products`;
+  let totalCount = 0;
+  let page = 1;
+  let hasMorePages = true;
+
+  console.time(`countTotalProducts`);
+
+  while (hasMorePages) {
+    let url = `${baseUrl}?page=${page}&limit=250`; // Asumiendo que 250 es el límite máximo soportado
+
+    try {
+      const response = await fetch(url, optionsGET);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const responseData = await response.json();
+      totalCount += responseData.data.length;
+
+      if (
+        !responseData.meta ||
+        !responseData.meta.pagination ||
+        responseData.meta.pagination.current_page >=
+          responseData.meta.pagination.total_pages
+      ) {
+        hasMorePages = false;
+      } else {
+        page++;
+      }
+    } catch (error) {
+      console.error(`Error fetching total products:`, error);
+      hasMorePages = false; // Detiene el bucle si hay un error
+    }
+  }
+
+  console.timeEnd(`countTotalProducts`);
+  console.log(`Total de productos: ${totalCount}`);
+
+  return totalCount;
+}
+
 module.exports = {
   fetchProductById,
   checkCustomField,
@@ -594,5 +636,6 @@ module.exports = {
   getLimitedValidProducts,
   manageDeleteProductsProcessing,
   getConfig,
-  countProductsByAvailability
+  countProductsByAvailability,
+  countTotalProducts
 };

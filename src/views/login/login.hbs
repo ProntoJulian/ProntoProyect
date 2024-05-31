@@ -17,7 +17,8 @@
 
         .form-control {
             border-radius: 10px;
-            padding-left: 40px; /* Espacio para el icono */
+            padding-left: 40px;
+            /* Espacio para el icono */
         }
 
         .btn-primary {
@@ -56,24 +57,25 @@
         <div class="row justify-content-center align-items-center vh-100">
             <div class="col-md-6 col-lg-4">
                 <div class="login-container">
-                    <h2 class="login-title">Iniciar Sesión</h2>
+                    <h2 class="login-title">Sign In</h2>
                     <form action="/login" method="POST">
                         <div class="mb-3 input-icon">
-                            <label for="username" class="form-label">Usuario</label>
+                            <label for="username" class="form-label">Username</label>
                             <i class="fas fa-user"></i>
                             <input type="text" name="username" class="form-control" autofocus id="username"
-                                aria-describedby="emailHelp" placeholder="Ingresa tu usuario">
+                                aria-describedby="emailHelp" placeholder="Enter your username">
                         </div>
                         <div class="mb-3 input-icon">
-                            <label for="password" class="form-label">Contraseña</label>
+                            <label for="password" class="form-label">Password</label>
                             <i class="fas fa-lock"></i>
                             <input type="password" name="password" class="form-control" id="password"
-                                placeholder="Contraseña">
+                                placeholder="Password">
                         </div>
                         <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-sign-in-alt"></i> Ingresar
+                            <i class="fas fa-sign-in-alt"></i> Sign In
                         </button>
                     </form>
+
                 </div>
             </div>
         </div>

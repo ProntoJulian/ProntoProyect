@@ -10,7 +10,7 @@ const { createWebhookToCreateProduct, createWebhookToUpdateProduct } = require("
 const { getProductInfoGoogleMerchant, initializeGoogleAuth,listAllProducts } = require("../../api/googleMerchantAPI")
 const routerFeeds = express.Router();
 
-const { countPages,countProductsByAvailability, manageProductProcessing, getConfig } = require("../../api/productsBigCommerceApi")
+const { countPages,countProductsByAvailability, manageProductProcessing, getConfig,countTotalProducts } = require("../../api/productsBigCommerceApi")
 
 routerFeeds.get("/feeds/getFeeds", authenticateToken, async (req, res) => {
     try {
@@ -102,21 +102,29 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
     console.log('Received feedId:', feedId); // Registro del feedId recibido
     const updateData = req.body;
 
+    const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
+
     const lastUpdate = new Date(updateData.last_update);
     const formattedLastUpdate = lastUpdate.toISOString().replace('T', ' ').substring(0, 19);
     updateData.last_update = formattedLastUpdate;
 
     try {
-        // Encriptar la private_key antes de actualizar
-        /*
-        if (updateData.private_key) {
-            const encryptedKey = encrypt(updateData.private_key);
-            console.log("Encrypted Key: ", encryptedKey); // Verificar el valor cifrado antes de almacenar
-            updateData.private_key = JSON.stringify(encryptedKey);
+        
+        const merchantId = feed.client_id;
+        
+        const [totalProductsGM, totalProductsBC, preorderProducts] = await Promise.all([
+            listAllProducts(merchantId),
+            countTotalProducts(),
+            countProductsByAvailability("preorder")
+        ]);
 
-        }
-*/
+        
+        updateData.total_products_bc = totalProductsBC;
+        updateData.active_products_gm = totalProductsGM;
+        updateData.preorder_products = preorderProducts;
+
         const result = await updateTable('feeds', updateData, 'feed_id', feedId);
+
         console.log('Resultado de la consulta:', result); // Registro del resultado de la consulta
         if (result.affectedRows > 0) {
             res.status(200).json({ message: "Feed actualizado con éxito" });
@@ -180,39 +188,40 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
             await initializeGoogleAuth(feed.client_email, privateKey, merchantId);
 
             // Responder inmediatamente al cliente
-            
+            res.status(200).json({ message: "Sincronización iniciada" });
 
             // Ejecutar las operaciones asíncronas en segundo plano
+            setImmediate(async () => {
+                try {
+                    const conteoPages = await countPages();
+                    const conteoByTipo = await manageProductProcessing(conteoPages);
 
-            try {
-                logMemoryUsage("Antes de countPages");
-                const conteoPages = await countPages();
-                logMemoryUsage("Después de countPages");
+                    console.log("Conteo: ", conteoPages);
 
-                const conteoByTipo = await manageProductProcessing(conteoPages);
-                logMemoryUsage("Después de manageProductProcessing");
+                    await createWebhookToCreateProduct(storeHash, accessToken);
+                    await createWebhookToUpdateProduct(storeHash, accessToken);
 
-                console.log("Conteo: ", conteoPages);
+                    // Ejecutar las operaciones de conteo en paralelo
+                    const [totalProductsGM, totalProductsBC, preorderProducts] = await Promise.all([
+                        listAllProducts(merchantId),
+                        countTotalProducts(),
+                        countProductsByAvailability("preorder")
+                    ]);
 
-                await createWebhookToCreateProduct(storeHash, accessToken);
-                await createWebhookToUpdateProduct(storeHash, accessToken);
+                    const updateData = {
+                        total_products_bc: totalProductsBC,
+                        active_products_gm: totalProductsGM,
+                        preorder_products: preorderProducts
+                    };
 
-                const totalProducts = await listAllProducts(merchantId);
-                const preorderProducts = await countProductsByAvailability("preorder");
+                    await updateFeed(feedId, updateData);
 
-                const updateData = {
-                    total_products_bc: conteoByTipo,
-                    active_products_gm:totalProducts,
-                    preorder_products:preorderProducts
-                };
-
-                await updateFeed(feedId, updateData)
-
-                res.status(200).json({ message: "Sincronización Finalizada" });
-            } catch (error) {
-                console.error('Error durante la sincronización en segundo plano:', error);
-                // Manejo de errores adicional si es necesario
-            }
+                    console.log('Sincronización completada y feed actualizado');
+                } catch (error) {
+                    console.error('Error durante la sincronización en segundo plano:', error);
+                    // Manejo de errores adicional si es necesario
+                }
+            });
 
         } else {
             res.status(404).json({ message: "Feed no encontrado" });
@@ -222,6 +231,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
         res.status(500).json({ message: "Error interno del servidor al intentar obtener el feed" });
     }
 });
+
 
 module.exports = routerFeeds;
 
