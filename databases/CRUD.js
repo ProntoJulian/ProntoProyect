@@ -4,35 +4,25 @@ const bcrypt = require('bcrypt');
 require('dotenv').config()
 
 const pool = mysql.createPool({
-  socketPath: `/cloudsql/${process.env.INSTANCE_CONNECTION_NAME}`,
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE
+    socketPath: `/cloudsql/${process.env.INSTANCE_CONNECTION_NAME}`,
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE
 });
 
 
 async function insertIntoTable(tableName, data, columns) {
-    const encryptionKey = 'your_encryption_key'; // Asegúrate de almacenar esta clave de manera segura
 
     let sql;
     let values;
 
-    if (tableName === 'feeds') {
-        // Modificar la consulta para usar AES_ENCRYPT en las columnas específicas
-        const encryptedColumns = ['store_hash', 'x_auth_token', 'client_id', 'client_secret', 'private_key'];
-        const placeholders = columns.map(column => {
-            return encryptedColumns.includes(column) ? `AES_ENCRYPT(?, '${encryptionKey}')` : '?';
-        }).join(', ');
 
-        sql = `INSERT INTO \`${tableName}\` (${columns.join(', ')}) VALUES (${placeholders})`;
-        values = columns.map(column => data[column]);
-    } else {
-        // Lógica normal sin encriptación para otras tablas
-        const placeholders = columns.map(() => '?').join(', ');
-        sql = `INSERT INTO \`${tableName}\` (${columns.join(', ')}) VALUES (${placeholders})`;
-        values = columns.map(column => data[column]);
-    }
+    // Lógica normal sin encriptación para otras tablas
+    const placeholders = columns.map(() => '?').join(', ');
+    sql = `INSERT INTO \`${tableName}\` (${columns.join(', ')}) VALUES (${placeholders})`;
+    values = columns.map(column => data[column]);
+
 
     try {
         const [result] = await pool.promise().query(sql, values);
