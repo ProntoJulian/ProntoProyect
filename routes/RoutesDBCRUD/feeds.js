@@ -44,13 +44,10 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
     feedData.total_products_bc = feedData.total_products_bc || 0;
     feedData.preorder_products = feedData.preorder_products || 0;
 
+    // Console.log para mostrar la información recibida
+    console.log('Feed Data Recibida:', feedData);
+
     try {
-        // Encriptar la private_key antes de insertar
-        /*
-        const encryptedKey = encrypt(feedData.private_key);
-        console.log("Encrypted Key: ", encryptedKey); // Verificar el valor cifrado antes de almacenar
-        feedData.private_key = JSON.stringify(encryptedKey);
-        */
 
         const result = await insertIntoTable('feeds', feedData, columns);
         if (result.affectedRows > 0) {

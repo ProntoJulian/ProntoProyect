@@ -260,6 +260,45 @@
                             </div>
                         </div>
 
+                        <!-- Nueva Sección para Repetir -->
+                        <div class="mb-3">
+                            <label class="form-label">Custom recurrence</label>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Repeat every</span>
+                                <input type="number" class="form-control" value="1">
+                                <select class="form-control">
+                                    <option value="hour">hour</option>
+                                    <option value="3_hours">3 hours</option>
+                                    <option value="6_hours">6 hours</option>
+                                    <option value="12_hours">12 hours</option>
+                                    <option value="24_hours">24 hours</option>
+                                </select>
+                            </div>
+                            <div class="btn-group" role="group" aria-label="Repeat on">
+                                <input type="checkbox" class="btn-check" id="monday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="monday">M</label>
+
+                                <input type="checkbox" class="btn-check" id="tuesday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="tuesday">T</label>
+
+                                <input type="checkbox" class="btn-check" id="wednesday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="wednesday">W</label>
+
+                                <input type="checkbox" class="btn-check" id="thursday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="thursday">T</label>
+
+                                <input type="checkbox" class="btn-check" id="friday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="friday">F</label>
+
+                                <input type="checkbox" class="btn-check" id="saturday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="saturday">S</label>
+
+                                <input type="checkbox" class="btn-check" id="sunday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="sunday">S</label>
+                            </div>
+                        </div>
+                        <!-- Fin de la Nueva Sección -->
+
                         <div class="action-buttons">
                             <button type="button" class="btn btn-primary" id="createButton">Create</button>
                             <button type="button" class="btn btn-secondary" id="cancelButton">Cancel</button>
@@ -269,6 +308,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Modal de Sincronización -->
     <!-- Modal de Sincronización -->
@@ -368,6 +408,18 @@
 
             // Funcionalidad de crear nuevo feed
             document.getElementById('createButton').addEventListener('click', function () {
+                // Obtener los valores de los días seleccionados
+                const selectedDays = [];
+                ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].forEach(day => {
+                    if (document.getElementById(day).checked) {
+                        selectedDays.push(day);
+                    }
+                });
+
+                // Obtener el valor del intervalo de tiempo
+                const intervalValue = document.querySelector('.input-group input[type="number"]').value;
+                const intervalUnit = document.querySelector('.input-group select').value;
+
                 const feedData = {
                     feed_name: document.getElementById('feed_name').value,
                     store_hash: document.getElementById('store_hash').value,
@@ -378,14 +430,24 @@
                     company_id: document.getElementById('company_id').value,
                     client_email: document.getElementById('client_email').value,
                     private_key: document.getElementById('private_key').value,
+                    recurrence: {
+                        intervalValue: intervalValue,
+                        intervalUnit: intervalUnit,
+                        selectedDays: selectedDays
+                    }
                 };
 
-                // Verificar que ningún campo esté vacío
+                // Verificar que ningún campo esté vacío (incluyendo los nuevos campos de recurrencia)
                 for (let key in feedData) {
                     if (feedData[key] === "") {
                         alert(`The field ${key} cannot be empty`);
                         return;
                     }
+                }
+
+                if (feedData.recurrence.selectedDays.length === 0) {
+                    alert("Please select at least one day of the week");
+                    return;
                 }
 
                 fetch('/feeds/createFeed', {
@@ -400,16 +462,16 @@
                         if (data.message === "Feed created successfully") {
                             alert("Feed created successfully");
                             window.location.href = "/app/feeds";
-                            window.location.reload();
                         } else {
-                            window.location.reload();
+                            alert("Error creating feed");
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        window.location.reload();
+                        alert("Error creating feed");
                     });
             });
+
 
             // Funcionalidad de sincronización
             document.querySelectorAll('.btn-sync').forEach(function (btn) {
