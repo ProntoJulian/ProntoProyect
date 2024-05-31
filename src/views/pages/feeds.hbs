@@ -265,7 +265,6 @@
                             <label class="form-label">Custom recurrence</label>
                             <div class="input-group mb-3">
                                 <span class="input-group-text">Repeat every</span>
-                                <input type="number" class="form-control" value="1">
                                 <select class="form-control">
                                     <option value="hour">hour</option>
                                     <option value="3_hours">3 hours</option>
@@ -417,7 +416,6 @@
                 });
 
                 // Obtener el valor del intervalo de tiempo
-                const intervalValue = document.querySelector('.input-group input[type="number"]').value;
                 const intervalUnit = document.querySelector('.input-group select').value;
 
                 const feedData = {
@@ -431,7 +429,6 @@
                     client_email: document.getElementById('client_email').value,
                     private_key: document.getElementById('private_key').value,
                     recurrence: {
-                        intervalValue: intervalValue,
                         intervalUnit: intervalUnit,
                         selectedDays: selectedDays
                     }
