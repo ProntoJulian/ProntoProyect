@@ -61,42 +61,47 @@
         }
 
         .hourglass {
-            width: 40px;
-            height: 40px;
-            border: 5px solid #007BFF;
-            border-top-color: transparent;
-            border-radius: 50%;
             position: relative;
-            animation: spin 2s linear infinite;
+            width: 30px;
+            height: 60px;
+            background: linear-gradient(to bottom, #007BFF 45%, transparent 45%, transparent 55%, #007BFF 55%);
+            border: 3px solid #007BFF;
+            border-radius: 15px;
+            animation: sand 2s infinite linear;
+            margin: 0 auto;
         }
 
-        .hourglass::before,
-        .hourglass::after {
+        .hourglass:before,
+        .hourglass:after {
             content: '';
             position: absolute;
-            top: 50%;
             left: 50%;
+            transform: translateX(-50%);
             width: 0;
-            height: 0;
-            border: 10px solid transparent;
-            border-bottom-color: #007BFF;
-            transform: translate(-50%, -50%);
+            border: 15px solid transparent;
         }
 
-        .hourglass::after {
-            border-bottom-color: transparent;
-            border-top-color: #007BFF;
-            top: auto;
-            bottom: 50%;
+        .hourglass:before {
+            top: -30px;
+            border-bottom: 15px solid #007BFF;
         }
 
-        @keyframes spin {
+        .hourglass:after {
+            bottom: -30px;
+            border-top: 15px solid #007BFF;
+        }
+
+        @keyframes sand {
             0% {
-                transform: rotate(0deg);
+                background: linear-gradient(to bottom, #007BFF 45%, transparent 45%, transparent 55%, #007BFF 55%);
+            }
+
+            50% {
+                background: linear-gradient(to bottom, transparent 45%, #007BFF 45%, #007BFF 55%, transparent 55%);
             }
 
             100% {
-                transform: rotate(360deg);
+                background: linear-gradient(to bottom, #007BFF 45%, transparent 45%, transparent 55%, #007BFF 55%);
             }
         }
     </style>
