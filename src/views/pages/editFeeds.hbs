@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,19 +29,20 @@
         }
     </style>
 </head>
+
 <body>
     <div class="content">
         <div class="container mt-5">
             <div class="card">
                 <div class="card-header">
-                    <h2>Información del Feed</h2>
+                    <h2>Feed Information</h2>
                 </div>
                 <div class="card-body">
                     <form id="feedForm">
                         {{#each feed}}
                         <input type="hidden" id="feed_id" value="{{this.feed_id}}">
                         <div class="mb-3">
-                            <label for="feed_name" class="form-label">Nombre del Feed</label>
+                            <label for="feed_name" class="form-label">Feed Name</label>
                             <input type="text" class="form-control" id="feed_name" value="{{this.feed_name}}">
                         </div>
                         <div class="mb-3">
@@ -55,7 +57,8 @@
                         <div class="mb-3">
                             <label for="x_auth_token" class="form-label">x_auth_token</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="x_auth_token" value="{{this.x_auth_token}}">
+                                <input type="password" class="form-control" id="x_auth_token"
+                                    value="{{this.x_auth_token}}">
                                 <span class="input-group-text toggle-password" data-toggle="x_auth_token">
                                     <i class="fas fa-eye"></i>
                                 </span>
@@ -73,7 +76,8 @@
                         <div class="mb-3">
                             <label for="client_secret" class="form-label">Client Secret</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="client_secret" value="{{this.client_secret}}">
+                                <input type="password" class="form-control" id="client_secret"
+                                    value="{{this.client_secret}}">
                                 <span class="input-group-text toggle-password" data-toggle="client_secret">
                                     <i class="fas fa-eye"></i>
                                 </span>
@@ -86,7 +90,8 @@
                         <div class="mb-3">
                             <label for="private_key" class="form-label">Private Key</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="private_key" value="{{this.private_key}}">
+                                <input type="password" class="form-control" id="private_key"
+                                    value="{{this.private_key}}">
                             </div>
                         </div>
                         <div class="mb-3">
@@ -94,23 +99,27 @@
                             <input type="text" class="form-control" id="formulas" value="{{this.formulas}}">
                         </div>
                         <div class="mb-3">
-                            <label for="last_update" class="form-label">Última Actualización</label>
-                            <input type="text" class="form-control" id="last_update" value="{{this.last_update}}" disabled>
+                            <label for="last_update" class="form-label">Last Update</label>
+                            <input type="text" class="form-control" id="last_update" value="{{this.last_update}}"
+                                disabled>
                         </div>
                         <div class="mb-3">
-                            <label for="active_products_gm" class="form-label">Productos Activos GM</label>
-                            <input type="number" class="form-control" id="active_products_gm" disabled value="{{this.active_products_gm}}">
+                            <label for="active_products_gm" class="form-label">Active GM Products</label>
+                            <input type="number" class="form-control" id="active_products_gm" disabled
+                                value="{{this.active_products_gm}}">
                         </div>
                         <div class="mb-3">
-                            <label for="total_products_bc" class="form-label">Productos Totales BC</label>
-                            <input type="number" class="form-control" id="total_products_bc" disabled value="{{this.total_products_bc}}">
+                            <label for="total_products_bc" class="form-label">Total BC Products</label>
+                            <input type="number" class="form-control" id="total_products_bc" disabled
+                                value="{{this.total_products_bc}}">
                         </div>
                         <div class="mb-3">
-                            <label for="preorder_products" class="form-label">Productos en Preorden</label>
-                            <input type="number" class="form-control" id="preorder_products" disabled value="{{this.preorder_products}}">
+                            <label for="preorder_products" class="form-label">Preorder Products</label>
+                            <input type="number" class="form-control" id="preorder_products" disabled
+                                value="{{this.preorder_products}}">
                         </div>
                         <div class="mb-3">
-                            <label for="company_id" class="form-label">Compañía</label>
+                            <label for="company_id" class="form-label">Company</label>
                             <select class="form-control" id="company_id" disabled>
                                 {{#each ../companies}}
                                 <option value="{{this.company_id}}">{{this.company_name}}</option>
@@ -119,9 +128,10 @@
                         </div>
                         {{/each}}
                         <div class="action-buttons">
-                            <button type="button" class="btn btn-primary" id="updateButton">Actualizar</button>
-                            <button type="button" class="btn btn-secondary" id="cancelButton">Cancelar</button>
+                            <button type="button" class="btn btn-primary" id="updateButton">Update</button>
+                            <button type="button" class="btn btn-secondary" id="cancelButton">Cancel</button>
                         </div>
+
                     </form>
                 </div>
             </div>
@@ -178,21 +188,22 @@
                     },
                     body: JSON.stringify(feedData)
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message === "Feed actualizado con éxito") {
-                        alert("Feed actualizado con éxito");
-                        window.location.href = "/app/feeds";
-                    } else {
-                        alert("Error al actualizar el feed: " + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert("Error al actualizar el feed");
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === "Feed actualizado con éxito") {
+                            alert("Feed actualizado con éxito");
+                            window.location.href = "/app/feeds";
+                        } else {
+                            alert("Error al actualizar el feed: " + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Error al actualizar el feed");
+                    });
             });
         });
     </script>
 </body>
+
 </html>
