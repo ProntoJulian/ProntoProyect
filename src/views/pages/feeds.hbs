@@ -60,48 +60,23 @@
             -webkit-text-security: disc;
         }
 
-        .hourglass {
-            position: relative;
-            width: 30px;
-            height: 60px;
-            background: linear-gradient(to bottom, #007BFF 45%, transparent 45%, transparent 55%, #007BFF 55%);
-            border: 3px solid #007BFF;
-            border-radius: 15px;
-            animation: sand 2s infinite linear;
-            margin: 0 auto;
+        .hourglass-icon {
+            font-size: 48px;
+            color: #007BFF;
+            animation: rotateHourglass 5s infinite linear;
         }
 
-        .hourglass:before,
-        .hourglass:after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            border: 15px solid transparent;
-        }
-
-        .hourglass:before {
-            top: -30px;
-            border-bottom: 15px solid #007BFF;
-        }
-
-        .hourglass:after {
-            bottom: -30px;
-            border-top: 15px solid #007BFF;
-        }
-
-        @keyframes sand {
+        @keyframes rotateHourglass {
             0% {
-                background: linear-gradient(to bottom, #007BFF 45%, transparent 45%, transparent 55%, #007BFF 55%);
+                transform: rotate(0deg);
             }
 
             50% {
-                background: linear-gradient(to bottom, transparent 45%, #007BFF 45%, #007BFF 55%, transparent 55%);
+                transform: rotate(180deg);
             }
 
             100% {
-                background: linear-gradient(to bottom, #007BFF 45%, transparent 45%, transparent 55%, #007BFF 55%);
+                transform: rotate(360deg);
             }
         }
     </style>
@@ -311,20 +286,22 @@
     </div>
 
     <!-- Modal de Sincronización -->
-    <div class="modal fade" id="syncModal" tabindex="-1" aria-labelledby="syncModalLabel" aria-hidden="true">
+    <!-- Modal de Sincronización -->
+    <div class="modal fade" id="syncModal" tabindex="-1" aria-labelledby="syncModalLabel" aria-hidden="true"
+        data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="syncModalLabel">Synchronization in Progress</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <div class="hourglass"></div>
+                    <i class="fas fa-hourglass-half hourglass-icon"></i>
                     <p class="mt-3">The synchronization has started, please do not close the page.</p>
                 </div>
             </div>
         </div>
     </div>
+
 
 
     <!-- Bootstrap JS bundle with Popper -->
@@ -476,7 +453,10 @@
                     });
 
                     // Show synchronization modal
-                    var syncModal = new bootstrap.Modal(document.getElementById('syncModal'));
+                    var syncModal = new bootstrap.Modal(document.getElementById('syncModal'), {
+                        backdrop: 'static',
+                        keyboard: false
+                    });
                     syncModal.show();
 
                     fetch(`/feeds/synchronize/${feedId}`, {

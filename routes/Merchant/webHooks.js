@@ -50,9 +50,6 @@ routerWebHooks.post("/updatedProduct/:feedID", async (req, res) => {
     const privateKey = feed.private_key;
     const merchantId = feed.client_id;
 
-    console.log("Store Hash: ", storeHash)
-    console.log("Feed: ", feed)
-
     await getConfig(accessToken, storeHash);
     await initializeGoogleAuth(feed.client_email, privateKey, merchantId);
 
@@ -107,9 +104,6 @@ routerWebHooks.post("/updatedProduct/:feedID", async (req, res) => {
 routerWebHooks.post("/createdProduct/:feedID", async (req, res) => {
     const { feedID } = req.params;
     const feed = await fetchOneFromTable('feeds', feedID, 'feed_id');
-
-    console.log("Store Hash: ", storeHash)
-    console.log("Feed: ", feed)
 
     const storeHash = feed.store_hash;
     const accessToken = feed.x_auth_token;
