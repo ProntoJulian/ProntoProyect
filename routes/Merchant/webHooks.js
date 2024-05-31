@@ -105,6 +105,8 @@ routerWebHooks.post("/createdProduct/:feedID", async (req, res) => {
     const { feedID } = req.params;
     const feed = await fetchOneFromTable('feeds', feedID, 'feed_id');
 
+    console.log("Feed: ", feed)
+
     const storeHash = feed.store_hash;
     const accessToken = feed.x_auth_token;
     const privateKey = feed.private_key;
