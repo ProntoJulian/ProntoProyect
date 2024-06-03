@@ -84,6 +84,8 @@ routerFeeds.get("/feeds/updateFeed/:feedId", authenticateToken, async (req, res)
     const { feedId } = req.params;
     const updateData = req.body;
 
+
+
     try {
         const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
         if (feed) {
@@ -142,6 +144,13 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
         updateData.total_products_bc = totalProductsBC;
         updateData.active_products_gm = totalProductsGM;
         updateData.preorder_products = preorderProducts;
+        /*
+            Configuración temporal
+
+        */
+        updateData.selectedDays = "";
+        updateData.intervalHour = 1;
+        updateData.isActive = feedData.recurrence ? Boolean(feedData.recurrence.isActive) : false;
 
         const result = await updateTable('feeds', updateData, 'feed_id', feedId);
 
