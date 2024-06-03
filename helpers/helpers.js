@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const crypto = require('crypto');
+const cron = require('node-cron');
 
 async function transformProduct(bcProduct) {
   const { getProductImages } = require("../api/imagesBigCommerceApi");
@@ -8,7 +9,7 @@ async function transformProduct(bcProduct) {
   const {primerImagen, ImagenesRestantes} = await getProductImages(bcProduct.id);
 
   if (bcProduct.categories.length > 0) {
-    console.log("ID de la categoria: ", bcProduct.categories[0])
+    //console.log("ID de la categoria: ", bcProduct.categories[0])
     Category = await fetchCategoryNameById(bcProduct.categories[0]);
   }
   // Configura aquí las propiedades que son comunes entre BigCommerce y Google Merchant Center
@@ -182,7 +183,7 @@ function createCronJobs(selectedDays, intervalHour, isActive) {
 }
 
 
-function createSimpleCron() {
+async function createSimpleCron() {
   // Crear una tarea cron que se ejecuta cada 10 segundos
   const cronExpression = '*/10 * * * * *'; // cada 10 segundos
 

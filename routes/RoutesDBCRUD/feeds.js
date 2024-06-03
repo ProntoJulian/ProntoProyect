@@ -245,7 +245,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
                         preorder_products: preorderProducts
                     };
 
-                    createSimpleCron();
+                    await createSimpleCron();
 
                     await updateFeed(feedId, updateData);
 
