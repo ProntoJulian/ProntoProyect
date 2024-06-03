@@ -36,6 +36,9 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
         'company_id',
         'client_email',
         'private_key',
+        'selectedDays',
+        'intervalHour',
+        'isActive',
         'active_products_gm',
         'total_products_bc',
         'preorder_products'
@@ -45,12 +48,16 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
     feedData.total_products_bc = feedData.total_products_bc || 0;
     feedData.preorder_products = feedData.preorder_products || 0;
 
-    const intervalUnit = feedData.recurrence ? feedData.recurrence.intervalUnit : undefined;
-    const selectedDays = feedData.recurrence ? feedData.recurrence.selectedDays : undefined;
+    const intervalUnit = feedData.recurrence ? parseInt(feedData.recurrence.intervalUnit, 10) : undefined;
+    const selectedDaysArray = feedData.recurrence ? feedData.recurrence.selectedDays : undefined;
+    const selectedDays = selectedDaysArray ? selectedDaysArray.join(';') : undefined; // Convertir la lista en un string
 
     console.log("Datos: ----------------", intervalUnit, selectedDays);
 
-    
+    feedData.selectedDays = selectedDays;
+    feedData.intervalHour = intervalUnit;
+    feedData.isActive = feedData.recurrence ? feedData.recurrence.isActive : false;
+
     // Console.log para mostrar la información recibida
     console.log('Feed Data Recibida:', feedData);
     
