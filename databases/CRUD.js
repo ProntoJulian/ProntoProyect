@@ -24,6 +24,18 @@ async function insertIntoTable(tableName, data, columns) {
     values = columns.map(column => data[column]);
 
 
+    if (tableName === 'users' && data.password_hash && columns.includes('password_hash')) {
+        try {
+            // Encripta la contraseña antes de insertarla
+            const salt = await bcrypt.genSalt(10);
+            data.password_hash = await bcrypt.hash(data.password_hash, salt);
+        } catch (error) {
+            console.error('Error al encriptar la contraseña:', error);
+            throw error;
+        }
+    }
+
+
     try {
         const [result] = await pool.promise().query(sql, values);
         console.log(`Número de registros insertados en ${tableName}:`, result.affectedRows);
