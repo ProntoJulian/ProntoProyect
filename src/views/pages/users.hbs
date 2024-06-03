@@ -96,12 +96,12 @@
                             <td>{{this.company_name}}</td>
                             {{#unless (eq ../roleModule.0.access_type "Read Only")}}
                             <td class="text-center">
-                                <button class="btn btn-primary btn-edit" data-role-id="{{this.user_id}}"
+                                <button class="btn btn-primary btn-edit" data-user-id="{{this.user_id}}"
                                     data-role-name="{{this.username}}" data-company-id="{{this.company_id}}"
                                     data-company-name="{{this.company_name}}" title="Actualizar">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-danger btn-delete" data-role-id="{{this.user_id}}"
+                                <button class="btn btn-danger btn-delete" data-user-id="{{this.user_id}}"
                                     title="Eliminar">
                                     <i class="fas fa-trash"></i>
                                 </button>
