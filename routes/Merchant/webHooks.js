@@ -58,7 +58,6 @@ routerWebHooks.post("/updatedProduct/:feedID", async (req, res) => {
     const productData = req.body;
     const productId = productData.data.id;
 
-    console.log(`El producto recibido: ${JSON.stringify(productData, null, 2)}`);
     console.log(`ID del Producto: `, productId);
 
     // Obtener información del producto de BigCommerce.
@@ -128,7 +127,7 @@ routerWebHooks.post("/createdProduct/:feedID", async (req, res) => {
             const transformedProducto = await transformProduct(product);
             const response = await insertProductToGoogleMerchant(transformedProducto);
 
-            console.log("Producto insertado en Google Merchant con éxito: ", response);
+            console.log("Producto insertado en Google Merchant con éxito: ");
             res.status(200).send("Producto creado y sincronizado correctamente con Google Merchant.");
         }
 

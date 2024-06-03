@@ -67,10 +67,10 @@ async function insertProductToGoogleMerchant(product) {
       merchantId: merchantId,
       resource: product,
     });
-    console.log("Producto insertado: ", response.data);
+    console.log("Producto insertado");
     return response.data;
   } catch (error) {
-    console.error("Error al insertar producto: ", error);
+    console.error("Error al insertar producto: ");
     throw error; // Re-lanza el error para manejarlo más arriba si es necesario
   }
 }
@@ -442,7 +442,7 @@ async function updateGoogleMerchantProduct(googleProductId, bcProduct) {
       // Por ejemplo: updateMask: 'title,link'
     });
 
-    console.log("Producto actualizado con éxito:", response.data);
+    console.log("Producto actualizado con éxito:", response.data.id);
     return response.data;
   } catch (error) {
     console.error("Error al actualizar el producto:", error);
@@ -497,11 +497,11 @@ async function getProductInfoGoogleMerchant(productId) { // Usa tu Merchant ID r
       productId: `online:en:US:${productId}`, // Asegúrate de que el ID del producto esté formateado correctamente
     });
 
-    console.log("Información del producto: ", response.data);
+    console.log("Información del producto: ", response.data.id);
     console.timeEnd("Duración de la obtención del producto"); // Detiene el temporizador y muestra la duración
     return response.data;
   } catch (error) {
-    console.error("Error al obtener la información del producto: ", error);
+    console.error("Error al obtener la información del producto: ", productId);
     console.timeEnd("Duración de la obtención del producto"); // Detiene el temporizador si hay un error
     throw error;
   }
