@@ -141,6 +141,64 @@ function logMemoryUsage(label) {
 }
 
 
+function createCronJobs(selectedDays, intervalHour, isActive) {
+    if (!isActive) {
+        console.log("Cron is not active. Skipping cron creation.");
+        return;
+    }
+
+    // Mapping days of the week to cron format
+    const dayMap = {
+        'monday': '1',
+        'tuesday': '2',
+        'wednesday': '3',
+        'thursday': '4',
+        'friday': '5',
+        'saturday': '6',
+        'sunday': '0'
+    };
+
+    // Split the selectedDays string into an array
+    const daysArray = selectedDays.split(';').map(day => day.trim());
+
+    // Convert the array of days to a string format that cron can use
+    const cronDays = daysArray.map(day => dayMap[day.toLowerCase()]).join(',');
+
+    // Convert intervalHour to cron format
+    const cronExpression = `0 */${intervalHour} * * ${cronDays}`;
+
+    // Ensure no duplicate cron jobs are created
+    if (cron.validate(cronExpression)) {
+        cron.schedule(cronExpression, () => {
+            console.log(`Running cron job on days: ${selectedDays} every ${intervalHour} hour(s)`);
+            // Your cron job code here
+        });
+
+        console.log(`Cron job created with expression: ${cronExpression}`);
+    } else {
+        console.log(`Invalid cron expression: ${cronExpression}`);
+    }
+}
+
+
+function createSimpleCron() {
+  // Crear una tarea cron que se ejecuta cada 10 segundos
+  const cronExpression = '*/10 * * * * *'; // cada 10 segundos
+
+  // Validar y programar el cron
+  if (cron.validate(cronExpression)) {
+      cron.schedule(cronExpression, () => {
+          console.log('Cron job running every 10 seconds');
+          // Aquí puedes poner el código que deseas que se ejecute cada 10 segundos
+      });
+
+      console.log(`Cron job created with expression: ${cronExpression}`);
+  } else {
+      console.log(`Invalid cron expression: ${cronExpression}`);
+  }
+}
+
+
 
 // Usar fetchWithRetry en lugar de fetch directamente
 
@@ -152,5 +210,7 @@ module.exports = {
   generateHash,
   encrypt,
   decrypt,
-  logMemoryUsage
+  logMemoryUsage,
+  createCronJobs,
+  createSimpleCron
 };

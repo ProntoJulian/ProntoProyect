@@ -1,6 +1,6 @@
 const express = require("express");
 const { authenticateToken } = require("../../middleware/index");
-const { encrypt, decrypt, logMemoryUsage } = require("../../helpers/helpers");
+const { encrypt, decrypt, logMemoryUsage, createSimpleCron } = require("../../helpers/helpers");
 const { insertIntoTable,
     updateTable,
     fetchDataFromTable,
@@ -244,6 +244,8 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
                         active_products_gm: totalProductsGM,
                         preorder_products: preorderProducts
                     };
+
+                    createSimpleCron();
 
                     await updateFeed(feedId, updateData);
 
