@@ -30,7 +30,7 @@ async function insertIntoTable(tableName, data, columns) {
 
 
     try {
-        const [result] = await pool.promise().query(sql, data);
+        const [result] = await pool.promise().query(sql, Object.values(data));
         console.log(`Número de registros insertados en ${tableName}:`, result.affectedRows);
         return result;
     } catch (error) {
