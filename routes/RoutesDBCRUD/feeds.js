@@ -44,10 +44,10 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
     feedData.total_products_bc = feedData.total_products_bc || 0;
     feedData.preorder_products = feedData.preorder_products || 0;
 
-    const intervalUnit = feedData.recurrence.intervalUnit;
-    const selectedDays = feedData.recurrence.selectedDays;
+    const intervalUnit = feedData.recurrence ? feedData.recurrence.intervalUnit : undefined;
+    const selectedDays = feedData.recurrence ? feedData.recurrence.selectedDays : undefined;
 
-    console.log("Datos: ", intervalUnit, selectedDays);
+    console.log("Datos: ----------------", intervalUnit, selectedDays);
 
     delete feedData.recurrence;
 
@@ -58,7 +58,7 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
 
         const result = await insertIntoTable('feeds', feedData, columns);
         if (result.affectedRows > 0) {
-            res.status(201).json({ message: "Feed creado con éxito" });
+            res.status(201).json({ message: "Feed created successfully" });
         } else {
             res.status(400).json({ message: "No se pudo insertar el feed" });
         }
