@@ -30,7 +30,7 @@ async function fetchCategoryNameById(categoryId) {
         const categoryData = await response.json();
         return categoryData.data.name; // Retorna el nombre de la categoría
     } catch (error) {
-        console.error(`Error fetching category name for ID ${categoryId}:`, error);
+        console.error(`Error fetching category name for ID ${categoryId}:`);
         throw error; // O puedes optar por devolver un valor por defecto o manejar de otra manera
     }
 }
