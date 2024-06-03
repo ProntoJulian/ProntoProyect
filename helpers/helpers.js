@@ -3,12 +3,13 @@ const crypto = require('crypto');
 
 async function transformProduct(bcProduct) {
   const { getProductImages } = require("../api/imagesBigCommerceApi");
+  const {fetchCategoryNameById} = require("../api/")
 
   const {primerImagen, ImagenesRestantes} = await getProductImages(bcProduct.id);
 
- // if (bcProduct.categories.length > 0) {
-  //  googleProductCategory = await fetchCategoryNameById(bcProduct.categories[0]);
-  //}
+  if (bcProduct.categories.length > 0) {
+    googleProductCategory = await fetchCategoryNameById(bcProduct.categories[0]);
+  }
   // Configura aquí las propiedades que son comunes entre BigCommerce y Google Merchant Center
   const googleProductFormat = {
     offerId: bcProduct.sku,

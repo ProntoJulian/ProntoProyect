@@ -11,6 +11,7 @@ const { getProductInfoGoogleMerchant, initializeGoogleAuth,listAllProducts } = r
 const routerFeeds = express.Router();
 
 const { countPages,countProductsByAvailability, manageProductProcessing, getConfig,countTotalProducts } = require("../../api/productsBigCommerceApi")
+const {getConfigCategories} = require("../../api/categoriesBigCommerceApi");
 
 routerFeeds.get("/feeds/getFeeds", authenticateToken, async (req, res) => {
     try {
@@ -196,6 +197,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
 
             // Inicializar configuraciones
             await getConfig(accessToken, storeHash);
+            await getConfigCategories(accessToken,storeHash);
             await initializeGoogleAuth(feed.client_email, privateKey, merchantId);
 
             // Responder inmediatamente al cliente
