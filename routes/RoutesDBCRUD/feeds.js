@@ -30,7 +30,7 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
         'feed_name',
         'store_hash',
         'x_auth_token',
-        'client_id',|
+        'client_id',
         'formulas',
         'company_id',
         'client_email',
