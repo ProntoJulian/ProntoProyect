@@ -46,7 +46,8 @@ routerAuth.post('/login', (req, res, next) => {
 
         console.log("Info: ", req.body)
         if (!user) {
-            return res.redirect('/login', {
+            // Use res.render to render the login page with errors and input values
+            return res.render('login', {
                 errors: [{ text: info.message }],
                 username: req.body.username,
                 password: req.body.password
