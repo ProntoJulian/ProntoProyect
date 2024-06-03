@@ -162,6 +162,7 @@ appRouter.get("/app/users", authenticateToken, superUsuarioPages, async function
     const roleModule = await fetchOneFromTableMultiple('role_modules', ['role_id', 'module_id'], [user.role_id, moduleId]);
 
     const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
+    //const role = fetchOneFromTableMultiple('role_modules', ['role_id', 'module_id'], [user.role_id, moduleId]),
     
     let users;
     let companies;
@@ -175,6 +176,9 @@ appRouter.get("/app/users", authenticateToken, superUsuarioPages, async function
     }
 
     const roles = await fetchDataFromTable('roles');
+
+    console.log("Todos los roles: ", roles);
+    console.log("Todas la compañias: ",companies)
 
     for (let user of users) {
         // Obtener el nombre de la compañía
