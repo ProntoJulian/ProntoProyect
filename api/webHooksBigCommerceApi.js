@@ -40,7 +40,6 @@ async function fetchWebHooks() {
       throw new Error(`Error: ${response.status} ${response.statusText}`);
     }
     const json = await response.json();
-    console.log(json);
     return json; // Retorna el JSON con la lista de webhooks
   } catch (error) {
     console.error("Error fetching webhooks:", error);

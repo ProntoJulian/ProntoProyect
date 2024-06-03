@@ -6,7 +6,7 @@ const { insertIntoTable,
     fetchDataFromTable,
     deleteFromTable,
     fetchOneFromTable,updateFeed } = require("../../databases/CRUD");
-const { createWebhookToCreateProduct, createWebhookToUpdateProduct } = require("../../api/webHooksBigCommerceApi")
+const { createWebhookToCreateProduct, createWebhookToUpdateProduct,fetchWebHooks } = require("../../api/webHooksBigCommerceApi")
 const { getProductInfoGoogleMerchant, initializeGoogleAuth,listAllProducts } = require("../../api/googleMerchantAPI")
 const routerFeeds = express.Router();
 
@@ -211,8 +211,13 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
 
                     console.log("Conteo: ", conteoPages);
 
-                    await createWebhookToCreateProduct(storeHash, accessToken,feedId);
-                    await createWebhookToUpdateProduct(storeHash, accessToken,feedId);
+                    const WebHooks = await fetchWebHooks();
+
+                    if(WebHooks.data.length == 0){
+                        await createWebhookToCreateProduct(storeHash, accessToken,feedId);
+                        await createWebhookToUpdateProduct(storeHash, accessToken,feedId);
+                    }
+
 
                     // Ejecutar las operaciones de conteo en paralelo
                     const [totalProductsGM, totalProductsBC, preorderProducts] = await Promise.all([
@@ -231,7 +236,6 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
 
                     console.log('Sincronización completada y feed actualizado');
                     res.status(200).json({ message: "Sincronización completada y feed actualizado" });
-                    res.redirect("/app/feed");
                 } catch (error) {
                     console.error('Error durante la sincronización en segundo plano:', error);
                     // Manejo de errores adicional si es necesario

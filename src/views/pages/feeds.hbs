@@ -470,7 +470,6 @@
             });
 
 
-            // Funcionalidad de sincronización
             document.querySelectorAll('.btn-sync').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     var feedId = btn.getAttribute('data-feed-id');
@@ -480,7 +479,7 @@
                         syncBtn.disabled = true;
                     });
 
-                    // Show synchronization modal
+                    // Mostrar modal de sincronización
                     var syncModal = new bootstrap.Modal(document.getElementById('syncModal'), {
                         backdrop: 'static',
                         keyboard: false
@@ -493,19 +492,25 @@
                             'Content-Type': 'application/json'
                         }
                     })
-                        .then(response => response.json())
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error en la sincronización');
+                            }
+                            return response.json();
+                        })
                         .then(data => {
+                        
                             if (data.message) {
                                 alert(data.message);
-                                window.location.reload();
                             } else {
                                 alert("Feed synchronized successfully");
-                                window.location.reload();
                             }
+                            window.location.reload();
                         })
                         .catch(error => {
                             console.error('Error:', error);
                             alert("Error synchronizing feed");
+                            syncModal.hide(); // Cerrar el modal en caso de error
                         })
                         .finally(() => {
                             // Volver a activar todos los botones de sincronización
@@ -515,6 +520,7 @@
                         });
                 });
             });
+
 
 
             // Toggle password visibility
