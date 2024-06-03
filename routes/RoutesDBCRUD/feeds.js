@@ -200,9 +200,6 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
             await getConfigCategories(accessToken, storeHash);
             await initializeGoogleAuth(feed.client_email, privateKey, merchantId);
 
-            // Responder inmediatamente al cliente
-            res.status(200).json({ message: "Sincronización iniciada. Los detalles se registrarán en el log." });
-
             // Ejecutar las operaciones asíncronas en segundo plano
             setImmediate(async () => {
                 try {
@@ -233,10 +230,12 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
 
                     await updateFeed(feedId, updateData);
 
-                    console.log('Sincronización completada y feed actualizado');
+                    // Responder inmediatamente al cliente
+                    res.status(200).json({ message: "Sincronización completada y feed actualizado" });
                 } catch (error) {
                     console.error('Error durante la sincronización en segundo plano:', error);
                     // Manejo de errores adicional si es necesario
+                    res.status(500).json({ message: "Hubo un error en la sincronización, verifique los datos ingresados" });
                 }
             });
 
@@ -246,6 +245,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
     } catch (error) {
         console.error('Error al obtener el feed:', error);
         res.status(500).json({ message: "Error interno del servidor al intentar obtener el feed" });
+        
     }
 });
 
