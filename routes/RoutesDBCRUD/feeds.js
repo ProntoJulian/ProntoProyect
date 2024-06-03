@@ -150,7 +150,7 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
         */
         updateData.selectedDays = "";
         updateData.intervalHour = 1;
-        updateData.isActive = feedData.recurrence ? Boolean(feedData.recurrence.isActive) : false;
+        updateData.isActive = updateData.recurrence ? Boolean(updateData.recurrence.isActive) : false;
 
         const result = await updateTable('feeds', updateData, 'feed_id', feedId);
 
