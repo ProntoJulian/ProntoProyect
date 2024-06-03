@@ -183,14 +183,14 @@ function createCronJobs(selectedDays, intervalHour, isActive) {
 }
 
 
-async function createSimpleCron() {
-  // Crear una tarea cron que se ejecuta cada 10 segundos
+const createSimpleCron = async () => {
   const cronExpression = '*/10 * * * * *'; // cada 10 segundos
+  let executionCount = 0; // Variable para contar las ejecuciones
 
-  // Validar y programar el cron
   if (cron.validate(cronExpression)) {
       cron.schedule(cronExpression, () => {
-          console.log('Cron job running every 10 seconds');
+          executionCount++; // Incrementar el contador en cada ejecución
+          console.log(`Cron job running every 10 seconds. Execution count: ${executionCount}`);
           // Aquí puedes poner el código que deseas que se ejecute cada 10 segundos
       });
 
@@ -198,7 +198,7 @@ async function createSimpleCron() {
   } else {
       console.log(`Invalid cron expression: ${cronExpression}`);
   }
-}
+};
 
 
 
