@@ -228,11 +228,13 @@
                             window.location.href = "/app/feeds";
                         } else {
                             alert("Error al actualizar el feed: " + data.message);
+                            progressModal.hide();
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
                         alert("Error al actualizar el feed");
+                        progressModal.hide();
                     });
             });
         });
