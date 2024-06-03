@@ -235,7 +235,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
                 } catch (error) {
                     console.error('Error durante la sincronización en segundo plano:', error);
                     // Manejo de errores adicional si es necesario
-                    res.status(500).json({ message: "Hubo un error en la sincronización, verifique los datos ingresados" });
+                    res.status(404).json({ message: "Hubo un error en la sincronización, verifique los datos ingresados" });
                 }
             });
 
