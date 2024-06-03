@@ -3,12 +3,12 @@ const crypto = require('crypto');
 
 async function transformProduct(bcProduct) {
   const { getProductImages } = require("../api/imagesBigCommerceApi");
-  const {fetchCategoryNameById} = require("../api/")
+  const {fetchCategoryNameById} = require("../api/categoriesBigCommerceApi");
 
   const {primerImagen, ImagenesRestantes} = await getProductImages(bcProduct.id);
 
   if (bcProduct.categories.length > 0) {
-    googleProductCategory = await fetchCategoryNameById(bcProduct.categories[0]);
+    Category = await fetchCategoryNameById(bcProduct.categories[0]);
   }
   // Configura aquí las propiedades que son comunes entre BigCommerce y Google Merchant Center
   const googleProductFormat = {
@@ -32,7 +32,7 @@ async function transformProduct(bcProduct) {
     brand: "Home & Garden",
     gtin: bcProduct.upc,
     mpn: bcProduct.mpn,
-    productTypes: bcProduct.categories.map((catId) => `${catId}`),
+    productTypes: Category,
   };
 
   if(bcProduct.sale_price>0){
