@@ -2,6 +2,7 @@ const fetch = require('node-fetch');
 const crypto = require('crypto');
 const cron = require('node-cron');
 
+
 async function transformProduct(bcProduct) {
   const { getProductImages } = require("../api/imagesBigCommerceApi");
   const {fetchCategoryNameById} = require("../api/categoriesBigCommerceApi");
