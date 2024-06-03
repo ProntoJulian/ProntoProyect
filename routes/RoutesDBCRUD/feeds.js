@@ -30,8 +30,7 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
         'feed_name',
         'store_hash',
         'x_auth_token',
-        'client_id',
-        'client_secret',
+        'client_id',|
         'formulas',
         'company_id',
         'client_email',
@@ -44,9 +43,7 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
         'preorder_products'
     ]; // Ajusta según sea necesario
 
-    feedData.active_products_gm = feedData.active_products_gm || 0;
-    feedData.total_products_bc = feedData.total_products_bc || 0;
-    feedData.preorder_products = feedData.preorder_products || 0;
+
 
     const intervalUnit = feedData.recurrence ? parseInt(feedData.recurrence.intervalUnit, 10) : undefined;
     const selectedDaysArray = feedData.recurrence ? feedData.recurrence.selectedDays : undefined;
@@ -56,7 +53,11 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
 
     feedData.selectedDays = selectedDays;
     feedData.intervalHour = intervalUnit;
-    feedData.isActive = feedData.recurrence ? feedData.recurrence.isActive : false;
+    feedData.isActive = feedData.recurrence ? Boolean(feedData.recurrence.isActive) : false;
+
+    feedData.active_products_gm = feedData.active_products_gm || 0;
+    feedData.total_products_bc = feedData.total_products_bc || 0;
+    feedData.preorder_products = feedData.preorder_products || 0;
 
     // Console.log para mostrar la información recibida
     console.log('Feed Data Recibida:', feedData);
