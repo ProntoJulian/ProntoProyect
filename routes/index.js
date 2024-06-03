@@ -182,11 +182,6 @@ appRouter.get("/app/users", authenticateToken, superUsuarioPages, async function
 
     rolesCompany = roles.filter(r => r.company_id === user.company_id);
 
-    console.log("Roles de la Company: ", rolesCompany)
-
-    console.log("Todos los roles: ", rolesCompany);
-    console.log("Todas la compañias: ",companies)
-
     for (let user of users) {
         // Obtener el nombre de la compañía
         if (user.company_id) {
