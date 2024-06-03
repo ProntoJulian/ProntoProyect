@@ -223,6 +223,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
 
                     console.log('Sincronización completada y feed actualizado');
                     res.status(200).json({ message: "Sincronización completada y feed actualizado" });
+                    res.redirect("/app/feed");
                 } catch (error) {
                     console.error('Error durante la sincronización en segundo plano:', error);
                     // Manejo de errores adicional si es necesario
