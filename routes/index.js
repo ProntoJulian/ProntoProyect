@@ -180,9 +180,11 @@ appRouter.get("/app/users", authenticateToken, superUsuarioPages, async function
 
     const roles = await fetchDataFromTable('roles');
 
-    roles = roles.filter(r => r.company_id === user.company_id);
+    rolesCompany = roles.filter(r => r.company_id === user.company_id);
 
-    console.log("Todos los roles: ", roles);
+    console.log("Roles de la Company: ", rolesCompany)
+
+    console.log("Todos los roles: ", rolesCompany);
     console.log("Todas la compañias: ",companies)
 
     for (let user of users) {
@@ -199,7 +201,7 @@ appRouter.get("/app/users", authenticateToken, superUsuarioPages, async function
         }
     }
 
-    res.render("pages/users", { users: users, companies: companies, roles: roles, roleModule: [roleModule] });
+    res.render("pages/users", { users: users, companies: companies, roles: rolesCompany, roleModule: [roleModule] });
 });
 
 
