@@ -48,7 +48,7 @@ routerAuth.post('/login', (req, res, next) => {
         if (!user) {
             return res.redirect('/login', {
                 errors: [{ text: info.message }],
-                email: req.body.email,
+                username: req.body.username,
                 password: req.body.password
             });
         }
