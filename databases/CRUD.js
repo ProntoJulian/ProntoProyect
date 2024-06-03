@@ -14,16 +14,6 @@ const pool = mysql.createPool({
 
 async function insertIntoTable(tableName, data, columns) {
 
-    let sql;
-    let values;
-
-
-    // Lógica normal sin encriptación para otras tablas
-    const placeholders = columns.map(() => '?').join(', ');
-    sql = `INSERT INTO \`${tableName}\` (${columns.join(', ')}) VALUES (${placeholders})`;
-    values = columns.map(column => data[column]);
-
-
     if (tableName === 'users' && data.password_hash && columns.includes('password_hash')) {
         try {
             // Encripta la contraseña antes de insertarla
@@ -35,9 +25,12 @@ async function insertIntoTable(tableName, data, columns) {
         }
     }
 
+    const placeholders = columns.map(() => '?').join(', ');
+    const sql = `INSERT INTO \`${tableName}\` (${columns.join(', ')}) VALUES (${placeholders})`;
+
 
     try {
-        const [result] = await pool.promise().query(sql, values);
+        const [result] = await pool.promise().query(sql, data);
         console.log(`Número de registros insertados en ${tableName}:`, result.affectedRows);
         return result;
     } catch (error) {
