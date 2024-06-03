@@ -44,13 +44,12 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
     feedData.total_products_bc = feedData.total_products_bc || 0;
     feedData.preorder_products = feedData.preorder_products || 0;
 
-    const intervalUnit = feedData.intervalUnit;
-    const selectedDays = feedData.selectedDays;
+    const intervalUnit = feedData.recurrence.intervalUnit;
+    const selectedDays = feedData.recurrence.selectedDays;
 
     console.log("Datos: ", intervalUnit, selectedDays);
-    
-    delete feedData.intervalUnit;
-    delete feedData.selectedDays;
+
+    delete feedData.recurrence;
 
     // Console.log para mostrar la información recibida
     console.log('Feed Data Recibida:', feedData);
