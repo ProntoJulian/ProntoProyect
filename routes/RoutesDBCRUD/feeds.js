@@ -49,13 +49,12 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
 
     console.log("Datos: ----------------", intervalUnit, selectedDays);
 
-    delete feedData.recurrence;
-
+    
     // Console.log para mostrar la información recibida
     console.log('Feed Data Recibida:', feedData);
-
-    try {
-
+    
+    try {  
+        delete feedData.recurrence;
         const result = await insertIntoTable('feeds', feedData, columns);
         if (result.affectedRows > 0) {
             res.status(201).json({ message: "Feed created successfully" });
