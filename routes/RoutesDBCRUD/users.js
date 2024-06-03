@@ -23,6 +23,8 @@ routerUsers.post("/users/createUser", authenticateToken, async (req, res) => {
     const columns = ['company_id', 'username', 'password_hash', 'role_id']; // Asegúrate de que estos campos están presentes en userData
     try {
         const result = await insertIntoTable('users', userData, columns);
+
+        
         if (result.affectedRows > 0) {
             res.status(201).json({ message: "Usuario creado con éxito" });
         } else {

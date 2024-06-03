@@ -13,8 +13,14 @@ const pool = mysql.createPool({
 
 async function authenticateUser(username, password) {
     const sql = `SELECT * FROM users WHERE username = ?`;
+
+   
+
     try {
         const [users] = await pool.promise().query(sql, [username]);
+
+
+        console.log("sql: ", [users])
         
         if (users.length === 0) {
             return { success: false, message: "Usuario no encontrado" };
