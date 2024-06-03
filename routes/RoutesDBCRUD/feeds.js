@@ -197,11 +197,11 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
 
             // Inicializar configuraciones
             await getConfig(accessToken, storeHash);
-            await getConfigCategories(accessToken,storeHash);
+            await getConfigCategories(accessToken, storeHash);
             await initializeGoogleAuth(feed.client_email, privateKey, merchantId);
 
             // Responder inmediatamente al cliente
-            
+            res.status(200).json({ message: "Sincronización iniciada. Los detalles se registrarán en el log." });
 
             // Ejecutar las operaciones asíncronas en segundo plano
             setImmediate(async () => {
@@ -213,11 +213,10 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
 
                     const WebHooks = await fetchWebHooks();
 
-                    if(WebHooks.data.length == 0){
-                        await createWebhookToCreateProduct(storeHash, accessToken,feedId);
-                        await createWebhookToUpdateProduct(storeHash, accessToken,feedId);
+                    if (WebHooks.data.length == 0) {
+                        await createWebhookToCreateProduct(storeHash, accessToken, feedId);
+                        await createWebhookToUpdateProduct(storeHash, accessToken, feedId);
                     }
-
 
                     // Ejecutar las operaciones de conteo en paralelo
                     const [totalProductsGM, totalProductsBC, preorderProducts] = await Promise.all([
@@ -235,7 +234,6 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
                     await updateFeed(feedId, updateData);
 
                     console.log('Sincronización completada y feed actualizado');
-                    res.status(200).json({ message: "Sincronización completada y feed actualizado" });
                 } catch (error) {
                     console.error('Error durante la sincronización en segundo plano:', error);
                     // Manejo de errores adicional si es necesario
@@ -250,6 +248,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
         res.status(500).json({ message: "Error interno del servidor al intentar obtener el feed" });
     }
 });
+
 
 
 module.exports = routerFeeds;
