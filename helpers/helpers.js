@@ -9,11 +9,7 @@ async function transformProduct(bcProduct) {
 
   const {primerImagen, ImagenesRestantes} = await getProductImages(bcProduct.id);
 
-  if (bcProduct.categories.length > 0) {
-    //console.log("ID de la categoria: ", bcProduct.categories[0])
-    Category = await fetchCategoryNameById(bcProduct.categories[0]);
-    
-  }
+  
   // Configura aquí las propiedades que son comunes entre BigCommerce y Google Merchant Center
   const googleProductFormat = {
     offerId: bcProduct.sku,
@@ -36,8 +32,19 @@ async function transformProduct(bcProduct) {
     brand: "Home & Garden",
     gtin: bcProduct.upc,
     mpn: bcProduct.mpn,
-    productTypes: Category,
+    
   };
+
+  if (bcProduct.categories.length > 0) {
+    //console.log("ID de la categoria: ", bcProduct.categories[0])
+    
+    try {
+      const Category = await fetchCategoryNameById(bcProduct.categories[0]);
+      googleProductFormat.productTypes= Category
+  } catch (error) {
+      console.error('Error fetching category:', error);
+  }
+  }
 
   if(bcProduct.sale_price>0){
      googleProductFormat.sale_price=  bcProduct.sale_price
