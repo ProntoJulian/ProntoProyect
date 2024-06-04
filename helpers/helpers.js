@@ -42,7 +42,11 @@ async function transformProduct(bcProduct) {
 
   if(bcProduct.sale_price>0){
      const salePrice = parseFloat(bcProduct.sale_price).toFixed(2);
-     googleProductFormat.sale_price = `${salePrice} USD`
+     googleProductFormat.sale_price= {
+      value: salePrice,
+      currency: "USD",
+    }
+
   }else{
     delete googleProductFormat.sale_price;
   }
