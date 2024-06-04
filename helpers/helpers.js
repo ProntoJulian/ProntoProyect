@@ -41,7 +41,8 @@ async function transformProduct(bcProduct) {
   };
 
   if(bcProduct.sale_price>0){
-    googleProductFormat.sale_price = parseFloat(bcProduct.sale_price).toFixed(2);
+     const salePrice = parseFloat(bcProduct.sale_price).toFixed(2);
+     googleProductFormat.sale_price = `${salePrice} USD`
   }else{
     delete googleProductFormat.sale_price;
   }
