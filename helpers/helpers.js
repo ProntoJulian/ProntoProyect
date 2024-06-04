@@ -46,9 +46,6 @@ async function transformProduct(bcProduct) {
       value: salePrice,
       currency: "USD",
     }
-
-  }else{
-    delete googleProductFormat.sale_price;
   }
 
   if (bcProduct.fixed_cost_shipping_price > 0) {
