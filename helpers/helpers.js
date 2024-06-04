@@ -32,6 +32,10 @@ async function transformProduct(bcProduct) {
     brand: "Home & Garden",
     gtin: bcProduct.upc,
     mpn: bcProduct.mpn,
+    sale_price:{
+      value: bcProduct.sale_price,
+      currency: "USD"
+    },
     
   };
 
@@ -47,7 +51,7 @@ async function transformProduct(bcProduct) {
   }
 
   if(bcProduct.sale_price>0){
-     googleProductFormat.sale_price=  bcProduct.sale_price
+     googleProductFormat
   }
 
   if (bcProduct.fixed_cost_shipping_price > 0) {
