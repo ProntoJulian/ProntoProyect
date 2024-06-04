@@ -42,10 +42,7 @@ async function transformProduct(bcProduct) {
 
   if(bcProduct.sale_price>0){
      const salePrice = bcProduct.sale_price;
-     googleProductFormat.sale_price= [{
-      value: salePrice,
-      currency: "USD",
-    }]
+     googleProductFormat.sale_price=  `<g:sale_price>${salePrice} USD</g:sale_price>`
   }
 
   if (bcProduct.fixed_cost_shipping_price > 0) {
