@@ -41,11 +41,11 @@ async function transformProduct(bcProduct) {
   };
 
   if(bcProduct.sale_price>0){
-     const salePrice = parseFloat(bcProduct.sale_price).toFixed(2);
-     googleProductFormat.sale_price= {
+     const salePrice = bcProduct.sale_price;
+     googleProductFormat.sale_price= [{
       value: salePrice,
       currency: "USD",
-    }
+    }]
   }
 
   if (bcProduct.fixed_cost_shipping_price > 0) {
