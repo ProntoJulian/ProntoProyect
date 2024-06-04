@@ -21,6 +21,7 @@ async function getConfigCategories(accessToken1, storeHash1) {
 async function fetchCategoryNameById(categoryId) {
     const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/catalog/categories/${categoryId}`;
 
+    
 
     try {
         const response = await fetch(url, options);
@@ -30,7 +31,7 @@ async function fetchCategoryNameById(categoryId) {
         const categoryData = await response.json();
         return categoryData.data.name; // Retorna el nombre de la categoría
     } catch (error) {
-        console.error(`Error fetching category name for ID ${categoryId}:`);
+        console.error(`Error fetching category name for ID ${categoryId}:`, error);
         throw error; // O puedes optar por devolver un valor por defecto o manejar de otra manera
     }
 }
