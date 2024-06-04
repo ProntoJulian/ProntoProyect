@@ -178,6 +178,48 @@ async function updateFeed(feedId, updateData) {
 
 
 
+async function insertEncryptedFeed(feedName, storeHash, authToken) {
+    const sql = `CALL insert_encrypted_feed(?, ?, ?);`;
+
+    try {
+        const [result] = await pool.promise().query(sql, [feedName, storeHash, authToken]);
+        console.log(`Número de registros insertados en feeds_test:`, result.affectedRows);
+        return result;
+    } catch (error) {
+        console.error(`Error al insertar en la tabla feeds_test:`, error);
+        throw error;
+    }
+}
+
+async function fetchDecryptedFeeds() {
+    const sql = `CALL select_decrypted_feeds();`;
+    try {
+        const [results] = await pool.promise().query(sql);
+        return results[0]; // Asegúrate de retornar el primer conjunto de resultados
+    } catch (error) {
+        console.error(`Error al obtener los datos desencriptados:`, error);
+        throw error;
+    }
+}
+
+// Función temporal para insertar datos y consultar el registro insertado
+async function testInsertAndFetchFeedTest() {
+    try {
+        // Insertar datos encriptados
+        await insertEncryptedFeed('Test Feed', 'storehashvalue', 'auth_token_value');
+        
+        // Consultar los datos desencriptados
+        const fetchedData = await fetchDecryptedFeeds();
+        console.log('Datos consultados:', fetchedData);
+
+        return fetchedData;
+    } catch (error) {
+        console.error('Error en testInsertAndFetchFeedTest:', error);
+        throw error;
+    }
+}
+
+
 module.exports = {
     insertIntoTable,
     updateTable,
@@ -189,5 +231,6 @@ module.exports = {
     insertIntoTableMultiple,
     fetchOneFromTableMultiple,
     fetchAllFromTableByRoleId,
-    updateFeed
+    updateFeed,
+    testInsertAndFetchFeedTest
 };

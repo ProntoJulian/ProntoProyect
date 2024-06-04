@@ -4,7 +4,8 @@ const {insertIntoTable,
     updateTable,
     fetchDataFromTable,
     deleteFromTable,
-    fetchOneFromTable} = require("../../databases/CRUD");
+    fetchOneFromTable,
+    testInsertAndFetchFeedTest} = require("../../databases/CRUD");
 
 const routerModules = express.Router();
 
@@ -74,6 +75,13 @@ routerModules.delete("/modules/deleteModule/:moduleId", authenticateToken, async
         res.status(500).json({ message: "Error al eliminar el rol" });
     }
 });
+
+
+routerModules.get("/test", (req,res) => {
+    testInsertAndFetchFeedTest()
+    res.send("Listo")
+})
+
 
 
 
