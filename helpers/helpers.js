@@ -9,8 +9,6 @@ async function transformProduct(bcProduct) {
 
   const {primerImagen, ImagenesRestantes} = await getProductImages(bcProduct.id);
 
-
-  let Category;
   if (bcProduct.categories.length > 0) {
     //console.log("ID de la categoria: ", bcProduct.categories[0])
     Category = await fetchCategoryNameById(bcProduct.categories[0]);
