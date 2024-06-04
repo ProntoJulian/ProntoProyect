@@ -12,6 +12,7 @@ async function transformProduct(bcProduct) {
   if (bcProduct.categories.length > 0) {
     //console.log("ID de la categoria: ", bcProduct.categories[0])
     Category = await fetchCategoryNameById(bcProduct.categories[0]);
+    
   }
   // Configura aquí las propiedades que son comunes entre BigCommerce y Google Merchant Center
   const googleProductFormat = {
