@@ -9,6 +9,8 @@ async function transformProduct(bcProduct) {
 
   const {primerImagen, ImagenesRestantes} = await getProductImages(bcProduct.id);
 
+
+  let Category;
   if (bcProduct.categories.length > 0) {
     //console.log("ID de la categoria: ", bcProduct.categories[0])
     Category = await fetchCategoryNameById(bcProduct.categories[0]);
@@ -40,9 +42,7 @@ async function transformProduct(bcProduct) {
   };
 
   if(bcProduct.sale_price>0){
-    googleProductFormat.sale_price = bcProduct.sale_price;
-  }else{
-    delete googleProductFormat.sale_price;
+     googleProductFormat.sale_price=  bcProduct.sale_price
   }
 
   if (bcProduct.fixed_cost_shipping_price > 0) {
@@ -81,6 +81,13 @@ async function transformProduct(bcProduct) {
 function delay(time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
+
+const formatPriceForGoogleMerchant = (price) => {
+    return {
+        value: price.toFixed(2), // Asegura que el precio tenga dos decimales
+        currency: 'USD' // Ajusta la moneda según sea necesario
+    };
+};
 
 async function fetchWithRetry(url, options, retries = 3, backoff = 2000) { //800 bien hasta 6 1200 con 8 //1500 Para El 2
     try {
