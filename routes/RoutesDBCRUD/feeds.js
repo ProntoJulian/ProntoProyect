@@ -216,7 +216,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
             // Inicializar configuraciones
             await getConfig(accessToken, storeHash);
             await getConfigCategories(accessToken, storeHash);
-            await getConfigImages(accessToken,storeHash)
+            await getConfigImages(accessToken,storeHash);
             await initializeGoogleAuth(feed.client_email, privateKey, merchantId);
 
             // Ejecutar las operaciones asíncronas en segundo plano

@@ -45,7 +45,7 @@ async function getProductImages(productId) {
         const response = await fetch(imagesUrl, options);
         if (!response.ok) {
             const errorText = await response.text(); // Convert the response to text
-            console.error(`HTTP error! ${productId} status desde Images 47: ${response.status}, response text: ${errorText}`);
+            console.error(`HTTP error! [${productId}/${storeHash}] status desde Images 47: ${response.status}, response text: ${errorText}`);
             return []; // Retorna un array vacío en caso de error
         }
         const data = await response.json();
