@@ -1,9 +1,6 @@
 async function getConfigCategories(config) {
   const { accessToken, storeHash } = config;
 
-  console.log("Store Hash en Categories: ", storeHash);
-  console.log("Access Token en Categories: ", accessToken);
-
   return {
     method: "GET",
     headers: {
