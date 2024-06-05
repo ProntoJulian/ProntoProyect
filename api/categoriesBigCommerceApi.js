@@ -40,8 +40,6 @@ async function getStoreDomain() {
   const url = `https://api.bigcommerce.com/stores/${storeHash}/v2/store`;
 
   try {
-    console.time(`getStoreDomain`);
-
     const response = await fetch(url, options);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -50,9 +48,7 @@ async function getStoreDomain() {
     const storeInfo = await response.json();
     const domain = storeInfo.domain;
 
-    console.timeEnd(`getStoreDomain`);
     console.log(`El dominio de la tienda es: ${domain}`);
-
     return domain;
   } catch (error) {
     console.error(`Error fetching store domain:`, error);
