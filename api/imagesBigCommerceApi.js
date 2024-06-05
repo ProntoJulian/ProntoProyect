@@ -64,6 +64,5 @@ async function getURLImage(productId) {
 
 module.exports = {
     getProductImages,
-    getURLImage,
-    getConfigImages
+    getURLImage
 };
