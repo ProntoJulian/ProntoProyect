@@ -196,7 +196,7 @@ async function createWebhookToUpdateProduct(storeHashF, accessTokenF, feedID) {
     const responseBody = await response.json(); // Asegúrate de leer el cuerpo de la respuesta siempre
     if (!response.ok) {
       console.error('Respuesta de la API:', responseBody); // Esto te mostrará el mensaje de error detallado de la API
-      throw new Error(`HTTP error! status: ${response}`);
+      throw new Error(`HTTP error! status 199 WebHooks: ${response}`);
     }
     console.log("Webhook creado exitosamente:", responseBody);
   } catch (error) {
@@ -300,7 +300,7 @@ async function createWebhookToDeleteProduct() {
     const responseBody = await response.json(); // Asegúrate de leer el cuerpo de la respuesta siempre
     if (!response.ok) {
       console.error('Respuesta de la API:', responseBody); // Esto te mostrará el mensaje de error detallado de la API
-      throw new Error(`HTTP error! status: ${response}`);
+      throw new Error(`HTTP error! status 303 WebHooks: ${response}`);
     }
     console.log("Webhook para producto eliminado creado exitosamente:", responseBody);
   } catch (error) {
@@ -353,7 +353,7 @@ async function createWebhookToCreateProduct(storeHashF,accessTokenF,feedId) {
     const responseBody = await response.json(); // Asegúrate de leer el cuerpo de la respuesta siempre
     if (!response.ok) {
       console.error('Respuesta de la API:', responseBody); // Esto te mostrará el mensaje de error detallado de la API
-      throw new Error(`HTTP error! status: ${response}`);
+      throw new Error(`HTTP error! status 356 WebHooks: ${response}`);
     }
     console.log("Webhook creado exitosamente:", responseBody);
   } catch (error) {

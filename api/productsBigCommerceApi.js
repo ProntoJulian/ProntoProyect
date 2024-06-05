@@ -52,7 +52,7 @@ async function fetchProductById(productId) {
     const response = await fetch(url, optionsGET);
     if (!response.ok) {
       // Si el producto no se encuentra, lanzar un error
-      throw new Error(`HTTP error! status: ${response}`);
+      throw new Error(`HTTP error! status 55 Products: ${response}`);
 
     }
     const productData = await response.json();
@@ -193,7 +193,7 @@ async function getLimitedValidProducts(maxCount) {
     const url = `${baseUrl}?price:min=0.01&availability=available&page=${page}&limit=300`;
     const response = await fetch(url, optionsGET);
     if (!response.ok) {
-      console.log(`HTTP error! status: ${response.status}`);
+      console.log(`HTTP error! status 196 Products: ${response.status}`);
       console.error(error);
       break;
     }
@@ -457,7 +457,7 @@ async function getProductsMatchingCustomField() {
     try {
       const response = await fetch(url, optionsGET);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response}`);
+        throw new Error(`HTTP error! status 460 Products: ${response}`);
       }
       const data = await response.json();
 
@@ -526,7 +526,7 @@ async function getProductCustomFields(productId) {
   try {
     const response = await fetch(url, optionsGET);
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response}`);
+      throw new Error(`HTTP error! status 529 Products: ${response}`);
     }
     const data = await response.json();
     console.timeEnd("getProductCustomFields");
@@ -601,7 +601,7 @@ async function countTotalProducts() {
     try {
       const response = await fetch(url, optionsGET);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response}`);
+        throw new Error(`HTTP error! status 604 Prodcts: ${response}`);
       }
       const responseData = await response.json();
       totalCount += responseData.data.length;

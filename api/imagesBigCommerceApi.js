@@ -1,6 +1,25 @@
 const fetch = require('node-fetch');
 require('dotenv').config()
 
+let accessToken; 
+let storeHash;
+let options;
+
+async function getConfigImages(accessToken1, storeHash1) {
+  accessToken = accessToken1;
+  storeHash = storeHash1;
+
+  options = {
+    method: "GET",
+    headers: {
+      "X-Auth-Token": accessToken,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  };
+
+}
+
 /**
  * Función asíncrona para recuperar las imágenes asociadas a un producto específico en BigCommerce.
  * Utiliza la API de BigCommerce para obtener todas las imágenes del producto dado su ID.
@@ -20,23 +39,12 @@ require('dotenv').config()
  */
 
 async function getProductImages(productId) {
-    const storeHash = process.env.STOREHASH; // Debería estar definido en tu archivo .env
-    const accessToken = process.env.ACCESS_TOKEN; // Debería estar definido en tu archivo .env
     const imagesUrl = `https://api.bigcommerce.com/stores/${storeHash}/v3/catalog/products/${productId}/images`;
-
-    const options = {
-        method: 'GET',
-        headers: {
-            'X-Auth-Token': accessToken,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-    };
 
     try {
         const response = await fetch(imagesUrl, options);
         if (!response.ok) {
-            console.error(`HTTP error! status: ${response}`);
+            console.error(`HTTP error! status desde Images: ${response}`);
             return []; // Retorna un array vacío en caso de error
         }
         const data = await response.json();
@@ -76,23 +84,12 @@ async function getProductImages(productId) {
  */
 
 async function getURLImage(productId) {
-    const storeHash = process.env.STOREHASH; // Debería estar definido en tu archivo .env
-    const accessToken = process.env.ACCESS_TOKEN; // Debería estar definido en tu archivo .env
     const imagesUrl = `https://api.bigcommerce.com/stores/${storeHash}/v3/catalog/products/${productId}/images`;
-
-    const options = {
-        method: 'GET',
-        headers: {
-            'X-Auth-Token': accessToken,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-    };
 
     try {
         const response = await fetch(imagesUrl, options);
         if (!response.ok) {
-            console.error(`HTTP error! status: ${response}`);
+            console.error(`HTTP error! status Images URL: ${response}`);
             return []; // Retorna un array vacío en caso de error
         }
         const data = await response.json();
@@ -106,5 +103,6 @@ async function getURLImage(productId) {
 
 module.exports = {
     getProductImages,
-    getURLImage
+    getURLImage,
+    getConfigImages
 };
