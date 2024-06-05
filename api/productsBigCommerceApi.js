@@ -89,6 +89,7 @@ async function getAvailableProducts(startPage, endPage) {
   console.log("Total de páginas: ", totalPages);
   console.log("Pag de inicio: ", startPage);
   console.log("Pag de Final: ", endPage);
+  console.log("StoreHash: ", storeHash);
   const segmentSize = Math.ceil(totalPages / 20); // Divide en 10 partes o segmentos
   const tasks = [];
 
@@ -397,7 +398,7 @@ async function countPages() {
  */
 
 
-async function checkCustomField(productId) {
+async function  checkCustomField(productId) {
   
   const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/catalog/products/${productId}/custom-fields`;
 
