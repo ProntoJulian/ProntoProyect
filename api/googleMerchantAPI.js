@@ -24,43 +24,29 @@ let auth;
 let content;
 let merchantId;
 
-async function initializeGoogleAuth(client_email, private_key, merchant_Id) {
-  merchantId = merchant_Id;
+async function initializeGoogleAuth(config) {
+  const { client_email, private_key, merchantId } = config;
 
   const formattedPrivateKeyFromDb = private_key.replace(/\\n/g, '\n');
 
-  auth = new google.auth.JWT(
+  const auth = new google.auth.JWT(
     client_email,
     null,
     formattedPrivateKeyFromDb,
     ["https://www.googleapis.com/auth/content"]
   );
 
-  content = google.content({
+  const content = google.content({
     version: "v2.1",
     auth: auth,
   });
+
+  return { content, merchantId };
 }
 
 
-/**
- * Función asíncrona para insertar un producto en Google Merchant mediante la API de Google Content.
- * La función toma un objeto de producto y lo envía a Google Merchant, registrando y devolviendo la respuesta.
- *
- * Parámetros:
- * - product: Objeto que representa el producto a insertar, debe estar formateado según los requisitos de la API de Google Merchant.
- *
- * Proceso:
- * 1. Utiliza el método 'insert' del objeto 'content.products' para enviar el producto a Google Merchant.
- * 2. Configura el 'merchantId' y el recurso del producto en el cuerpo de la solicitud.
- * 3. Si la inserción es exitosa, imprime y devuelve los detalles del producto insertado.
- * 4. Captura y maneja cualquier error durante la inserción, imprimiendo el mensaje de error y re-lanzando el error para manejarlo en niveles superiores.
- *
- * Esta función es crucial para la integración de inventarios entre sistemas internos y la plataforma de Google Merchant, 
- * facilitando la gestión y sincronización de productos en un entorno de comercio electrónico.
- */
-
-async function insertProductToGoogleMerchant(product) {
+async function insertProductToGoogleMerchant(config, product) {
+  const { content, merchantId } = await initializeGoogleAuth(config);
 
   try {
     const response = await content.products.insert({
@@ -70,48 +56,15 @@ async function insertProductToGoogleMerchant(product) {
     console.log("Producto insertado");
     return response.data;
   } catch (error) {
-    console.error("Error al insertar producto: ");
+    console.error("Error al insertar producto: ", error);
     throw error; // Re-lanza el error para manejarlo más arriba si es necesario
   }
 }
 
-/**
- * Función asíncrona para insertar un lote de productos en Google Merchant utilizando la API de Google Content.
- * Agrupa varios productos en un solo request de lote para optimizar la inserción y reduce el número de llamadas de API necesarias.
- *
- * Parámetros:
- * - products: Array de productos que se desea insertar en Google Merchant. Cada producto debe estar formateado adecuadamente según los requisitos de la API.
- *
- * Proceso:
- * 1. Prepara un objeto 'batchRequest' para contener todas las entradas de productos, asignando un 'batchId' único a cada una.
- * 2. Itera sobre el array de productos, añadiendo cada producto al objeto 'batchRequest' con la acción 'insert'.
- * 3. Inicia un temporizador para monitorear el tiempo de ejecución del proceso de inserción de lote.
- * 4. Utiliza el método 'custombatch' de 'content.products' para enviar el request de lote a Google Merchant.
- * 5. Finaliza el temporizador y registra el tiempo de ejecución.
- * 6. Imprime la respuesta de la API para verificar los resultados de la inserción.
- * 7. Captura y maneja errores durante la inserción, imprimiendo los errores y asegurando que el temporizador se detenga adecuadamente en caso de fallas.
- *
- * Esta función es útil para el manejo eficiente de grandes volúmenes de productos, permitiendo actualizaciones masivas y sincronizadas en la tienda de Google Merchant.
- */
 
 
-async function insertBatchProducts(products) {
-  const { google } = require("googleapis");
-
-  /*
-
-  const auth = new google.auth.JWT(
-    client_email,
-    null,
-    private_key,
-    ["https://www.googleapis.com/auth/content"]
-  );
-
-  const content = google.content({
-    version: "v2.1",
-    auth: auth,
-  });
-  */
+async function insertBatchProducts(config, products) {
+  const { content, merchantId } = await initializeGoogleAuth(config);
 
   const batchRequest = { entries: [] };
 
@@ -140,24 +93,6 @@ async function insertBatchProducts(products) {
   }
 }
 
-/**
- * Función asíncrona para eliminar un lote de productos en Google Merchant utilizando la API de Google Content.
- * Esta función facilita la eliminación eficiente de múltiples productos, enviando una sola solicitud de lote.
- *
- * Parámetros:
- * - productIds: Array de identificadores de los productos que se desea eliminar.
- *
- * Proceso:
- * 1. Prepara un objeto 'batchRequest' con entradas que especifican cada producto a eliminar, asignando un 'batchId' único a cada una.
- * 2. Cada entrada en el lote especifica la acción 'delete', el 'merchantId' y el 'productId' correspondiente.
- * 3. Inicia un temporizador para medir la duración del proceso de eliminación de productos.
- * 4. Envía la solicitud de lote a través del método 'custombatch' de 'content.products', que procesa todas las eliminaciones especificadas.
- * 5. Termina el temporizador una vez que se completa la operación y muestra el tiempo transcurrido.
- * 6. Imprime la respuesta de la API para verificar los resultados de la eliminación.
- * 7. Captura y maneja cualquier error durante la operación, registrando los errores y asegurando que el temporizador se detenga correctamente en caso de fallas.
- *
- * Esta función es ideal para administradores y sistemas automatizados que necesitan manejar la eliminación masiva de productos en Google Merchant, optimizando tanto el tiempo como los recursos.
- */
 
 
 async function deleteBatchProducts(productIds) {
@@ -188,20 +123,7 @@ async function deleteBatchProducts(productIds) {
   }
 }
 
-/**
- * Función asíncrona para obtener el estado actual de un producto específico en Google Merchant mediante la API de Google Content.
- * Esta función busca el estado de un producto dado su ID, útil para verificar su disponibilidad y visibilidad en el mercado.
- *
- * Parámetros:
- * - productId: El identificador único del producto cuyo estado se desea consultar.
- *
- * Proceso:
- * 1. Utiliza el método 'productstatuses.get' para enviar una solicitud a Google Content, especificando el 'merchantId', 'productId' y las 'destinations' deseadas.
- * 2. Si la solicitud es exitosa, imprime y devuelve los datos del estado del producto, proporcionando detalles como su aceptación en los canales de venta, problemas de calidad, etc.
- * 3. Captura y maneja cualquier error que pueda ocurrir durante la solicitud, registrando los detalles del error y re-lanzando el error para manejo externo.
- *
- * Esta función es crucial para los vendedores y administradores de sistemas que necesitan monitorear el estado y la salud de los productos listados en Google Shopping, asegurando que los productos cumplen con los requisitos y están disponibles para la venta.
- */
+
 
 async function getProductStatusByProductId(productId) {
   try {
@@ -219,21 +141,7 @@ async function getProductStatusByProductId(productId) {
   }
 }
 
-/**
- * Función asíncrona para listar el estado de todos los productos en Google Merchant utilizando la API de Google Content.
- * Itera sobre las páginas de estados de productos, utilizando paginación controlada por tokens para manejar grandes volúmenes de datos.
- *
- * Proceso:
- * 1. Inicia un temporizador para monitorear el tiempo total del proceso de listado.
- * 2. Configura los parámetros iniciales para la solicitud de la API, incluyendo el 'merchantId', las 'destinations' y el máximo de resultados por página.
- * 3. Utiliza un bucle do-while que continúa mientras exista un 'nextPageToken', indicando más páginas de datos disponibles.
- * 4. En cada iteración, realiza una solicitud a la API para obtener la página actual de estados de productos.
- * 5. Si la respuesta contiene productos, suma el total de productos listados y actualiza el 'nextPageToken' para la próxima solicitud.
- * 6. Al final del bucle, imprime el total de productos listados y detiene el temporizador para mostrar la duración del proceso.
- * 7. Captura y maneja cualquier error durante las solicitudes, registrando el error y deteniendo el temporizador antes de re-lanzar el error para su manejo externo.
- *
- * Esta función es útil para obtener un recuento completo y estados de todos los productos listados en Google Shopping, proporcionando una herramienta esencial para la gestión y el análisis del inventario en plataformas de comercio electrónico.
- */
+
 
 
 async function listAllProductStatuses() {
@@ -272,38 +180,10 @@ async function listAllProductStatuses() {
   }
 }
 
-/**
- * Función asíncrona para listar todos los productos en Google Merchant utilizando la API de Google Content.
- * Utiliza la paginación para manejar grandes volúmenes de datos, iterando sobre todas las páginas de productos disponibles.
- *
- * Proceso:
- * 1. Inicia un temporizador para medir la duración del proceso de listado de productos.
- * 2. Configura los parámetros iniciales para la solicitud de la API, incluyendo el 'merchantId' y el número máximo de resultados por página.
- * 3. Utiliza un bucle do-while que continúa mientras exista un 'nextPageToken', lo que indica más páginas de datos disponibles.
- * 4. En cada iteración, realiza una solicitud a la API para obtener la página actual de productos.
- * 5. Si la respuesta contiene productos, suma el total de productos listados y actualiza el 'nextPageToken' para la próxima solicitud.
- * 6. Al finalizar todas las páginas, imprime el total de productos listados y detiene el temporizador para mostrar la duración del proceso.
- * 7. Captura y maneja cualquier error durante las solicitudes, registrando el error y deteniendo el temporizador antes de re-lanzar el error para su manejo externo.
- *
- * Esta función es esencial para obtener un recuento completo de todos los productos listados en Google Shopping, proporcionando una visión global del inventario disponible y ayudando en la gestión y análisis del mismo.
- */
 
-async function listAllProducts(merchantId) {
-  const { google } = require("googleapis");
+async function listAllProducts(config) {
+  const { content, merchantId } = await initializeGoogleAuth(config);
 
-  /*
-  const auth = new google.auth.JWT(
-    client_email,
-    null,
-    private_key,
-    ["https://www.googleapis.com/auth/content"]
-  );
-
-  const content = google.content({
-    version: "v2.1",
-    auth: auth,
-  });
-*/
   let totalProducts = 0;
   let nextPageToken = null;
   const maxResults = 250;
@@ -422,8 +302,8 @@ async function findProductByBigCommerceId(bigCommerceId) { // Asegúrate de reem
  * en una plataforma se reflejen adecuadamente en la otra. Esto facilita la gestión de inventarios y la presentación correcta de los productos en diferentes canales de venta.
  */
 
-async function updateGoogleMerchantProduct(googleProductId, bcProduct) {
-
+async function updateGoogleMerchantProduct(config, googleProductId, bcProduct) {
+  const { content, merchantId } = await initializeGoogleAuth(config);
 
   console.log("Google Product Id: ", googleProductId);
 
@@ -467,27 +347,10 @@ async function updateGoogleMerchantProduct(googleProductId, bcProduct) {
  * Esta función es útil para obtener información actualizada y detallada de los productos listados en Google Merchant, permitiendo a los administradores y desarrolladores verificar la exactitud y la integridad de la información del producto en el inventario de Google Merchant.
  */
 
-async function getProductInfoGoogleMerchant(productId) { // Usa tu Merchant ID real aquí
+async function getProductInfoGoogleMerchant(config, productId) {
+  const { content, merchantId } = await initializeGoogleAuth(config);
 
-  const scopes = ["https://www.googleapis.com/auth/content"];
-/*
-  // Crea un cliente de autenticación JWT utilizando las credenciales de la cuenta de servicio
-  const auth = new google.auth.JWT(
-    client_email,
-    null,
-    formattedPrivateKeyFromDb,
-    scopes
-  );
-
-  const content = google.content({
-    version: "v2.1",
-    auth: auth, // Pasa el cliente de autenticación JWT aquí
-  });
-
-  const merchantId = 5314272709;
-*/
-
-  console.log("SKU recibido desde Info Google Merchant: ", productId)
+  console.log("SKU recibido desde Info Google Merchant: ", productId);
 
   console.time("Duración de la obtención del producto"); // Inicia el temporizador
 
@@ -525,8 +388,11 @@ async function getProductInfoGoogleMerchant(productId) { // Usa tu Merchant ID r
  * Esta función es crucial para la gestión de inventarios en Google Merchant, permitiendo a los administradores y desarrolladores eliminar productos que ya no deben estar disponibles para la venta.
  */
 
-async function deleteGoogleMerchantProduct(googleProductId) { // Reemplaza con tu Merchant ID real
-  console.log("SKU recibido desde Info Google Merchant: ", googleProductId)
+async function deleteGoogleMerchantProduct(config, googleProductId) {
+  const { content, merchantId } = await initializeGoogleAuth(config);
+
+  console.log("SKU recibido desde Info Google Merchant: ", googleProductId);
+
   try {
     const response = await content.products.delete({
       merchantId: merchantId,

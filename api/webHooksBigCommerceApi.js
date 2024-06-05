@@ -101,15 +101,6 @@ async function updateWebhook(webhookId, updateData) {
 }
 
 
-/**
- * Función asíncrona para crear un webhook en una tienda de BigCommerce.
- * Requiere 'scope' y 'destination' como parámetros para configurar el nuevo webhook.
- * El webhook se crea activo y puede incluir cabeceras personalizadas si se requieren.
- * Utiliza la autenticación mediante 'storeHash' y 'accessToken' para realizar una solicitud POST a la API de BigCommerce.
- * Si la creación es exitosa, devuelve los datos del webhook creado. Los errores durante la solicitud son capturados,
- * registrados en la consola y luego re-lanzados para su manejo externo.
- */
-
 async function createWebhook(scope, destination) {
   const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/hooks`;
 
@@ -132,22 +123,6 @@ async function createWebhook(scope, destination) {
 }
 
 
-/**
- * Función asíncrona diseñada para crear un webhook en BigCommerce que se activa cuando se actualiza un producto específico.
- * Esta función genera una marca de tiempo UNIX actual y un hash de seguridad para garantizar que la información
- * enviada es auténtica. El webhook notifica a una URL específica en Google Cloud cuando se actualiza el producto.
- *
- * Parámetros:
- * - productID: Identificador del producto a monitorizar para actualizaciones.
- *
- * Proceso:
- * 1. Prepara los datos del webhook, incluyendo el 'scope', 'destination', y otros detalles relevantes.
- * 2. Envía una solicitud POST a la API de BigCommerce para crear el webhook.
- * 3. Captura y maneja errores durante la creación del webhook, proporcionando detalles de error en la consola.
- * 4. Registra la respuesta de la creación del webhook para confirmar el éxito de la operación.
- *
- * La función asegura que cualquier error en la creación del webhook es registrado y muestra información detallada sobre el problema.
- */
 
 async function createWebhookToUpdateProduct(storeHashF, accessTokenF, feedID) {
   const urlPage = "https://pronto-proyect-4gzkueldfa-uc.a.run.app";
@@ -205,22 +180,6 @@ async function createWebhookToUpdateProduct(storeHashF, accessTokenF, feedID) {
 
 }
 
-
-/**
-* Función asíncrona para eliminar un webhook específico en BigCommerce.
-* Utiliza el ID del webhook para formar la URL necesaria para una solicitud DELETE.
-*
-* Parámetros:
-* - webhookId: Identificador único del webhook que se desea eliminar.
-*
-* Proceso:
-* 1. Configura las opciones de la solicitud HTTP, incluyendo el método DELETE y los encabezados necesarios para autenticación.
-* 2. Realiza la solicitud HTTP a la API de BigCommerce para eliminar el webhook especificado.
-* 3. Verifica la respuesta: si es exitosa, registra un mensaje de éxito; si no, obtiene y registra los detalles del error.
-* 4. Maneja cualquier error de conexión o solicitud con un registro detallado del error.
-*
-* Esta función asegura que se manejen adecuadamente los errores durante la eliminación, proporcionando claridad sobre el estado de la operación.
-*/
 
 
 async function deleteWebhook(webhookId) {

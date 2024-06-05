@@ -213,16 +213,19 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
             const privateKey = feed.private_key; // decrypt(JSON.parse(feed.private_key));
             const merchantId = feed.client_id;
 
-            // Inicializar configuraciones
-            await getConfig(accessToken, storeHash);
-            await getConfigCategories(accessToken, storeHash);
-            await getConfigImages(accessToken,storeHash);
-            await initializeGoogleAuth(feed.client_email, privateKey, merchantId);
+            
+            const config = {
+                accessToken: accessToken,
+                storeHash: storeHash,
+                client_email: feed.client_email,
+                privateKey: privateKey,
+                merchantId: merchantId
+              };
 
             // Ejecutar las operaciones asíncronas en segundo plano
             setImmediate(async () => {
                 try {
-                    const conteoPages = await countPages();
+                    const conteoPages = await countPages(config);
                     const conteoByTipo = await manageProductProcessing(conteoPages);
 
                     console.log("Conteo: ", conteoPages);
@@ -236,9 +239,9 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
 
                     // Ejecutar las operaciones de conteo en paralelo
                     const [totalProductsGM, totalProductsBC, preorderProducts] = await Promise.all([
-                        listAllProducts(merchantId),
-                        countTotalProducts(),
-                        countProductsByAvailability("preorder")
+                        listAllProducts(config),
+                        countTotalProducts(config),
+                        countProductsByAvailability(config,"preorder")
                     ]);
 
                     const updateData = {

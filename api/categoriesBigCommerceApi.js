@@ -1,15 +1,10 @@
-let accessToken; 
-let storeHash;
-let options;
-
-async function getConfigCategories(accessToken1, storeHash1) {
-  accessToken = accessToken1;
-  storeHash = storeHash1;
+async function getConfigCategories(config) {
+  const { accessToken, storeHash } = config;
 
   console.log("Store Hash en Categories: ", storeHash);
   console.log("Access Token en Categories: ", accessToken);
 
-  options = {
+  return {
     method: "GET",
     headers: {
       "X-Auth-Token": accessToken,
@@ -17,29 +12,29 @@ async function getConfigCategories(accessToken1, storeHash1) {
       "Content-Type": "application/json",
     },
   };
-
 }
 
+async function fetchCategoryNameById(config, categoryId) {
+  const { storeHash } = config;
+  const options = await getConfigCategories(config);
+  const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/catalog/categories/${categoryId}`;
 
-async function fetchCategoryNameById(categoryId) {
-    const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/catalog/categories/${categoryId}`;
-
-    
-
-    try {
-        const response = await fetch(url, options);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status en Category: ${response}`);
-        }
-        const categoryData = await response.json();
-        return categoryData.data.name; // Retorna el nombre de la categoría
-    } catch (error) {
-        console.error(`Error fetching category name for ID ${categoryId}:`, error);
-        throw error; // O puedes optar por devolver un valor por defecto o manejar de otra manera
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status en Category: ${response}`);
     }
+    const categoryData = await response.json();
+    return categoryData.data.name; // Retorna el nombre de la categoría
+  } catch (error) {
+    console.error(`Error fetching category name for ID ${categoryId}:`, error);
+    throw error; // O puedes optar por devolver un valor por defecto o manejar de otra manera
+  }
 }
 
-async function getStoreDomain() {
+async function getStoreDomain(config) {
+  const { storeHash } = config;
+  const options = await getConfigCategories(config);
   const url = `https://api.bigcommerce.com/stores/${storeHash}/v2/store`;
 
   try {
@@ -60,7 +55,7 @@ async function getStoreDomain() {
 }
 
 module.exports = {
-    fetchCategoryNameById,
-    getConfigCategories,
-    getStoreDomain
+  fetchCategoryNameById,
+  getConfigCategories,
+  getStoreDomain,
 };

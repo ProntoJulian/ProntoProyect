@@ -3,12 +3,12 @@ const crypto = require('crypto');
 const cron = require('node-cron');
 
 
-async function transformProduct(bcProduct) {
+async function transformProduct(config,bcProduct) {
   const { getProductImages } = require("../api/imagesBigCommerceApi");
   const {fetchCategoryNameById, getStoreDomain} = require("../api/categoriesBigCommerceApi");
 
-  const {primerImagen, ImagenesRestantes} = await getProductImages(bcProduct.id);
-  const domain = getStoreDomain();
+  const {primerImagen, ImagenesRestantes} = await getProductImages(config,bcProduct.id);
+  const domain = getStoreDomain(config);
   
   // Configura aquí las propiedades que son comunes entre BigCommerce y Google Merchant Center
   const googleProductFormat = {
@@ -43,7 +43,7 @@ async function transformProduct(bcProduct) {
     //console.log("ID de la categoria: ", bcProduct.categories[0])
     
     try {
-      const Category = await fetchCategoryNameById(bcProduct.categories[0]);
+      const Category = await fetchCategoryNameById(config, bcProduct.categories[0]);
       googleProductFormat.productTypes= Category
   } catch (error) {
       console.error('Error fetching category:', error);
