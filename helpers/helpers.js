@@ -36,7 +36,8 @@ async function transformProduct(config,bcProduct) {
   };
   
   if(bcProduct.upc !== ""){
-    googleProductFormat.gtin= bcProduct.upc
+    console.log()
+    googleProductFormat.gtin= bcProduct.gtin
   }
 
   if (bcProduct.categories.length > 0) {
