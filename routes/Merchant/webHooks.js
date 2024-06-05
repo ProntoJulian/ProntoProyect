@@ -75,7 +75,7 @@ routerWebHooks.post("/updatedProduct/:feedID", async (req, res) => {
     }
 
     const hasImage = await checkCustomField(config,productId);
-    console.log("¿El producto tiene imagen correcta?: ", hasImage)
+    console.log("¿El producto tiene imagen correcta?: ", hasImage) 
     if (hasImage) {
         console.log("El producto tiene imagen adecuada.");
     }
