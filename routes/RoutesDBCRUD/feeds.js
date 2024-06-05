@@ -218,7 +218,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
                 accessToken: accessToken,
                 storeHash: storeHash,
                 client_email: feed.client_email,
-                privateKey: privateKey,
+                private_key: privateKey,
                 merchantId: merchantId,
                 domain:feed.domain
               };
