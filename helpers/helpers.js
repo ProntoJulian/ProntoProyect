@@ -31,10 +31,13 @@ async function transformProduct(bcProduct) {
     // Agrega más campos según corresponda...
     // A continuación, se muestran algunos campos adicionales que podrías querer mapear:
     brand: "Home & Garden",
-    gtin: bcProduct.upc,
     mpn: bcProduct.mpn,
     
   };
+  
+  if(bcProduct.upc !==0){
+    googleProductFormat.gtin= bcProduct.upc
+  }
 
   if (bcProduct.categories.length > 0) {
     //console.log("ID de la categoria: ", bcProduct.categories[0])
