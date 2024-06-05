@@ -27,6 +27,8 @@ let merchantId;
 async function initializeGoogleAuth(config) {
   const { client_email, private_key, merchantId } = config;
 
+  console.log("config en Google: ", config)
+
   const formattedPrivateKeyFromDb = private_key.replace(/\\n/g, '\n');
 
   const auth = new google.auth.JWT(

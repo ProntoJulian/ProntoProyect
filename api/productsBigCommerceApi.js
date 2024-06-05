@@ -162,7 +162,7 @@ async function manageProductProcessing(config,totalPages) {
     const transformedProductos = await Promise.all(
       validProductIds.map((product) => transformProduct(config,product))
     );
-    console.log("Config: ", config)
+
     await insertBatchProducts(config,transformedProductos);
 
     currentPage = endPage + 1;
