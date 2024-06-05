@@ -36,7 +36,7 @@ async function getProductImages(productId) {
     try {
         const response = await fetch(imagesUrl, options);
         if (!response.ok) {
-            console.error(`HTTP error! status: ${response.status}`);
+            console.error(`HTTP error! status: ${response}`);
             return []; // Retorna un array vacío en caso de error
         }
         const data = await response.json();
@@ -92,7 +92,7 @@ async function getURLImage(productId) {
     try {
         const response = await fetch(imagesUrl, options);
         if (!response.ok) {
-            console.error(`HTTP error! status: ${response.status}`);
+            console.error(`HTTP error! status: ${response}`);
             return []; // Retorna un array vacío en caso de error
         }
         const data = await response.json();

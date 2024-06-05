@@ -26,7 +26,7 @@ async function fetchCategoryNameById(categoryId) {
     try {
         const response = await fetch(url, options);
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response}`);
         }
         const categoryData = await response.json();
         return categoryData.data.name; // Retorna el nombre de la categoría
