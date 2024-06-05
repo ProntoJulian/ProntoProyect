@@ -93,7 +93,7 @@ routerWebHooks.post("/updatedProduct/:feedID", async (req, res) => {
             await insertProductToGoogleMerchant(transformedProduct);
             console.log("Producto creado en Google Merchant.");
         } else {
-            console.log("Producto no cumple con las condiciones para ser creado en Google Merchant.",error);
+            console.log("Producto no cumple con las condiciones para ser creado en Google Merchant.");
         }
 
     }
