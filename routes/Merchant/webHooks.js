@@ -56,7 +56,7 @@ routerWebHooks.post("/updatedProduct/:feedID", async (req, res) => {
         accessToken: accessToken,
         storeHash: storeHash,
         client_email: feed.client_email,
-        privateKey: privateKey,
+        private_key: privateKey,
         merchantId: merchantId
       };
 
