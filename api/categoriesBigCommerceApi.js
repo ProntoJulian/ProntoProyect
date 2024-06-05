@@ -36,7 +36,32 @@ async function fetchCategoryNameById(categoryId) {
     }
 }
 
+async function getStoreDomain() {
+  const url = `https://api.bigcommerce.com/stores/${storeHash}/v2/store`;
+
+  try {
+    console.time(`getStoreDomain`);
+
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const storeInfo = await response.json();
+    const domain = storeInfo.domain;
+
+    console.timeEnd(`getStoreDomain`);
+    console.log(`El dominio de la tienda es: ${domain}`);
+
+    return domain;
+  } catch (error) {
+    console.error(`Error fetching store domain:`, error);
+    throw error; // Re-lanza el error para que la llamada a la función pueda manejarlo
+  }
+}
+
 module.exports = {
     fetchCategoryNameById,
-    getConfigCategories
+    getConfigCategories,
+    getStoreDomain
 };

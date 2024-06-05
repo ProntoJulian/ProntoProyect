@@ -5,9 +5,10 @@ const cron = require('node-cron');
 
 async function transformProduct(bcProduct) {
   const { getProductImages } = require("../api/imagesBigCommerceApi");
-  const {fetchCategoryNameById} = require("../api/categoriesBigCommerceApi");
+  const {fetchCategoryNameById, getStoreDomain} = require("../api/categoriesBigCommerceApi");
 
   const {primerImagen, ImagenesRestantes} = await getProductImages(bcProduct.id);
+  const domain = getStoreDomain();
   
   // Configura aquí las propiedades que son comunes entre BigCommerce y Google Merchant Center
   const googleProductFormat = {
@@ -17,6 +18,7 @@ async function transformProduct(bcProduct) {
     imageLink: `<g:image_link>${primerImagen.url_standard}</g:image_link>`,
     contentLanguage: "en",
     targetCountry: "us",
+    link:`${domain}${bcProduct.custom_url.url}`
     channel: "online",
     googleProductCategory: 'Home & Garden', // Ejemplo, debería ser específico para tu producto
     condition: bcProduct.condition,
