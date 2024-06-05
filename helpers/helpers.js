@@ -8,7 +8,7 @@ async function transformProduct(config,bcProduct) {
   const {fetchCategoryNameById, getStoreDomain} = require("../api/categoriesBigCommerceApi");
 
   const {primerImagen, ImagenesRestantes} = await getProductImages(config,bcProduct.id);
-  const domain = getStoreDomain(config);
+  //const domain = getStoreDomain(config);
   
   // Configura aquí las propiedades que son comunes entre BigCommerce y Google Merchant Center
   const googleProductFormat = {
