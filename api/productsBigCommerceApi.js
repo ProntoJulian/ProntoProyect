@@ -52,7 +52,8 @@ async function fetchProductById(productId) {
     const response = await fetch(url, optionsGET);
     if (!response.ok) {
       // Si el producto no se encuentra, lanzar un error
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response}`);
+
     }
     const productData = await response.json();
     return productData.data; // Retorna los datos del producto
@@ -193,6 +194,7 @@ async function getLimitedValidProducts(maxCount) {
     const response = await fetch(url, optionsGET);
     if (!response.ok) {
       console.log(`HTTP error! status: ${response.status}`);
+      console.error(error);
       break;
     }
     const data = await response.json();
@@ -455,7 +457,7 @@ async function getProductsMatchingCustomField() {
     try {
       const response = await fetch(url, optionsGET);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response}`);
       }
       const data = await response.json();
 
@@ -524,7 +526,7 @@ async function getProductCustomFields(productId) {
   try {
     const response = await fetch(url, optionsGET);
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response}`);
     }
     const data = await response.json();
     console.timeEnd("getProductCustomFields");
@@ -552,7 +554,7 @@ async function countProductsByAvailability(availability) {
     try {
       const response = await fetch(url, optionsGET);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response}`);
       }
       const responseData = await response.json();
       totalCount += responseData.data.length;
@@ -599,7 +601,7 @@ async function countTotalProducts() {
     try {
       const response = await fetch(url, optionsGET);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response}`);
       }
       const responseData = await response.json();
       totalCount += responseData.data.length;
