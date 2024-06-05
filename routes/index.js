@@ -6,7 +6,8 @@ const {
     fetchDataFromTable,
     deleteFromTable,
     fetchOneFromTable,
-    fetchOneFromTableMultiple
+    fetchOneFromTableMultiple,
+    fetchAllFromTableByUserId
 } = require("../databases/CRUD");
 
 const {getByIdCompany} = require("../databases/consultas")
@@ -100,6 +101,29 @@ appRouter.get("/app/feeds", authenticateToken, superUsuarioPages, async function
     }
 });
 
+appRouter.get("/app/selectCompany", authenticateToken, superUsuarioPages, async function (req, res) {
+    try {
+        const user = res.locals.user;
+        const userID = user.user_id;
+        const userCompanies = await fetchAllFromTableByUserId(userID);
+        const companies = await fetchDataFromTable('companies');
+
+        // Mapear el nombre de la compañía
+        const userCompaniesWithName = userCompanies.map(uc => {
+            const company = companies.find(c => c.company_id === uc.company_id);
+            return {
+                user_id: uc.user_id,
+                company_id: uc.company_id,
+                company_name: company ? company.company_name : "Company not found"
+            };
+        });
+
+        res.render("selectCompany", { userCompanies: userCompaniesWithName });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
+    }
+});
 
 
 appRouter.get("/app/roles", authenticateToken, superUsuarioPages, async function (req, res) {

@@ -408,6 +408,7 @@ async function checkCustomField(productId) {
       );
     } else {
       console.error(`HTTP error! status: ${response.status}`);
+      console.error(error);
       console.log("Response:", await response.text());
       return false;
     }

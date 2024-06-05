@@ -93,6 +93,7 @@ const routerFeeds = require("./routes/RoutesDBCRUD/feeds");
 const routerRoles = require("./routes/RoutesDBCRUD/roles");
 const routerUsers = require("./routes/RoutesDBCRUD/users");
 const routerRoleModules = require("./routes/RoutesDBCRUD/roleModules.js");
+const routerUserCompany = require("./routes/RoutesDBCRUD/userCompany.js");
 const routerUserFeeds = require("./routes/RoutesDBCRUD/userFeed");
 const routerAuth = require("./routes/auth.js");
 const routerMerchant = require("./routes/Merchant/googleMerchant");
@@ -112,6 +113,7 @@ app.use(routerImages);
 app.use(routerWebHooks);
 app.use(routerAuth);
 app.use(routerCompanies);
+app.use(routerUserCompany);
 app.use(routerFeeds);
 app.use(routerRoles);
 app.use(routerUsers);
@@ -119,8 +121,13 @@ app.use(routerUserFeeds);
 app.use(routerAuth);
 app.use(appRouter);
 
+
+const {startCronJob} = require("./helpers/queue.js")
 // Server is listening
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  //startCronJob();
+
+    /* Modificaste app, auth y queue */
 });

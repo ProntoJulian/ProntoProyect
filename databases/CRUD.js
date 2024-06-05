@@ -164,6 +164,17 @@ async function fetchAllFromTableByRoleId(roleId) {
     }
 }
 
+async function fetchAllFromTableByUserId(roleId) {
+    const sql = `SELECT * FROM \`user_companies\` WHERE \`user_id\` = ?`;
+    try {
+        const [results] = await pool.promise().query(sql, [roleId]);
+        return results;
+    } catch (error) {
+        console.error(`Error al obtener registros de role_modules con role_id = ${roleId}:`, error);
+        throw error;
+    }
+}
+
 
 async function updateFeed(feedId, updateData) {
     try {
@@ -232,5 +243,6 @@ module.exports = {
     fetchOneFromTableMultiple,
     fetchAllFromTableByRoleId,
     updateFeed,
-    testInsertAndFetchFeedTest
+    testInsertAndFetchFeedTest,
+    fetchAllFromTableByUserId
 };

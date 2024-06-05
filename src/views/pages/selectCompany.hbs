@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Company</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .container {
+            margin-top: 50px;
+        }
+        .form-label {
+            font-weight: bold;
+        }
+        .btn-accept {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Select the Company</h2>
+            </div>
+            <div class="card-body">
+                <form id="selectCompanyForm">
+                    <div class="mb-3">
+                        <label for="companyId" class="form-label">Company</label>
+                        <select class="form-control" id="companyId">
+                            <!-- Example options, replace with dynamic data if needed -->
+                            <option value="1">Company 1</option>
+                            <option value="2">Company 2</option>
+                            <option value="3">Company 3</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-accept">Accept</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('selectCompanyForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var companyId = document.getElementById('companyId').value;
+            alert('Selected Company ID: ' + companyId);
+            // Add your form submission logic here
+        });
+    </script>
+</body>
+</html>

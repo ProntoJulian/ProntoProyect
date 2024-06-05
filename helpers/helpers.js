@@ -32,10 +32,7 @@ async function transformProduct(bcProduct) {
     brand: "Home & Garden",
     gtin: bcProduct.upc,
     mpn: bcProduct.mpn,
-    sale_price:{
-      value: bcProduct.sale_price,
-      currency: "USD"
-    },
+    sale_price:`<g:sale_price>${bcProduct.sale_price} USD</g:sale_price>`
     
   };
 

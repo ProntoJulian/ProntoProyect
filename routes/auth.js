@@ -76,7 +76,12 @@ routerAuth.post('/login', (req, res, next) => {
 });
 
 
+const {syncQueue} = require("../helpers/queue")
 
+routerAuth.post('/addSync', (req, res) => {
+    syncQueue.add({});
 
+    res.send('Synchronization job added to the queue');
+});
 
 module.exports = routerAuth;
