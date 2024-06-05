@@ -219,7 +219,8 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
                 storeHash: storeHash,
                 client_email: feed.client_email,
                 privateKey: privateKey,
-                merchantId: merchantId
+                merchantId: merchantId,
+                domain:feed.domain
               };
 
             // Ejecutar las operaciones asíncronas en segundo plano
