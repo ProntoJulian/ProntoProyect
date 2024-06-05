@@ -8,9 +8,6 @@ async function transformProduct(bcProduct) {
   const {fetchCategoryNameById} = require("../api/categoriesBigCommerceApi");
 
   const {primerImagen, ImagenesRestantes} = await getProductImages(bcProduct.id);
-
-  console.log("Nombre del producto: ", bcProduct.name)
-
   
   // Configura aquí las propiedades que son comunes entre BigCommerce y Google Merchant Center
   const googleProductFormat = {
