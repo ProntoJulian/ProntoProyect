@@ -35,7 +35,7 @@ async function transformProduct(config,bcProduct) {
     
   };
   
-  if(bcProduct.upc !== ""){
+  if(bcProduct.gtin !== ""){
     console.log()
     googleProductFormat.gtin= bcProduct.gtin
   }
