@@ -6,6 +6,9 @@ async function getConfigCategories(accessToken1, storeHash1) {
   accessToken = accessToken1;
   storeHash = storeHash1;
 
+  console.log("Store Hash en Categories: ", storeHash);
+  console.log("Access Token en Categories: ", accessToken);
+
   options = {
     method: "GET",
     headers: {
