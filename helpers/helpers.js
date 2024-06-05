@@ -46,7 +46,7 @@ async function transformProduct(bcProduct) {
   }
   }
 
-  if(bcProduct.sale_price>0){
+  if(bcProduct.sale_price>0 && bcProduct.sale_price> bcProduct.price){
     googleProductFormat.sale_price=`<g:sale_price>${bcProduct.sale_price} USD</g:sale_price>`
   }
 
