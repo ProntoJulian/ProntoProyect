@@ -14,6 +14,8 @@ const {fetchOneFromTable } = require("../../databases/CRUD");
 const { transformProduct } = require("../../helpers/helpers")
 
 const { fetchProductById, checkCustomField,getConfig } = require("../../api/productsBigCommerceApi");
+const { getConfigCategories } = require("../../api/categoriesBigCommerceApi");
+const { getConfigImages } = require("../../api/imagesBigCommerceApi");
 
 routerWebHooks.get("/webhooks/fetchWebHooks", async (req, res) => {
     res.send("Se ha hecho una consulta de las ordenes");
@@ -51,6 +53,8 @@ routerWebHooks.post("/updatedProduct/:feedID", async (req, res) => {
     const merchantId = feed.client_id;
 
     await getConfig(accessToken, storeHash);
+    await getConfigImages(accessToken,storeHash);
+    await getConfigCategories(accessToken, storeHash);
     await initializeGoogleAuth(feed.client_email, privateKey, merchantId);
 
 
