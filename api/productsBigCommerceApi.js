@@ -139,7 +139,7 @@ async function getLimitedValidProducts(maxCount) {
   return { validProductIds, totalValidCount };
 }
 
-async function manageProductProcessing(totalPages) {
+async function manageProductProcessing(config,totalPages) {
   const { transformProduct } = require("../helpers/helpers");
   const { insertBatchProducts } = require("../api/googleMerchantAPI");
 
