@@ -18,7 +18,7 @@ async function transformProduct(bcProduct) {
     imageLink: `<g:image_link>${primerImagen.url_standard}</g:image_link>`,
     contentLanguage: "en",
     targetCountry: "us",
-    link:`${domain}${bcProduct.custom_url.url}`
+    link:`${domain}${bcProduct.custom_url.url}`,
     channel: "online",
     googleProductCategory: 'Home & Garden', // Ejemplo, debería ser específico para tu producto
     condition: bcProduct.condition,
