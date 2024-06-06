@@ -5,14 +5,14 @@ const { insertIntoTable,
     updateTable,
     fetchDataFromTable,
     deleteFromTable,
-    fetchOneFromTable,updateFeed } = require("../../databases/CRUD");
-const { createWebhookToCreateProduct, createWebhookToUpdateProduct,fetchWebHooks } = require("../../api/webHooksBigCommerceApi")
-const { getProductInfoGoogleMerchant, initializeGoogleAuth,listAllProducts } = require("../../api/googleMerchantAPI")
+    fetchOneFromTable, updateFeed } = require("../../databases/CRUD");
+const { createWebhookToCreateProduct, createWebhookToUpdateProduct, fetchWebHooks } = require("../../api/webHooksBigCommerceApi")
+const { getProductInfoGoogleMerchant, initializeGoogleAuth, listAllProducts,getInfoOfAllProducts, createExcel} = require("../../api/googleMerchantAPI")
 const routerFeeds = express.Router();
 
-const { countPages,countProductsByAvailability, manageProductProcessing, getConfig,countTotalProducts } = require("../../api/productsBigCommerceApi")
-const {getConfigCategories} = require("../../api/categoriesBigCommerceApi");
-const {getConfigImages} = require("../../api/imagesBigCommerceApi");
+const { countPages, countProductsByAvailability, manageProductProcessing, getConfig, countTotalProducts } = require("../../api/productsBigCommerceApi")
+const { getConfigCategories } = require("../../api/categoriesBigCommerceApi");
+const { getConfigImages } = require("../../api/imagesBigCommerceApi");
 
 routerFeeds.get("/feeds/getFeeds", authenticateToken, async (req, res) => {
     try {
@@ -63,8 +63,8 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
 
     // Console.log para mostrar la información recibida
     console.log('Feed Data Recibida:', feedData);
-    
-    try {  
+
+    try {
         delete feedData.recurrence;
         const result = await insertIntoTable('feeds', feedData, columns);
         if (result.affectedRows > 0) {
@@ -133,16 +133,16 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
     await initializeGoogleAuth(feed.client_email, privateKey, merchantId);
 
     try {
-        
+
         const merchantId = feed.client_id;
-        
+
         const [totalProductsGM, totalProductsBC, preorderProducts] = await Promise.all([
             listAllProducts(merchantId),
             countTotalProducts(),
             countProductsByAvailability("preorder")
         ]);
 
-        
+
         updateData.total_products_bc = totalProductsBC;
         updateData.active_products_gm = totalProductsGM;
         updateData.preorder_products = preorderProducts;
@@ -200,7 +200,7 @@ routerFeeds.get("/feeds/getFeed/:feedId", authenticateToken, async (req, res) =>
     }
 });
 
-routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
+routerFeeds.get("/feeds/synchronize/:feedId",authenticateToken, async (req, res) => {
     const { feedId } = req.params;
     try {
         const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
@@ -214,21 +214,21 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
             const privateKey = feed.private_key; // decrypt(JSON.parse(feed.private_key));
             const merchantId = feed.client_id;
 
-            
+
             const config = {
                 accessToken: accessToken,
                 storeHash: storeHash,
                 client_email: feed.client_email,
                 private_key: privateKey,
                 merchantId: merchantId,
-                domain:feed.domain
-              };
+                domain: feed.domain
+            };
 
             // Ejecutar las operaciones asíncronas en segundo plano
             setImmediate(async () => {
                 try {
                     const conteoPages = await countPages(config);
-                    const conteoByTipo = await manageProductProcessing(config,conteoPages);
+                    const conteoByTipo = await manageProductProcessing(config, conteoPages);
 
                     console.log("Conteo: ", conteoPages);
 
@@ -243,7 +243,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
                     const [totalProductsGM, totalProductsBC, preorderProducts] = await Promise.all([
                         listAllProducts(config),
                         countTotalProducts(config),
-                        countProductsByAvailability(config,"preorder")
+                        countProductsByAvailability(config, "preorder")
                     ]);
 
                     const updateData = {
@@ -271,7 +271,40 @@ routerFeeds.get("/feeds/synchronize/:feedId", async (req, res) => {
     } catch (error) {
         console.error('Error al obtener el feed:', error);
         res.status(500).json({ message: "Error interno del servidor al intentar obtener el feed" });
-        
+
+    }
+});
+
+
+routerFeeds.get("/feeds/downloadFeed/:feedId", authenticateToken, async (req, res) => {
+    const { feedId } = req.params;
+
+    try {
+        const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
+
+        const config = {
+            accessToken: accessToken,
+            storeHash: storeHash,
+            client_email: feed.client_email,
+            private_key: privateKey,
+            merchantId: merchantId,
+            domain: feed.domain
+        };
+
+        const products = await getInfoOfAllProducts(config);
+
+        // Llama a la función createExcel y obtiene el buffer
+        const buffer = createExcel(products, true);
+
+        // Configura las cabeceras de la respuesta para la descarga
+        res.setHeader('Content-Disposition', 'attachment; filename=Products.xlsx');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+        // Envía el buffer como una respuesta
+        res.send(buffer);
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).send("Error generating Excel file");
     }
 });
 

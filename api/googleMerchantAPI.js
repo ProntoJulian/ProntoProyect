@@ -410,6 +410,83 @@ async function deleteGoogleMerchantProduct(config, googleProductId) {
 }
 
 
+
+function shortenDescription(description) {
+  if (description.length > 20) {
+    return description.substring(0, 20) + "..." + `${description.length - 20}`;
+  }
+  return description;
+}
+
+async function getInfoOfAllProducts(config) {
+  const { content, merchantId } = await initializeGoogleAuth(config);
+
+  let products = [];
+  let nextPageToken = null;
+  const maxResults = 250;
+
+  console.time("Duración del listado de productos");
+
+  try {
+    do {
+      const params = {
+        merchantId,
+        maxResults
+      };
+      if (nextPageToken) {
+        params.pageToken = nextPageToken;
+      }
+
+      const response = await content.products.list(params);
+
+      if (response.data.resources) {
+        products = products.concat(response.data.resources);
+        nextPageToken = response.data.nextPageToken;
+      }
+    } while (nextPageToken);
+
+    console.log("Total de productos listados: ", products.length);
+    console.timeEnd("Duración del listado de productos");
+    return products;
+  } catch (error) {
+    console.error("Error al listar todos los productos: ", error);
+    console.timeEnd("Duración del listado de productos");
+    throw error;
+  }
+}
+
+function createExcel(products, returnBuffer = false) {
+  const workbook = xlsx.utils.book_new();
+  const worksheetData = products.map(product => ({
+    id: product.id,
+    title: product.title,
+    description: shortenDescription(product.description),
+    imageLink: product.imageLink,
+    contentLanguage: product.contentLanguage,
+    targetCountry: product.targetCountry,
+    availability: product.availability,
+    brand: product.brand,
+    condition: product.condition,
+    googleProductCategory: product.googleProductCategory,
+    mpn: product.mpn,
+    price: product.price.value + ' ' + product.price.currency,
+    productTypes: product.productTypes.join(', ')
+  }));
+
+  const worksheet = xlsx.utils.json_to_sheet(worksheetData);
+  xlsx.utils.book_append_sheet(workbook, worksheet, "Products");
+
+  if (returnBuffer) {
+    // Escribe el archivo Excel en un buffer y lo devuelve
+    return xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+  } else {
+    // Guarda el archivo en el directorio de trabajo actual
+    xlsx.writeFile(workbook, "Products.xlsx");
+    console.log("Archivo Excel creado exitosamente en el directorio de trabajo actual");
+  }
+}
+
+
 module.exports = {
   insertProductToGoogleMerchant,
   insertBatchProducts,
@@ -421,5 +498,7 @@ module.exports = {
   getProductInfoGoogleMerchant,
   deleteGoogleMerchantProduct,
   deleteBatchProducts,
-  initializeGoogleAuth
+  initializeGoogleAuth,
+  getInfoOfAllProducts,
+  createExcel
 };
