@@ -1,6 +1,7 @@
 const { google } = require("googleapis");
 var OAuth2 = google.auth.OAuth2;
 const fetch = require("node-fetch"); // Asegúrate de tener esta dependencia instalada
+const xlsx = require("xlsx");
 
 const credentials = {
   type: process.env.TYPE,
