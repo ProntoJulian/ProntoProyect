@@ -7,7 +7,7 @@ const { insertIntoTable,
     deleteFromTable,
     fetchOneFromTable, updateFeed } = require("../../databases/CRUD");
 const { createWebhookToCreateProduct, createWebhookToUpdateProduct, fetchWebHooks } = require("../../api/webHooksBigCommerceApi")
-const { getProductInfoGoogleMerchant, initializeGoogleAuth, listAllProducts,getInfoOfAllProducts, createExcel} = require("../../api/googleMerchantAPI")
+const { getProductInfoGoogleMerchant, initializeGoogleAuth, listAllProducts, getInfoOfAllProducts, createExcel } = require("../../api/googleMerchantAPI")
 const routerFeeds = express.Router();
 
 const { countPages, countProductsByAvailability, manageProductProcessing, getConfig, countTotalProducts } = require("../../api/productsBigCommerceApi")
@@ -200,7 +200,7 @@ routerFeeds.get("/feeds/getFeed/:feedId", authenticateToken, async (req, res) =>
     }
 });
 
-routerFeeds.get("/feeds/synchronize/:feedId",authenticateToken, async (req, res) => {
+routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res) => {
     const { feedId } = req.params;
     try {
         const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
@@ -281,6 +281,10 @@ routerFeeds.get("/feeds/downloadFeed/:feedId", authenticateToken, async (req, re
 
     try {
         const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
+        const storeHash = feed.store_hash;
+        const accessToken = feed.x_auth_token;
+        const privateKey = feed.private_key;
+        const merchantId = feed.client_id;
 
         const config = {
             accessToken: accessToken,
