@@ -28,7 +28,7 @@ let merchantId;
 async function initializeGoogleAuth(config) {
   const { client_email, private_key, merchantId } = config;
 
-  console.log("config en Google: ", config)
+  //console.log("config en Google: ", config)
 
   const formattedPrivateKeyFromDb = private_key.replace(/\\n/g, '\n');
 
@@ -478,8 +478,8 @@ function createExcel(products, returnBuffer = false) {
     condition: product.condition,
     googleProductCategory: product.googleProductCategory,
     mpn: product.mpn,
-    price: product.price.value + ' ' + product.price.currency,
-    productTypes: product.productTypes.join(', ')
+    price: product.price ? (product.price.value + ' ' + product.price.currency) : '',
+    productTypes: Array.isArray(product.productTypes) ? product.productTypes.join(', ') : ''
   }));
 
   const worksheet = xlsx.utils.json_to_sheet(worksheetData);
@@ -494,6 +494,7 @@ function createExcel(products, returnBuffer = false) {
     console.log("Archivo Excel creado exitosamente en el directorio de trabajo actual");
   }
 }
+
 
 
 module.exports = {
