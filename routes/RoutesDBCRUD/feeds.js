@@ -235,7 +235,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
                     const WebHooks = await fetchWebHooks();
 
                     if (WebHooks.data.length == 0) {
-                        await createWebhookToCreateProduct(storeHash, accessToken, feedId);
+                        await createWebhookToCreateProduct(config, feedId);
                         await createWebhookToUpdateProduct(storeHash, accessToken, feedId);
                     }
 
