@@ -169,6 +169,7 @@ async function createWebhookToUpdateProduct(config, feedID) {
       Accept: "application/json",
     },
     body: JSON.stringify(webhookPayload),
+    
   };
 
   try {
