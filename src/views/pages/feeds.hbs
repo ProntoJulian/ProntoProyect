@@ -432,11 +432,11 @@
                     company_id: document.getElementById('company_id').value.trim(),
                     client_email: document.getElementById('client_email').value.trim(),
                     private_key: document.getElementById('private_key').value.trim(),
-                    domain: document.getElementById('domain').value.trim(),
                     recurrence: {
                         intervalUnit: intervalUnit,
                         selectedDays: selectedDays
-                    }
+                    },
+                    domain: document.getElementById('domain').value.trim()
                 };
 
                 // Verificar que ningún campo esté vacío (incluyendo los nuevos campos de recurrencia)

@@ -186,19 +186,19 @@
             updateButton.addEventListener('click', function () {
                 const feedId = document.getElementById('feed_id').value;
                 const feedData = {
-                    feed_name: document.getElementById('feed_name').value,
-                    store_hash: document.getElementById('store_hash').value,
-                    x_auth_token: document.getElementById('x_auth_token').value,
-                    client_id: document.getElementById('client_id').value,
-                    client_email: document.getElementById('client_email').value,
-                    private_key: document.getElementById('private_key').value,
-                    formulas: document.getElementById('formulas').value,
-                    last_update: document.getElementById('last_update').value,
-                    active_products_gm: document.getElementById('active_products_gm').value,
-                    total_products_bc: document.getElementById('total_products_bc').value,
-                    preorder_products: document.getElementById('preorder_products').value,
-                    company_id: document.getElementById('company_id').value,
-                    domain: document.getElementById('domain').value,
+                    feed_name: document.getElementById('feed_name').value.trim(),
+                    store_hash: document.getElementById('store_hash').value.trim(),
+                    x_auth_token: document.getElementById('x_auth_token').value.trim(),
+                    client_id: document.getElementById('client_id').value.trim(),
+                    client_email: document.getElementById('client_email').value.trim(),
+                    private_key: document.getElementById('private_key').value.trim(),
+                    formulas: document.getElementById('formulas').value.trim(),
+                    last_update: document.getElementById('last_update').value.trim(),
+                    active_products_gm: document.getElementById('active_products_gm').value.trim(),
+                    total_products_bc: document.getElementById('total_products_bc').value.trim(),
+                    preorder_products: document.getElementById('preorder_products').value.trim(),
+                    company_id: document.getElementById('company_id').value.trim(),
+                    domain: document.getElementById('domain').value.trim(),
                 };
 
                 var progressModal = new bootstrap.Modal(document.getElementById('progressModal'), {
