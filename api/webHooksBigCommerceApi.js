@@ -18,13 +18,6 @@ async function getConfig(config) {
 }
 
 
-const optionsDelete = {
-  method: 'DELETE',
-  headers: {
-    'X-Auth-Token': accessToken,
-    'Content-Type': 'application/json'
-  }
-};
 
 
 /**
