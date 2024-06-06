@@ -524,6 +524,12 @@
                     }
                 });
             });
+
+            // Funcionalidad de cancelar en el modal de creación
+            document.getElementById('cancelButton').addEventListener('click', function () {
+                var createModal = new bootstrap.Modal(document.getElementById('createModal'));
+                createModal.hide();
+            });
         });
     </script>
 </body>
