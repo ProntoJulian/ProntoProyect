@@ -419,6 +419,14 @@ function shortenDescription(description) {
   return description;
 }
 
+function shortenDescription(description) {
+  if (description && description.length > 100) {
+    return description.substring(0, 20) + "..." + `${description.length - 20}`;
+  }
+  return description;
+}
+
+
 async function getInfoOfAllProducts(config) {
   const { content, merchantId } = await initializeGoogleAuth(config);
 

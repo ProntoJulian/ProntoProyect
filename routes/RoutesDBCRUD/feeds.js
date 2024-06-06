@@ -236,7 +236,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
 
                     if (WebHooks.data.length == 0) {
                         await createWebhookToCreateProduct(config, feedId);
-                        await createWebhookToUpdateProduct(storeHash, accessToken, feedId);
+                        await createWebhookToUpdateProduct(config, feedId);
                     }
 
                     // Ejecutar las operaciones de conteo en paralelo

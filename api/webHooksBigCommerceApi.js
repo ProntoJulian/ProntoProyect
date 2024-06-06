@@ -3,23 +3,6 @@ require("dotenv").config();
 
 const { generateHash } = require("../helpers/helpers.js")
 
-
-async function getConfig(config) {
-  const { accessToken, storeHash } = config;
-
-  return {
-    method: "GET",
-    headers: {
-      "X-Auth-Token": accessToken,
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  };
-}
-
-
-
-
 /**
  * Función asíncrona para recuperar los webhooks registrados de una tienda en BigCommerce.
  * Utiliza las variables `storeHash` y `accessToken` para autenticarse y realizar una solicitud GET a la API de BigCommerce.
