@@ -114,27 +114,19 @@
                     <tbody>
                         {{#each feeds}}
                         <tr>
-                            <td><span class="non-editable">{{this.feed_id}}</span><span
-                                    class="editable">{{this.feed_id}}</span></td>
-                            <td><span class="non-editable">{{this.feed_name}}</span><input type="text"
-                                    class="form-control editable" value="{{this.feed_name}}"></td>
-                            <td><span class="non-editable">{{this.formulas}}</span><input type="text"
-                                    class="form-control editable" value="{{this.formulas}}"></td>
-                            <td><span class="non-editable">{{this.last_update}}</span><input type="text"
-                                    class="form-control editable" value="{{this.last_update}}"></td>
-                            <td><span class="non-editable">{{this.active_products_gm}}</span><input type="text"
-                                    class="form-control editable" value="{{this.active_products_gm}}"></td>
-                            <td><span class="non-editable">{{this.total_products_bc}}</span><input type="text"
-                                    class="form-control editable" value="{{this.total_products_bc}}"></td>
-                            <td><span class="non-editable">{{this.preorder_products}}</span><input type="text"
-                                    class="form-control editable" value="{{this.preorder_products}}"></td>
+                            <td><span class="non-editable">{{this.feed_id}}</span><span class="editable">{{this.feed_id}}</span></td>
+                            <td><span class="non-editable">{{this.feed_name}}</span><input type="text" class="form-control editable" value="{{this.feed_name}}"></td>
+                            <td><span class="non-editable">{{this.formulas}}</span><input type="text" class="form-control editable" value="{{this.formulas}}"></td>
+                            <td><span class="non-editable">{{this.last_update}}</span><input type="text" class="form-control editable" value="{{this.last_update}}"></td>
+                            <td><span class="non-editable">{{this.active_products_gm}}</span><input type="text" class="form-control editable" value="{{this.active_products_gm}}"></td>
+                            <td><span class="non-editable">{{this.total_products_bc}}</span><input type="text" class="form-control editable" value="{{this.total_products_bc}}"></td>
+                            <td><span class="non-editable">{{this.preorder_products}}</span><input type="text" class="form-control editable" value="{{this.preorder_products}}"></td>
                             {{#unless (eq ../roleModule.0.access_type "Read Only")}}
                             <td class="text-center">
                                 <button class="btn btn-primary btn-edit" title="Update" data-feed-id="{{this.feed_id}}">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-danger btn-delete" title="Delete"
-                                    data-feed-id="{{this.feed_id}}">
+                                <button class="btn btn-danger btn-delete" title="Delete" data-feed-id="{{this.feed_id}}">
                                     <i class="fas fa-trash"></i>
                                 </button>
                                 <button class="btn btn-success btn-save editable" title="Save">
@@ -143,8 +135,7 @@
                                 <button class="btn btn-secondary btn-cancel editable" title="Cancel">
                                     <i class="fas fa-times"></i>
                                 </button>
-                                <button class="btn btn-info btn-sync" title="Synchronize"
-                                    data-feed-id="{{this.feed_id}}">
+                                <button class="btn btn-info btn-sync" title="Synchronize" data-feed-id="{{this.feed_id}}">
                                     <i class="fas fa-sync-alt"></i>
                                 </button>
                             </td>
@@ -179,8 +170,7 @@
     </div>
 
     <!-- Modal de Confirmación de Eliminación -->
-    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -220,18 +210,21 @@
                             <label for="store_hash" class="form-label">Store Hash</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="store_hash">
+                                <span class="input-group-text toggle-password" data-toggle="store_hash"><i class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="x_auth_token" class="form-label">x_auth_token</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="x_auth_token">
+                                <span class="input-group-text toggle-password" data-toggle="x_auth_token"><i class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="client_id" class="form-label">Merchant ID</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="client_id">
+                                <span class="input-group-text toggle-password" data-toggle="client_id"><i class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -256,6 +249,7 @@
                             <label for="private_key" class="form-label">Private Key</label>
                             <div class="input-group">
                                 <textarea class="form-control password-protected" id="private_key" rows="3"></textarea>
+                                <span class="input-group-text toggle-password" data-toggle="private_key"><i class="fas fa-eye"></i></span>
                             </div>
                         </div>
 
@@ -308,9 +302,7 @@
 
 
     <!-- Modal de Sincronización -->
-    <!-- Modal de Sincronización -->
-    <div class="modal fade" id="syncModal" tabindex="-1" aria-labelledby="syncModalLabel" aria-hidden="true"
-        data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal fade" id="syncModal" tabindex="-1" aria-labelledby="syncModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -425,7 +417,7 @@
                     company_id: document.getElementById('company_id').value,
                     client_email: document.getElementById('client_email').value,
                     private_key: document.getElementById('private_key').value,
-                    domain:document.getElementById('domain').value,
+                    domain: document.getElementById('domain').value,
                     recurrence: {
                         intervalUnit: intervalUnit,
                         selectedDays: selectedDays
@@ -467,7 +459,7 @@
                     });
             });
 
-
+            // Funcionalidad de sincronización
             document.querySelectorAll('.btn-sync').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     var feedId = btn.getAttribute('data-feed-id');
@@ -492,13 +484,12 @@
                     })
                         .then(response => {
                             if (!response.ok) {
-                                 alert("Error en la sincronización");
+                                alert("Error en la sincronización");
                                 syncModal.hide();
                             }
                             return response.json();
                         })
                         .then(data => {
-                        
                             if (data.message) {
                                 alert(data.message);
                             } else {
@@ -519,8 +510,6 @@
                         });
                 });
             });
-
-
 
             // Toggle password visibility
             document.querySelectorAll('.toggle-password').forEach(function (toggle) {
