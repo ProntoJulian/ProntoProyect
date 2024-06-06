@@ -232,7 +232,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
 
                     console.log("Conteo: ", conteoPages);
 
-                    const WebHooks = await fetchWebHooks();
+                    const WebHooks = await fetchWebHooks(config);
 
                     if (WebHooks.data.length == 0) {
                         await createWebhookToCreateProduct(config, feedId);

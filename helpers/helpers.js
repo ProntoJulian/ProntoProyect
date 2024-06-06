@@ -52,7 +52,8 @@ async function transformProduct(config,bcProduct) {
   }
 
   if(bcProduct.sale_price>0 && bcProduct.sale_price> bcProduct.price){
-    googleProductFormat.sale_price=`<g:sale_price>${bcProduct.sale_price} USD</g:sale_price>`
+    googleProductFormat.sale_price = `<g:sale_price>${parseFloat(bcProduct.sale_price).toFixed(2)} USD</g:sale_price>`;
+
   }
 
   if (bcProduct.fixed_cost_shipping_price > 0) {
