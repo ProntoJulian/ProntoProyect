@@ -3,17 +3,21 @@ require("dotenv").config();
 
 const { generateHash } = require("../helpers/helpers.js")
 
-const storeHash = process.env.STOREHASH;
-const accessToken = process.env.ACCESS_TOKEN;
-const urlGCloud = process.env.URL_GCLOUD;
 
-const optionsGet = {
-  method: "GET",
-  headers: {
-    "Content-Type": "application/json",
-    "X-Auth-Token": accessToken,
-  },
-};
+async function getConfig(config) {
+  const { accessToken, storeHash } = config;
+
+  return {
+    method: "GET",
+    headers: {
+      "X-Auth-Token": accessToken,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  };
+}
+
+
 
 const optionsDelete = {
   method: 'DELETE',
@@ -124,17 +128,18 @@ async function createWebhook(scope, destination) {
 
 
 
-async function createWebhookToUpdateProduct(storeHashF, accessTokenF, feedID) {
+async function createWebhookToUpdateProduct(config, feedID) {
+  const { storeHash, accessToken } = config;
   const urlPage = "https://pronto-proyect-4gzkueldfa-uc.a.run.app";
-  const url = `https://api.bigcommerce.com/stores/${storeHashF}/v3/hooks`;
-  const producer = `stores/${storeHashF}`;
+  const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/hooks`;
+  const producer = `stores/${storeHash}`;
 
   // Obtener la marca de tiempo UNIX actual
   const currentTimestamp = Math.floor(Date.now() / 1000);
   console.log("La marca de tiempo UNIX actual es:", currentTimestamp);
 
   const dataToHash = {
-    store_id: storeHashF,
+    store_id: storeHash,
     data: {
       type: "product"
     },
@@ -159,7 +164,7 @@ async function createWebhookToUpdateProduct(storeHashF, accessTokenF, feedID) {
   const optionsPost = {
     method: "POST",
     headers: {
-      "X-Auth-Token": accessTokenF,
+      "X-Auth-Token": accessToken,
       "Content-Type": "application/json",
       Accept: "application/json",
     },
@@ -268,17 +273,18 @@ async function createWebhookToDeleteProduct() {
 }
 
 
-async function createWebhookToCreateProduct(storeHashF,accessTokenF,feedId) {
+async function createWebhookToCreateProduct(config,feedId) {
+  const { storeHash, accessToken } = config;
   const urlPage = "https://pronto-proyect-4gzkueldfa-uc.a.run.app";
-  const url = `https://api.bigcommerce.com/stores/${storeHashF}/v3/hooks`;
-  const producer = `stores/${storeHashF}`;
+  const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/hooks`;
+  const producer = `stores/${storeHash}`;
 
   // Obtener la marca de tiempo UNIX actual
   const currentTimestamp = Math.floor(Date.now() / 1000);
   console.log("La marca de tiempo UNIX actual es:", currentTimestamp);
 
   const dataToHash = {
-    store_id: storeHashF,
+    store_id: storeHash,
     created_at: currentTimestamp,
     producer: producer,
   };
@@ -300,7 +306,7 @@ async function createWebhookToCreateProduct(storeHashF,accessTokenF,feedId) {
   const options = {
     method: "POST",
     headers: {
-      "X-Auth-Token": accessTokenF,
+      "X-Auth-Token": accessToken,
       "Content-Type": "application/json",
       Accept: "application/json",
     },
