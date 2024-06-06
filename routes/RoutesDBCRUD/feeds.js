@@ -39,10 +39,10 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
         'selectedDays',
         'intervalHour',
         'isActive',
+        'domain',
         'active_products_gm',
         'total_products_bc',
-        'preorder_products',
-        'domain'
+        'preorder_products'
     ]; // Ajusta según sea necesario
 
 
