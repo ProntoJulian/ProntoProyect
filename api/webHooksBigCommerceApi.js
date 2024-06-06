@@ -27,13 +27,21 @@ async function getConfig(config) {
 
 async function fetchWebHooks(config) {
   const { storeHash, accessToken } = config;
-  const optionsGet = getConfig(config);
   const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/hooks`;
+
+  const options = {
+    method: "GET",
+    headers: {
+      "X-Auth-Token": accessToken,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  };
 
   
 
   try {
-    const response = await fetch(url, optionsGet);
+    const response = await fetch(url, options);
     if (!response.ok) {
       throw new Error(`Error: ${response.status} ${response.statusText}`);
     }
