@@ -559,12 +559,12 @@
                 btn.addEventListener('click', function () {
                     var feedId = btn.getAttribute('data-feed-id');
 
-                    // Mostrar modal de espera
-                    var downloadModal = new bootstrap.Modal(document.getElementById('downloadModal'), {
+                    // Mostrar modal de sincronización
+                    var syncModal = new bootstrap.Modal(document.getElementById('syncModal'), {
                         backdrop: 'static',
                         keyboard: false
                     });
-                    downloadModal.show();
+                    syncModal.show();
 
                     fetch(`/feeds/downloadFeed/${feedId}`, {
                         method: 'GET',
