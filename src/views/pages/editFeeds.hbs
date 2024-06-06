@@ -66,6 +66,10 @@
                             <input type="text" class="form-control" id="feed_name" value="{{this.feed_name}}">
                         </div>
                         <div class="mb-3">
+                            <label for="domain" class="form-label">Domain</label>
+                            <input type="text" class="form-control" id="domain" value="{{this.domain}}">
+                        </div>
+                        <div class="mb-3">
                             <label for="store_hash" class="form-label">Store Hash</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="store_hash" value="{{this.store_hash}}">
@@ -79,7 +83,7 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="client_id" class="form-label">Client ID</label>
+                            <label for="client_id" class="form-label">Merchant ID</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="client_id" value="{{this.client_id}}">
                                 <span class="input-group-text toggle-password" data-toggle="client_id">/push    
@@ -198,6 +202,7 @@
                     total_products_bc: document.getElementById('total_products_bc').value,
                     preorder_products: document.getElementById('preorder_products').value,
                     company_id: document.getElementById('company_id').value,
+                    domain: document.getElementById('domain').value,
                 };
 
                 var progressModal = new bootstrap.Modal(document.getElementById('progressModal'), {

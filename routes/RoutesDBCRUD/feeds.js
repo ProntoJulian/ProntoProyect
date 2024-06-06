@@ -41,7 +41,8 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
         'isActive',
         'active_products_gm',
         'total_products_bc',
-        'preorder_products'
+        'preorder_products',
+        'domain'
     ]; // Ajusta según sea necesario
 
 
