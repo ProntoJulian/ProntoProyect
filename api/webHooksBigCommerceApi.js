@@ -25,7 +25,7 @@ async function getConfig(config) {
  * es capturado y registrado en la consola.
  */
 
-async function fetchWebHooks() {
+async function fetchWebHooks(config) {
   const { storeHash, accessToken } = config;
   const optionsGet = getConfig(config);
   const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/hooks`;
