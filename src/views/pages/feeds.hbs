@@ -424,15 +424,15 @@
                 const intervalUnit = document.querySelector('.input-group select').value;
 
                 const feedData = {
-                    feed_name: document.getElementById('feed_name').value,
-                    store_hash: document.getElementById('store_hash').value,
-                    x_auth_token: document.getElementById('x_auth_token').value,
-                    client_id: document.getElementById('client_id').value,
-                    formulas: document.getElementById('formulas').value,
-                    company_id: document.getElementById('company_id').value,
-                    client_email: document.getElementById('client_email').value,
-                    private_key: document.getElementById('private_key').value,
-                    domain: document.getElementById('domain').value,
+                    feed_name: document.getElementById('feed_name').value.trim(),
+                    store_hash: document.getElementById('store_hash').value.trim(),
+                    x_auth_token: document.getElementById('x_auth_token').value.trim(),
+                    client_id: document.getElementById('client_id').value.trim(),
+                    formulas: document.getElementById('formulas').value.trim(),
+                    company_id: document.getElementById('company_id').value.trim(),
+                    client_email: document.getElementById('client_email').value.trim(),
+                    private_key: document.getElementById('private_key').value.trim(),
+                    domain: document.getElementById('domain').value.trim(),
                     recurrence: {
                         intervalUnit: intervalUnit,
                         selectedDays: selectedDays

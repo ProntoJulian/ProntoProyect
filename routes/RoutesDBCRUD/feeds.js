@@ -35,11 +35,11 @@ routerFeeds.post("/feeds/createFeed", authenticateToken, async (req, res) => {
         'formulas',
         'company_id',
         'client_email',
+        'domain',
         'private_key',
         'selectedDays',
         'intervalHour',
         'isActive',
-        'domain',
         'active_products_gm',
         'total_products_bc',
         'preorder_products'
