@@ -4,7 +4,8 @@ const {insertIntoTable,
     updateTable,
     fetchDataFromTable,
     deleteFromTable,
-    fetchOneFromTable} = require("../../databases/CRUD");
+    fetchOneFromTable,
+    updateUserCompany} = require("../../databases/CRUD");
 const routerUsers = express.Router();
 const bcrypt = require('bcrypt');
 
