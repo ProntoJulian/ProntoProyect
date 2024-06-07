@@ -444,7 +444,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ company_id: primaryCompanyId, username: newUsername, password: password, role_id: newRoleName, selectedCompanies: selectedCompanies })
+                    body: JSON.stringify({ company_id: primaryCompanyId, username: newUsername, password_hash: password, role_id: newRoleName, selectedCompanies: selectedCompanies })
                 })
                     .then(response => response.json())
                     .then(data => {

@@ -61,7 +61,7 @@ routerUsers.post("/users/createUser", authenticateToken, async (req, res) => {
             }
 
             if (totalAffectedRows > 0) {
-                res.status(201).json({ message: "Usuario y relaciones User-Company creados con éxito" });
+                res.status(201).json({ message: "Usuario creado con éxito" });
             } else {
                 res.status(400).json({ message: "Usuario creado, pero no se pudieron insertar las relaciones User-Company" });
             }
