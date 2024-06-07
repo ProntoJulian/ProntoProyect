@@ -200,13 +200,13 @@
                     company_id: document.getElementById('company_id').value.trim(),
                     domain: document.getElementById('domain').value.trim(),
                 };
-
+/*
                 var progressModal = new bootstrap.Modal(document.getElementById('progressModal'), {
                     backdrop: 'static',
                     keyboard: false
                 });
                 progressModal.show();
-
+*/
                 fetch(`/feeds/update/${feedId}`, {
                     method: 'PUT',
                     headers: {

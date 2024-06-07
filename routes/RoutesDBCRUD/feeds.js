@@ -135,17 +135,17 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
     try {
 
         const merchantId = feed.client_id;
-
+        /*
         const [totalProductsGM, totalProductsBC, preorderProducts] = await Promise.all([
             listAllProducts(merchantId),
             countTotalProducts(),
             countProductsByAvailability("preorder")
         ]);
-
-
+        
         updateData.total_products_bc = totalProductsBC;
         updateData.active_products_gm = totalProductsGM;
         updateData.preorder_products = preorderProducts;
+        */
         /*
             Configuración temporal
 
