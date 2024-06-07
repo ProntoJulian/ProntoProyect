@@ -191,20 +191,28 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="newCompanyName" class="form-label">Company Name</label>
-                            {{#if (includes permisos 'modules')}}
-                            <select class="form-control" id="company_id">
-                                {{#each companies}}
-                                <option value="{{this.company_id}}">{{this.company_name}}</option>
-                                {{/each}}
-                            </select>
-                            {{else}}
-                            <select class="form-control" id="company_id">
-                                {{#each companies}}
-                                <option value="{{this.company_id}}">{{this.company_name}}</option>
-                                {{/each}}
-                            </select>
-                            {{/if}}
+                            <label class="form-label">Company Name</label>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Company Name</th>
+                                            <th>Select</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each companies}}
+                                        <tr>
+                                            <td>{{this.company_name}}</td>
+                                            <td>
+                                                <input type="checkbox" class="form-check-input company-checkbox"
+                                                    value="{{this.company_id}}">
+                                            </td>
+                                        </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="newRoleName" class="form-label">Role</label>
@@ -268,7 +276,7 @@
                             <label for="editCompanyId" class="form-label">Company Name</label>
                             <select class="form-control" id="editCompanyId">
                                 {{#each companies}}
-                                    <option value="{{this.company_id}}">{{this.company_name}}</option>
+                                <option value="{{this.company_id}}">{{this.company_name}}</option>
                                 {{/each}}
                             </select>
                         </div>
@@ -392,73 +400,77 @@
             });
 
             // Funcionalidad de crear nuevo usuario
-            document.getElementById('createForm').addEventListener('submit', function (event) {
-                event.preventDefault();
-                var newUsername = document.getElementById('newUsername').value;
-                var password = document.getElementById('password').value;
-                var confirmPassword = document.getElementById('confirmPassword').value;
-                var newCompanyName = document.getElementById('company_id').value;
-                var newRoleName = document.getElementById('rol_id').value;
+            document.addEventListener('DOMContentLoaded', function () {
+                document.getElementById('createForm').addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    var newUsername = document.getElementById('newUsername').value;
+                    var password = document.getElementById('password').value;
+                    var confirmPassword = document.getElementById('confirmPassword').value;
+                    var newRoleName = document.getElementById('rol_id').value;
 
-                if (password !== confirmPassword) {
-                    alert("Las contraseñas no coinciden");
-                    return;
-                }
+                    // Obtener todas las compañías seleccionadas
+                    var selectedCompanies = Array.from(document.querySelectorAll('.company-checkbox:checked')).map(checkbox => checkbox.value);
 
-                fetch('/users/createUser', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ company_id: newCompanyName, username: newUsername, password_hash: password, role_id: newRoleName })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message === "Usuario creado con éxito") {
-                            var newRow = `
-                            <tr>
-                                <td><span class="non-editable">${data.user_id}</span><input type="text" class="form-control editable" value="${data.user_id}" disabled></td>
-                                <td><span class="non-editable">${newUsername}</span><input type="text" class="form-control editable" value="${newUsername}"></td>
-                                <td><span class="non-editable">${newCompanyName}</span><input type="text" class="form-control editable" value="${newCompanyName}"></td>
-                                <td><span class="non-editable">${newRoleName}</span><input type="text" class="form-control editable" value="${newRoleName}"></td>
-                                <td class="text-center">
-                                    <button class="btn btn-primary btn-edit" title="Actualizar" data-user-id="${data.user_id}" data-username="${newUsername}" data-company-id="${newCompanyName}" data-role-id="${newRoleName}">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-danger btn-delete" title="Eliminar" data-user-id="${data.user_id}">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
-                            document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
-                            var createModal = new bootstrap.Modal(document.getElementById('createModal'));
-                            createModal.hide();
-                            window.location.reload();
-                        } else {
-                            alert("Error al crear el usuario: " + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert("Error al crear el usuario");
-                    });
-            });
-
-            // Toggle password visibility
-            document.querySelectorAll('.toggle-password').forEach(function (toggle) {
-                toggle.addEventListener('click', function () {
-                    var input = document.getElementById(toggle.getAttribute('data-toggle'));
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        toggle.innerHTML = '<i class="fas fa-eye-slash"></i>';
-                    } else {
-                        input.type = 'password';
-                        toggle.innerHTML = '<i class="fas fa-eye"></i>';
+                    if (password !== confirmPassword) {
+                        alert("Las contraseñas no coinciden");
+                        return;
                     }
+
+                    // Crear usuario
+                    fetch('/users/createUser', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username: newUsername, password: password, role_id: newRoleName })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === "Usuario creado con éxito") {
+                                var userId = data.user_id;
+
+                                // Crear UserCompany
+                                var userCompaniesData = selectedCompanies.map(companyId => ({ user_id: userId, company_id: companyId }));
+
+                                return fetch('/userCompanies/createUserCompany', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(userCompaniesData)
+                                });
+                            } else {
+                                throw new Error("Error al crear el usuario: " + data.message);
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === "User Company creado con éxito") {
+                                window.location.reload();
+                            } else {
+                                throw new Error("Error al crear User-Company: " + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert("Error: " + error.message);
+                        });
+                });
+
+                // Toggle password visibility
+                document.querySelectorAll('.toggle-password').forEach(function (toggle) {
+                    toggle.addEventListener('click', function () {
+                        var input = document.getElementById(toggle.getAttribute('data-toggle'));
+                        if (input.type === 'password') {
+                            input.type = 'text';
+                            toggle.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                        } else {
+                            input.type = 'password';
+                            toggle.innerHTML = '<i class="fas fa-eye"></i>';
+                        }
+                    });
                 });
             });
-        });
     </script>
 </body>
 

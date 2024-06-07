@@ -21,16 +21,19 @@ routerUserCompany.get("/userCompanies/getUserCompanies", /*authenticateToken,*/ 
 
 routerUserCompany.post("/userCompanies/createUserCompany", /*authenticateToken,*/ async (req, res) => {
     const userCompaniesData = req.body;
-    const columns = [
-        'user_id',
-        'company_id'
-    ]; // Ajusta según sea necesario
+    const columns = ['user_id', 'company_id'];
 
     console.log("Datos enviados: ", userCompaniesData);
 
     try {
-        const result = await insertIntoTableMultiple('user_companies', userCompaniesData, columns);
-        if (result.affectedRows > 0) {
+        let totalAffectedRows = 0;
+
+        for (const userCompany of userCompaniesData) {
+            const result = await insertIntoTableMultiple('user_companies', [userCompany], columns);
+            totalAffectedRows += result.affectedRows;
+        }
+
+        if (totalAffectedRows > 0) {
             res.status(201).json({ message: "User Company creado con éxito" });
         } else {
             res.status(400).json({ message: "No se pudo insertar el User Company" });
@@ -40,6 +43,7 @@ routerUserCompany.post("/userCompanies/createUserCompany", /*authenticateToken,*
         res.status(500).json({ message: "Error al crear el User-Company" });
     }
 });
+
 
 routerUserCompany.put("/userCompanies/updateUserCompany/:userId/:companyId", /*authenticateToken,*/ async (req, res) => {
     const { userId, companyId } = req.params;
