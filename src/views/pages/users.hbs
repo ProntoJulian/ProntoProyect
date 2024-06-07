@@ -199,6 +199,37 @@
                             </select>
                             {{/if}}
                         </div>
+
+
+                        <!-- Temporal -->
+
+                        <div class="mb-3">
+                            <label class="form-label">Company Name</label>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Company Name</th>
+                                            <th>Select</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each companies}}
+                                        <tr>
+                                            <td>{{this.company_name}}</td>
+                                            <td>
+                                                <input type="checkbox" class="form-check-input company-checkbox"
+                                                    value="{{this.company_id}}">
+                                            </td>
+                                        </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Temporal -->
+
                         <div class="mb-3">
                             <label for="newRoleName" class="form-label">Role</label>
                             <select class="form-control" id="rol_id">
@@ -261,40 +292,9 @@
                             <select class="form-control" id="editCompanyId">
                                 {{#each companies}}
                                 <option value="{{this.company_id}}">{{this.company_name}}</option>
-                                <option value="{{this.company_id}}">{{this.company_name}}</option>
                                 {{/each}}
                             </select>
                         </div>
-
-                        <!-- Temporal -->
-
-                        <div class="mb-3">
-                            <label class="form-label">Company Name</label>
-                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Company Name</th>
-                                            <th>Select</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {{#each companies}}
-                                        <tr>
-                                            <td>{{this.company_name}}</td>
-                                            <td>
-                                                <input type="checkbox" class="form-check-input company-checkbox"
-                                                    value="{{this.company_id}}">
-                                            </td>
-                                        </tr>
-                                        {{/each}}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- Temporal -->
-
 
                         <div class="mb-3">
                             <label for="editRoleId" class="form-label">Role</label>
