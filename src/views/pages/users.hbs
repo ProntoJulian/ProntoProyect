@@ -173,22 +173,12 @@
                             <input type="text" class="form-control" id="newUsername" required>
                         </div>
                         <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="password" required>
-                                <span class="input-group-text toggle-password" data-toggle="password">
-                                    <i class="fas fa-eye"></i>
-                                </span>
-                            </div>
+                            <label for="newPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="newPassword" required>
                         </div>
                         <div class="mb-3">
                             <label for="confirmPassword" class="form-label">Confirm Password</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="confirmPassword" required>
-                                <span class="input-group-text toggle-password" data-toggle="confirmPassword">
-                                    <i class="fas fa-eye"></i>
-                                </span>
-                            </div>
+                            <input type="password" class="form-control" id="confirmPassword" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Company Name</label>
@@ -215,8 +205,8 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="newRoleName" class="form-label">Role</label>
-                            <select class="form-control" id="rol_id">
+                            <label for="roleId" class="form-label">Role</label>
+                            <select class="form-control" id="roleId">
                                 {{#each roles}}
                                 <option value="{{this.role_id}}">{{this.role_name}}</option>
                                 {{/each}}
