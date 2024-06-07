@@ -410,6 +410,9 @@
             // Funcionalidad de crear nuevo usuario
             document.getElementById('createForm').addEventListener('submit', function (event) {
                 event.preventDefault();
+                
+                console.log('Document loaded'); // Debugging line
+
                 var newUsername = document.getElementById('newUsername').value;
                 var password = document.getElementById('password').value;
                 var confirmPassword = document.getElementById('confirmPassword').value;
