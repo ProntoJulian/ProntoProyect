@@ -5,7 +5,8 @@ const {insertIntoTable,
     fetchDataFromTable,
     deleteFromTable,
     fetchOneFromTable,
-    updateUserCompany} = require("../../databases/CRUD");
+    updateUserCompany,
+    insertIntoTableMultiple} = require("../../databases/CRUD");
 const routerUsers = express.Router();
 const bcrypt = require('bcrypt');
 
@@ -25,23 +26,52 @@ routerUsers.post("/users/createUser", authenticateToken, async (req, res) => {
 
     console.log('Received userData:', userData);
 
-    // Eliminar la propiedad selectedCompanies antes de insertar el usuario
+    if (userData.selectedCompanies) {
+        userData.selectedCompanies = userData.selectedCompanies.map(companyId => parseInt(companyId, 10));
+    }
+
+    if (userData.company_id) {
+        userData.company_id = parseInt(userData.company_id, 10);
+    }
+
+    // Guardar las compañías seleccionadas en una constante y eliminar del objeto userData
+    const selectedCompanies = userData.selectedCompanies;
     delete userData.selectedCompanies;
-    
+
     try {
+        // Primero, insertar el usuario
         const result = await insertIntoTable('users', userData, columns);
 
-        
         if (result.affectedRows > 0) {
-            res.status(201).json({ message: "Usuario creado con éxito" });
+            const userId = result.insertId;
+
+            // Crear las relaciones userCompanies
+            const userCompaniesData = selectedCompanies.map(companyId => ({
+                user_id: userId,
+                company_id: companyId
+            }));
+
+            // Insertar las relaciones userCompanies una por una
+            let totalAffectedRows = 0;
+            for (const userCompany of userCompaniesData) {
+                const userCompanyResult = await insertIntoTableMultiple('user_companies', userCompany, ['user_id', 'company_id']);
+                totalAffectedRows += userCompanyResult.affectedRows;
+            }
+
+            if (totalAffectedRows > 0) {
+                res.status(201).json({ message: "Usuario y relaciones User-Company creados con éxito" });
+            } else {
+                res.status(400).json({ message: "Usuario creado, pero no se pudieron insertar las relaciones User-Company" });
+            }
         } else {
             res.status(400).json({ message: "No se pudo insertar el usuario" });
         }
     } catch (error) {
-        console.error('Error al insertar usuario:', error);
-        res.status(500).json({ message: "Error al crear el usuario" });
+        console.error('Error al insertar usuario y relaciones User-Company:', error);
+        res.status(500).json({ message: "Error al crear el usuario y relaciones User-Company" });
     }
 });
+
 
 
 routerUsers.put("/users/updateUser/:userId", authenticateToken, async (req, res) => {
