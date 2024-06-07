@@ -417,8 +417,7 @@
                 var newRoleName = document.getElementById('rol_id').value;
                 const companyCheckboxes = document.querySelectorAll('.company-checkbox');
 
-                const selectedCompanies = Array.from(companyCheckboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
-                console.log("selectedCompanies: ", selectedCompanies); // Añadir mensaje de consola
+                console.log("selectedCompanies: ", companyCheckboxes); // Añadir mensaje de consola
 
 
                 if (password !== confirmPassword) {
