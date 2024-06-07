@@ -434,6 +434,10 @@
                     return;
                 }
 
+                const primaryCompanyId = selectedCompanies[0];
+                console.log("primaryCompanyId: ", primaryCompanyId); // Añadir mensaje de consola
+
+
 
                 fetch('/users/createUser', {
                     method: 'POST',
