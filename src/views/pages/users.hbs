@@ -191,7 +191,7 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Company Name</label>
+                            <label class="form-label">Select Company</label>
                             <div class="table-responsive">
                                 <table class="table table-bordered">
                                     <thead>
@@ -403,18 +403,26 @@
             document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('createForm').addEventListener('submit', function (event) {
                     event.preventDefault();
-                    var newUsername = document.getElementById('newUsername').value;
-                    var password = document.getElementById('password').value;
-                    var confirmPassword = document.getElementById('confirmPassword').value;
-                    var newRoleName = document.getElementById('rol_id').value;
+                    const newUsername = document.getElementById('newUsername').value;
+                    const password = document.getElementById('password').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+                    const newRoleName = document.getElementById('rol_id').value;
 
                     // Obtener todas las compañías seleccionadas
-                    var selectedCompanies = Array.from(document.querySelectorAll('.company-checkbox:checked')).map(checkbox => checkbox.value);
+                    const selectedCompanies = Array.from(document.querySelectorAll('.company-checkbox:checked')).map(checkbox => checkbox.value);
 
                     if (password !== confirmPassword) {
                         alert("Las contraseñas no coinciden");
                         return;
                     }
+
+                    if (selectedCompanies.length === 0) {
+                        alert("Debe seleccionar al menos una compañía.");
+                        return;
+                    }
+
+                    const primaryCompanyId = selectedCompanies[0];
+                    console.log("primaryCompanyId: ",primaryCompanyId)
 
                     // Crear usuario
                     fetch('/users/createUser', {
@@ -422,15 +430,15 @@
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ username: newUsername, password: password, role_id: newRoleName })
+                        body: JSON.stringify({ username: newUsername, password: password, role_id: newRoleName, company_id: primaryCompanyId })
                     })
                         .then(response => response.json())
                         .then(data => {
                             if (data.message === "Usuario creado con éxito") {
-                                var userId = data.user_id;
+                                const userId = data.user_id;
 
                                 // Crear UserCompany
-                                var userCompaniesData = selectedCompanies.map(companyId => ({ user_id: userId, company_id: companyId }));
+                                const userCompaniesData = selectedCompanies.map(companyId => ({ user_id: userId, company_id: companyId }));
 
                                 return fetch('/userCompanies/createUserCompany', {
                                     method: 'POST',
