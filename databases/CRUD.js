@@ -65,6 +65,19 @@ async function updateTable(tableName, data, keyColumn, id) {
     }
 }
 
+async function updateUserCompany(userId, companyId) {
+    const sql = 'UPDATE `users` SET company_id = ? WHERE user_id = ?';
+    try {
+        const [result] = await pool.promise().query(sql, [companyId, userId]);
+        console.log(`Usuario actualizado con éxito:`, result.affectedRows);
+        return result;
+    } catch (error) {
+        console.error(`Error al actualizar usuario:`, error);
+        throw error;
+    }
+}
+
+
 async function updateTableMultiple(tableName, data, keyColumns, ids) {
     if (!Array.isArray(keyColumns) || !Array.isArray(ids) || keyColumns.length !== ids.length) {
         throw new Error("keyColumns and ids must be arrays of the same length");
@@ -244,5 +257,6 @@ module.exports = {
     fetchAllFromTableByRoleId,
     updateFeed,
     testInsertAndFetchFeedTest,
-    fetchAllFromTableByUserId
+    fetchAllFromTableByUserId,
+    updateUserCompany
 };

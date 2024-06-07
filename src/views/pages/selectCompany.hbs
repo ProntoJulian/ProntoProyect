@@ -29,12 +29,12 @@
                     <div class="mb-3">
                         <label for="companyId" class="form-label">Company</label>
                         <select class="form-control" id="companyId">
-                            <!-- Example options, replace with dynamic data if needed -->
-                            <option value="1">Company 1</option>
-                            <option value="2">Company 2</option>
-                            <option value="3">Company 3</option>
+                            {{#each userCompanies}}
+                            <option value="{{this.company_id}}">{{this.company_name}}</option>
+                            {{/each}}
                         </select>
                     </div>
+                    <input type="hidden" id="userId" value="{{user.user_id}}">
                     <button type="submit" class="btn btn-primary btn-accept">Accept</button>
                 </form>
             </div>
@@ -47,8 +47,28 @@
         document.getElementById('selectCompanyForm').addEventListener('submit', function(event) {
             event.preventDefault();
             var companyId = document.getElementById('companyId').value;
-            alert('Selected Company ID: ' + companyId);
-            // Add your form submission logic here
+            var userId = document.getElementById('userId').value;
+
+            var data = {
+                companyId: companyId
+            };
+
+            fetch(`/users/updateUserCompany/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === "Usuario actualizado con éxito") {
+                    window.location.href = '/app';
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
         });
     </script>
 </body>

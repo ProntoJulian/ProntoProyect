@@ -80,6 +80,24 @@ routerUsers.put("/users/updateUser/:userId", authenticateToken, async (req, res)
     }
 });
 
+routerUsers.put("/users/updateUserCompany/:userId", authenticateToken, async (req, res) => {
+    const { userId } = req.params;
+    const { companyId } = req.body;
+
+    try {
+        const result = await updateUserCompany(userId, companyId);
+        if (result.affectedRows > 0) {
+            res.status(200).json({ message: "Usuario actualizado con éxito" });
+        } else {
+            res.status(404).json({ message: "Usuario no encontrado" });
+        }
+    } catch (error) {
+        console.error('Error al actualizar usuario:', error);
+        res.status(500).json({ message: "Error al actualizar el usuario" });
+    }
+});
+
+
 
 
 routerUsers.delete("/users/deleteUser/:userId", authenticateToken, async (req, res) => {

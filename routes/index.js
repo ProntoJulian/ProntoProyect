@@ -118,7 +118,7 @@ appRouter.get("/app/selectCompany", authenticateToken, superUsuarioPages, async 
             };
         });
 
-        res.render("selectCompany", { userCompanies: userCompaniesWithName });
+        res.render("pages/selectCompany", { userCompanies: userCompaniesWithName });
     } catch (error) {
         console.error(error);
         res.status(500).send("Internal Server Error");

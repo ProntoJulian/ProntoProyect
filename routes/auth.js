@@ -70,7 +70,7 @@ routerAuth.post('/login', (req, res, next) => {
                 maxAge: 3600000 // 1 hora
             });
 
-            res.redirect('/app');
+            res.redirect('/app/selectCompany');
         });
     })(req, res, next);
 });
