@@ -371,6 +371,7 @@
                         alert("Error al actualizar el usuario");
                     });
             });
+
             // Funcionalidad de eliminar
             document.querySelectorAll('.btn-delete').forEach(function (btn) {
                 btn.addEventListener('click', function () {
@@ -403,6 +404,9 @@
                     };
                 });
             });
+
+
+
             // Funcionalidad de crear nuevo usuario
             document.getElementById('createForm').addEventListener('submit', function (event) {
                 event.preventDefault();
@@ -411,10 +415,23 @@
                 var confirmPassword = document.getElementById('confirmPassword').value;
                 var newCompanyName = document.getElementById('company_id').value;
                 var newRoleName = document.getElementById('rol_id').value;
+
+                const selectedCompanies = Array.from(companyCheckboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
+                console.log("selectedCompanies: ", selectedCompanies); // Añadir mensaje de consola
+
+
                 if (password !== confirmPassword) {
                     alert("Las contraseñas no coinciden");
                     return;
                 }
+
+                if (selectedCompanies.length === 0) {
+                    alert("Debe seleccionar al menos una compañía.");
+                    return;
+                }
+
+
+
                 fetch('/users/createUser', {
                     method: 'POST',
                     headers: {
