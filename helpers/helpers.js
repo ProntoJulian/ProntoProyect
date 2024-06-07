@@ -10,7 +10,7 @@ async function transformProduct(config,bcProduct) {
   const {primerImagen, ImagenesRestantes} = await getProductImages(config,bcProduct.id);
   //const domain = getStoreDomain(config);
 
-  console.log("Dominio: ", config.domain)
+  //console.log("Dominio: ", config.domain)
   
   // Configura aquí las propiedades que son comunes entre BigCommerce y Google Merchant Center
   const googleProductFormat = {
