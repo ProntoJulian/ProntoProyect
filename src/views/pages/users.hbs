@@ -434,7 +434,7 @@
                     return;
                 }
 
-                const primaryCompanyId = selectedCompanies[0];
+                const primaryCompanyId = parseInt(selectedCompanies[0], 10);
                 console.log("primaryCompanyId: ", primaryCompanyId); // Añadir mensaje de consola
 
 
@@ -444,7 +444,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username: newUsername, password: password, role_id: newRoleName, company_id: primaryCompanyId, selectedCompanies: selectedCompanies })
+                    body: JSON.stringify({ company_id: primaryCompanyId, username: newUsername, password: password, role_id: newRoleName, , selectedCompanies: selectedCompanies })
                 })
                     .then(response => response.json())
                     .then(data => {
