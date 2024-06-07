@@ -401,6 +401,7 @@
 
             // Funcionalidad de crear nuevo usuario
             document.addEventListener('DOMContentLoaded', function () {
+                console.log('Document loaded'); // Debugging line
                 const createForm = document.getElementById('createForm');
                 const newUsernameInput = document.getElementById('newUsername');
                 const passwordInput = document.getElementById('password');
@@ -408,10 +409,14 @@
                 const roleInput = document.getElementById('rol_id');
                 const companyCheckboxes = document.querySelectorAll('.company-checkbox');
 
+                if (!createForm) {
+                    console.error('Form not found');
+                    return;
+                }
+
                 createForm.addEventListener('submit', function (event) {
                     event.preventDefault();
-
-                    console.log('Form submitted'); // Debugging line
+                    console.log('Form submit event triggered'); // Debugging line
 
                     const newUsername = newUsernameInput.value;
                     const password = passwordInput.value;
@@ -444,6 +449,7 @@
                         body: JSON.stringify({ username: newUsername, password: password, role_id: newRoleName, company_id: primaryCompanyId })
                     })
                         .then(response => {
+                            console.log('Create user fetch response received'); // Debugging line
                             if (!response.ok) {
                                 throw new Error('Error en la creación del usuario');
                             }
@@ -470,6 +476,7 @@
                             }
                         })
                         .then(response => {
+                            console.log('Create userCompany fetch response received'); // Debugging line
                             if (!response.ok) {
                                 throw new Error('Error en la creación del User-Company');
                             }
