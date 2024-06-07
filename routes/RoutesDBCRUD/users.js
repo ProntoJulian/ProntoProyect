@@ -22,6 +22,12 @@ routerUsers.get("/users/getUsers", authenticateToken, async (req, res) => {
 routerUsers.post("/users/createUser", authenticateToken, async (req, res) => {
     const userData = req.body;
     const columns = ['company_id', 'username', 'password_hash', 'role_id']; // Asegúrate de que estos campos están presentes en userData
+
+    console.log('Received userData:', userData);
+
+    // Eliminar la propiedad selectedCompanies antes de insertar el usuario
+    delete userData.selectedCompanies;
+    
     try {
         const result = await insertIntoTable('users', userData, columns);
 

@@ -419,6 +419,7 @@
                 var newCompanyName = document.getElementById('company_id').value;
                 var newRoleName = document.getElementById('rol_id').value;
                 const companyCheckboxes = document.querySelectorAll('.company-checkbox');
+                const selectedCompanies = Array.from(companyCheckboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
 
                 console.log("selectedCompanies: ", companyCheckboxes); // Añadir mensaje de consola
 
@@ -427,12 +428,11 @@
                     alert("Las contraseñas no coinciden");
                     return;
                 }
-/*
+
                 if (selectedCompanies.length === 0) {
                     alert("Debe seleccionar al menos una compañía.");
                     return;
                 }
-*/
 
 
                 fetch('/users/createUser', {
@@ -440,7 +440,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ company_id: newCompanyName, username: newUsername, password_hash: password, role_id: newRoleName })
+                    body: JSON.stringify({ username: newUsername, password: password, role_id: newRoleName, company_id: primaryCompanyId, selectedCompanies: selectedCompanies })
                 })
                     .then(response => response.json())
                     .then(data => {
