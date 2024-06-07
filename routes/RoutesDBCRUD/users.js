@@ -26,6 +26,8 @@ routerUsers.post("/users/createUser", authenticateToken, async (req, res) => {
 
     console.log('Received userData:', userData);
 
+    userData.company_id = parseInt(userData.company_id, 10)
+
     if (userData.selectedCompanies) {
         userData.selectedCompanies = userData.selectedCompanies.map(companyId => parseInt(companyId, 10));
     }
