@@ -401,70 +401,94 @@
 
             // Funcionalidad de crear nuevo usuario
             document.addEventListener('DOMContentLoaded', function () {
-                document.getElementById('createForm').addEventListener('submit', function (event) {
-                    event.preventDefault();
-                    const newUsername = document.getElementById('newUsername').value;
-                    const password = document.getElementById('password').value;
-                    const confirmPassword = document.getElementById('confirmPassword').value;
-                    const newRoleName = document.getElementById('rol_id').value;
+        const createForm = document.getElementById('createForm');
+        const newUsernameInput = document.getElementById('newUsername');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const roleInput = document.getElementById('rol_id');
+        const companyCheckboxes = document.querySelectorAll('.company-checkbox');
 
-                    // Obtener todas las compañías seleccionadas
-                    const selectedCompanies = Array.from(document.querySelectorAll('.company-checkbox:checked')).map(checkbox => checkbox.value);
-                    console.log("selectedCompanies: ", selectedCompanies); // Añadir mensaje de consola
+        createForm.addEventListener('submit', function (event) {
+            event.preventDefault();
 
-                    if (password !== confirmPassword) {
-                        alert("Las contraseñas no coinciden");
-                        return;
+            console.log('Form submitted'); // Debugging line
+
+            const newUsername = newUsernameInput.value;
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            const newRoleName = roleInput.value;
+
+            // Obtener todas las compañías seleccionadas
+            const selectedCompanies = Array.from(companyCheckboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
+            console.log("selectedCompanies: ", selectedCompanies); // Añadir mensaje de consola
+
+            if (password !== confirmPassword) {
+                alert("Las contraseñas no coinciden");
+                return;
+            }
+
+            if (selectedCompanies.length === 0) {
+                alert("Debe seleccionar al menos una compañía.");
+                return;
+            }
+
+            const primaryCompanyId = selectedCompanies[0];
+            console.log("primaryCompanyId: ", primaryCompanyId); // Añadir mensaje de consola
+
+            // Crear usuario
+            fetch('/users/createUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: newUsername, password: password, role_id: newRoleName, company_id: primaryCompanyId })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la creación del usuario');
                     }
+                    console.log('Create user response', response); // Debugging line
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Create user data', data); // Debugging line
+                    if (data.message === "Usuario creado con éxito") {
+                        const userId = data.user_id;
 
-                    if (selectedCompanies.length === 0) {
-                        alert("Debe seleccionar al menos una compañía.");
-                        return;
-                    }
+                        // Crear UserCompany
+                        const userCompaniesData = selectedCompanies.map(companyId => ({ user_id: userId, company_id: companyId }));
 
-                    const primaryCompanyId = selectedCompanies[0];
-                    console.log("primaryCompanyId: ", primaryCompanyId); // Añadir mensaje de consola
-
-                    // Crear usuario
-                    fetch('/users/createUser', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ username: newUsername, password: password, role_id: newRoleName, company_id: primaryCompanyId })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.message === "Usuario creado con éxito") {
-                                const userId = data.user_id;
-
-                                // Crear UserCompany
-                                const userCompaniesData = selectedCompanies.map(companyId => ({ user_id: userId, company_id: companyId }));
-
-                                return fetch('/userCompanies/createUserCompany', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    },
-                                    body: JSON.stringify(userCompaniesData)
-                                });
-                            } else {
-                                throw new Error("Error al crear el usuario: " + data.message);
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.message === "User Company creado con éxito") {
-                                window.location.reload();
-                            } else {
-                                throw new Error("Error al crear User-Company: " + data.message);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert("Error: " + error.message);
+                        return fetch('/userCompanies/createUserCompany', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(userCompaniesData)
                         });
+                    } else {
+                        throw new Error("Error al crear el usuario: " + data.message);
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error en la creación del User-Company');
+                    }
+                    console.log('Create userCompany response', response); // Debugging line
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Create userCompany data', data); // Debugging line
+                    if (data.message === "User Company creado con éxito") {
+                        window.location.reload();
+                    } else {
+                        throw new Error("Error al crear User-Company: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("Error: " + error.message);
                 });
+        });
 
                 // Toggle password visibility
                 document.querySelectorAll('.toggle-password').forEach(function (toggle) {
