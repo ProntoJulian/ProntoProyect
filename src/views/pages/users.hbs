@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +12,6 @@
             padding: 0.75rem;
             white-space: nowrap;
         }
-
         .icon-btn {
             border: none;
             background: none;
@@ -21,47 +19,37 @@
             margin: 0 5px;
             cursor: pointer;
         }
-
         .icon-btn i {
             font-size: 1.2em;
             color: #007BFF;
         }
-
         .table-responsive {
             overflow-x: auto;
         }
-
         .table thead th {
             white-space: nowrap;
         }
-
         .highlight-row {
             background-color: #f8f9fa;
         }
-
         .editable {
             display: none;
         }
-
         .editing .editable {
             display: inline;
         }
-
         .editing .non-editable {
             display: none;
         }
-
         .toggle-password {
             cursor: pointer;
         }
-
         .action-buttons {
             margin-bottom: 15px;
             text-align: left;
         }
     </style>
 </head>
-
 <body>
     <div class="container mt-5">
         {{#unless (eq roleModule.0.access_type "Read Only")}}
@@ -86,7 +74,6 @@
                             <th class="text-center">Actions</th>
                             {{/unless}}
                         </tr>
-
                     </thead>
                     <tbody>
                         {{#each users}}
@@ -114,10 +101,6 @@
             </div>
         </div>
     </div>
-
-
-
-
     <!-- Confirmation Modal -->
     <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -136,8 +119,6 @@
             </div>
         </div>
     </div>
-
-
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
         aria-hidden="true">
@@ -173,40 +154,42 @@
                             <input type="text" class="form-control" id="newUsername" required>
                         </div>
                         <div class="mb-3">
-                            <label for="newPassword" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="newPassword" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="confirmPassword" class="form-label">Confirm Password</label>
-                            <input type="password" class="form-control" id="confirmPassword" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Company Name</label>
-                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Company Name</th>
-                                            <th>Select</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {{#each companies}}
-                                        <tr>
-                                            <td>{{this.company_name}}</td>
-                                            <td>
-                                                <input type="checkbox" class="form-check-input company-checkbox"
-                                                    value="{{this.company_id}}">
-                                            </td>
-                                        </tr>
-                                        {{/each}}
-                                    </tbody>
-                                </table>
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password" required>
+                                <span class="input-group-text toggle-password" data-toggle="password">
+                                    <i class="fas fa-eye"></i>
+                                </span>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="roleId" class="form-label">Role</label>
-                            <select class="form-control" id="roleId">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirmPassword" required>
+                                <span class="input-group-text toggle-password" data-toggle="confirmPassword">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newCompanyName" class="form-label">Company Name</label>
+                            {{#if (includes permisos 'modules')}}
+                            <select class="form-control" id="company_id">
+                                {{#each companies}}
+                                <option value="{{this.company_id}}">{{this.company_name}}</option>
+                                {{/each}}
+                            </select>
+                            {{else}}
+                            <select class="form-control" id="company_id">
+                                {{#each companies}}
+                                <option value="{{this.company_id}}">{{this.company_name}}</option>
+                                {{/each}}
+                            </select>
+                            {{/if}}
+                        </div>
+                        <div class="mb-3">
+                            <label for="newRoleName" class="form-label">Role</label>
+                            <select class="form-control" id="rol_id">
                                 {{#each roles}}
                                 <option value="{{this.role_id}}">{{this.role_name}}</option>
                                 {{/each}}
@@ -218,8 +201,6 @@
             </div>
         </div>
     </div>
-
-
 
     <!-- Modal to Edit User -->
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -265,9 +246,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="editCompanyId" class="form-label">Company Name</label>
+                            <select class="form-control" id="editCompanyId" >
                             <select class="form-control" id="editCompanyId">
                                 {{#each companies}}
                                 <option value="{{this.company_id}}">{{this.company_name}}</option>
+                                    <option value="{{this.company_id}}">{{this.company_name}}</option>
                                 {{/each}}
                             </select>
                         </div>
@@ -285,8 +268,6 @@
             </div>
         </div>
     </div>
-
-
     <!-- Bootstrap JS bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -298,17 +279,14 @@
                     var username = btn.getAttribute('data-username');
                     var companyId = btn.getAttribute('data-company-id');
                     var roleId = btn.getAttribute('data-role-id');
-
                     document.getElementById('editUserId').value = userId;
                     document.getElementById('editUsername').value = username;
                     document.getElementById('editCompanyId').value = companyId;
                     document.getElementById('editRoleId').value = roleId;
-
                     var editModal = new bootstrap.Modal(document.getElementById('editModal'));
                     editModal.show();
                 });
             });
-
             // Funcionalidad de cancelar edición
             document.querySelectorAll('.btn-cancel').forEach(function (btn) {
                 btn.addEventListener('click', function () {
@@ -316,7 +294,6 @@
                     row.classList.remove('editing');
                 });
             });
-
             // Funcionalidad de guardar cambios
             document.getElementById('editForm').addEventListener('submit', function (event) {
                 event.preventDefault();
@@ -327,12 +304,10 @@
                 var confirmPassword = document.getElementById('editConfirmPassword').value;
                 var companyId = document.getElementById('editCompanyId').value;
                 var roleId = document.getElementById('editRoleId').value;
-
                 if (newPassword !== confirmPassword) {
                     alert("Las contraseñas no coinciden");
                     return;
                 }
-
                 fetch(`/users/updateUser/${userId}`, {
                     method: 'PUT',
                     headers: {
@@ -354,17 +329,14 @@
                         alert("Error al actualizar el usuario");
                     });
             });
-
             // Funcionalidad de eliminar
             document.querySelectorAll('.btn-delete').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     var userId = btn.getAttribute('data-user-id');
                     var deleteUserIdSpan = document.getElementById('deleteUserId');
                     deleteUserIdSpan.textContent = userId;
-
                     var deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
                     deleteConfirmModal.show();
-
                     document.getElementById('confirmDelete').onclick = function () {
                         fetch(`/users/deleteUser/${userId}`, {
                             method: 'DELETE',
@@ -389,38 +361,57 @@
                     };
                 });
             });
-
             // Funcionalidad de crear nuevo usuario
-            document.addEventListener('DOMContentLoaded', function () {
-                console.log('Document loaded'); // Debugging line
-                const createForm = document.getElementById('createForm');
-
-                if (!createForm) {
-                    console.error('Form not found'); // Debugging line
+            document.getElementById('createForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                var newUsername = document.getElementById('newUsername').value;
+                var password = document.getElementById('password').value;
+                var confirmPassword = document.getElementById('confirmPassword').value;
+                var newCompanyName = document.getElementById('company_id').value;
+                var newRoleName = document.getElementById('rol_id').value;
+                if (password !== confirmPassword) {
+                    alert("Las contraseñas no coinciden");
                     return;
                 }
-
-                createForm.addEventListener('submit', function (event) {
-                    event.preventDefault();
-                    console.log('Create form submitted'); // Debugging line
-
-                    const newUsername = document.getElementById('newUsername').value;
-                    const newPassword = document.getElementById('newPassword').value;
-                    const confirmPassword = document.getElementById('confirmPassword').value;
-                    const roleId = document.getElementById('roleId').value;
-                    //const selectedCompanies = Array.from(document.querySelectorAll('.company-checkbox'))
-                       // .filter(checkbox => checkbox.checked)
-                        //.map(checkbox => checkbox.value);
-
-                    console.log("New Username:", newUsername);
-                    console.log("New Password:", newPassword);
-                    console.log("Confirm Password:", confirmPassword);
-                    console.log("Role ID:", roleId);
-                    //console.log("Selected Companies:", selectedCompanies);
-                });
+                fetch('/users/createUser', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ company_id: newCompanyName, username: newUsername, password_hash: password, role_id: newRoleName })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message === "Usuario creado con éxito") {
+                            var newRow = `
+                            <tr>
+                                <td><span class="non-editable">${data.user_id}</span><input type="text" class="form-control editable" value="${data.user_id}" disabled></td>
+                                <td><span class="non-editable">${newUsername}</span><input type="text" class="form-control editable" value="${newUsername}"></td>
+                                <td><span class="non-editable">${newCompanyName}</span><input type="text" class="form-control editable" value="${newCompanyName}"></td>
+                                <td><span class="non-editable">${newRoleName}</span><input type="text" class="form-control editable" value="${newRoleName}"></td>
+                                <td class="text-center">
+                                    <button class="btn btn-primary btn-edit" title="Actualizar" data-user-id="${data.user_id}" data-username="${newUsername}" data-company-id="${newCompanyName}" data-role-id="${newRoleName}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-delete" title="Eliminar" data-user-id="${data.user_id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                            document.querySelector('tbody').insertAdjacentHTML('beforeend', newRow);
+                            var createModal = new bootstrap.Modal(document.getElementById('createModal'));
+                            createModal.hide();
+                            window.location.reload();
+                        } else {
+                            alert("Error al crear el usuario: " + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Error al crear el usuario");
+                    });
             });
-
-
             // Toggle password visibility
             document.querySelectorAll('.toggle-password').forEach(function (toggle) {
                 toggle.addEventListener('click', function () {
@@ -437,5 +428,4 @@
         });
     </script>
 </body>
-
 </html>
