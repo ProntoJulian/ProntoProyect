@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
             padding: 0.75rem;
             white-space: nowrap;
         }
+
         .icon-btn {
             border: none;
             background: none;
@@ -19,37 +21,47 @@
             margin: 0 5px;
             cursor: pointer;
         }
+
         .icon-btn i {
             font-size: 1.2em;
             color: #007BFF;
         }
+
         .table-responsive {
             overflow-x: auto;
         }
+
         .table thead th {
             white-space: nowrap;
         }
+
         .highlight-row {
             background-color: #f8f9fa;
         }
+
         .editable {
             display: none;
         }
+
         .editing .editable {
             display: inline;
         }
+
         .editing .non-editable {
             display: none;
         }
+
         .toggle-password {
             cursor: pointer;
         }
+
         .action-buttons {
             margin-bottom: 15px;
             text-align: left;
         }
     </style>
 </head>
+
 <body>
     <div class="container mt-5">
         {{#unless (eq roleModule.0.access_type "Read Only")}}
@@ -246,14 +258,44 @@
                         </div>
                         <div class="mb-3">
                             <label for="editCompanyId" class="form-label">Company Name</label>
-                            <select class="form-control" id="editCompanyId" >
                             <select class="form-control" id="editCompanyId">
                                 {{#each companies}}
                                 <option value="{{this.company_id}}">{{this.company_name}}</option>
-                                    <option value="{{this.company_id}}">{{this.company_name}}</option>
+                                <option value="{{this.company_id}}">{{this.company_name}}</option>
                                 {{/each}}
                             </select>
                         </div>
+
+                        <!-- Temporal -->
+
+                        <div class="mb-3">
+                            <label class="form-label">Company Name</label>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Company Name</th>
+                                            <th>Select</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each companies}}
+                                        <tr>
+                                            <td>{{this.company_name}}</td>
+                                            <td>
+                                                <input type="checkbox" class="form-check-input company-checkbox"
+                                                    value="{{this.company_id}}">
+                                            </td>
+                                        </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Temporal -->
+
+
                         <div class="mb-3">
                             <label for="editRoleId" class="form-label">Role</label>
                             <select class="form-control" id="editRoleId">
@@ -428,4 +470,5 @@
         });
     </script>
 </body>
+
 </html>
