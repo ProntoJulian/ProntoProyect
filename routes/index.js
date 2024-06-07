@@ -181,47 +181,53 @@ appRouter.get("/app/modules", authenticateToken, superUsuarioPages,async functio
 });
 
 appRouter.get("/app/users", authenticateToken, superUsuarioPages, async function (req, res) {
-    const user = res.locals.user;
-    const moduleId = 10; // Ajusta el módulo ID si es necesario
-    const roleModule = await fetchOneFromTableMultiple('role_modules', ['role_id', 'module_id'], [user.role_id, moduleId]);
-
-    const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
-
-    
-    
-    let users;
-    let companies;
-
-    if (role.role_name === "Superusuario") {
-        users = await fetchDataFromTable('users');
-        companies = await fetchDataFromTable('companies');
-    } else {
-        users = await getByIdCompany("users", user.company_id);
-        companies = [await fetchOneFromTable('companies', user.company_id, 'company_id')];
-    }
-
-
-
-    const roles = await fetchDataFromTable('roles');
-
-    rolesCompany = roles.filter(r => r.company_id === user.company_id);
-
-    for (let user of users) {
-        // Obtener el nombre de la compañía
-        if (user.company_id) {
-            const company = companies.find(c => c.company_id === user.company_id);
-            user.company_name = company ? company.company_name : "Compañía no encontrada";
+    try {
+        const user = res.locals.user;
+        const moduleId = 10; // Ajusta el módulo ID si es necesario
+        const roleModule = await fetchOneFromTableMultiple('role_modules', ['role_id', 'module_id'], [user.role_id, moduleId]);
+        
+        const role = await fetchOneFromTable('roles', user.role_id, 'role_id');
+        
+        let users;
+        let companies;
+        
+        if (role.role_name === "Superusuario") {
+            users = await fetchDataFromTable('users');
+            companies = await fetchDataFromTable('companies');
+        } else {
+            users = await getByIdCompany("users", user.company_id);
+            const userCompanies = await fetchAllFromTableByUserId(user.user_id);
+            const companyIds = userCompanies.map(uc => uc.company_id);
+            companies = await fetchDataFromTable('companies');
+            companies = companies.filter(c => companyIds.includes(c.company_id));
         }
 
-        // Obtener el nombre del rol
-        if (user.role_id) {
-            const role = roles.find(r => r.role_id === user.role_id);
-            user.role_name = role ? role.role_name : "Rol no encontrado";
-        }
-    }
+        const roles = await fetchDataFromTable('roles');
 
-    res.render("pages/users", { users: users, companies: companies, roles: rolesCompany, roleModule: [roleModule] });
+        // Filtrar roles por las compañías del usuario
+        const rolesCompany = roles.filter(r => companies.some(c => c.company_id === r.company_id));
+
+        for (let user of users) {
+            // Obtener el nombre de la compañía
+            if (user.company_id) {
+                const company = companies.find(c => c.company_id === user.company_id);
+                user.company_name = company ? company.company_name : "Compañía no encontrada";
+            }
+
+            // Obtener el nombre del rol
+            if (user.role_id) {
+                const role = roles.find(r => r.role_id === user.role_id);
+                user.role_name = role ? role.role_name : "Rol no encontrado";
+            }
+        }
+
+        res.render("pages/users", { users: users, companies: companies, roles: rolesCompany, roleModule: [roleModule] });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
+    }
 });
+
 
 
 
