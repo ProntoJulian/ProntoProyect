@@ -9,11 +9,11 @@ const { findProductByBigCommerceId,
     insertProductToGoogleMerchant,
     initializeGoogleAuth } = require("../../api/googleMerchantAPI");
 
-const {fetchOneFromTable } = require("../../databases/CRUD");
+const { fetchOneFromTable } = require("../../databases/CRUD");
 
 const { transformProduct } = require("../../helpers/helpers")
 
-const { fetchProductById, checkCustomField,getConfig } = require("../../api/productsBigCommerceApi");
+const { fetchProductById, checkCustomField, getConfig } = require("../../api/productsBigCommerceApi");
 const { getConfigCategories } = require("../../api/categoriesBigCommerceApi");
 const { getConfigImages } = require("../../api/imagesBigCommerceApi");
 
@@ -58,7 +58,7 @@ routerWebHooks.post("/updatedProduct/:feedID", async (req, res) => {
         client_email: feed.client_email,
         private_key: privateKey,
         merchantId: merchantId
-      };
+    };
 
 
     console.clear();
@@ -68,36 +68,36 @@ routerWebHooks.post("/updatedProduct/:feedID", async (req, res) => {
     console.log(`ID del Producto: `, productId);
 
     // Obtener información del producto de BigCommerce.
-    const infoProductBigCommerce = await fetchProductById(config,productId);
+    const infoProductBigCommerce = await fetchProductById(config, productId);
     if (!infoProductBigCommerce) {
         console.log("Producto no encontrado en BigCommerce.");
         return res.status(404).send("Producto no encontrado en BigCommerce.");
     }
 
-    const hasImage = await checkCustomField(config,productId);
-    console.log("¿El producto tiene imagen correcta?: ", hasImage) 
+    const hasImage = await checkCustomField(config, productId);
+    console.log("¿El producto tiene imagen correcta?: ", hasImage)
     if (hasImage) {
         console.log("El producto tiene imagen adecuada.");
     }
 
     try {
-        const infoProductGoogle = await getProductInfoGoogleMerchant(config,infoProductBigCommerce.sku);
+        const infoProductGoogle = await getProductInfoGoogleMerchant(config, infoProductBigCommerce.sku);
         if (infoProductBigCommerce.price === 0 || !infoProductBigCommerce.is_visible || infoProductBigCommerce.availability === "disabled" || !hasImage) {
             console.log(`El producto ${productId} no está activo o su precio es 0, procediendo a eliminar en Google Merchant.`);
-            await deleteGoogleMerchantProduct(config,infoProductGoogle.id);
+            await deleteGoogleMerchantProduct(config, infoProductGoogle.id);
             console.log("Producto eliminado en Google Merchant.");
             return res.status(200).send("Producto inactivo o a precio cero, no se requiere acción adicional en Google Merchant.");
         } else {
             console.log(`Actualizando el producto ${productId} en Google Merchant.`);
-            await updateGoogleMerchantProduct(config,infoProductGoogle.id, infoProductBigCommerce);
+            await updateGoogleMerchantProduct(config, infoProductGoogle.id, infoProductBigCommerce);
             console.log("Producto actualizado en Google Merchant.");
             return res.status(200).send("Producto actualizado en Google Merchant.");
         }
     } catch (error) {
         console.log(`Producto no encontrado en Google Merchant, intentando crear.`);
         if (infoProductBigCommerce.price !== 0 && infoProductBigCommerce.is_visible && hasImage && infoProductBigCommerce.availability !== "disabled") {
-            const transformedProduct = await transformProduct(config,infoProductBigCommerce);
-            await insertProductToGoogleMerchant(config,transformedProduct);
+            const transformedProduct = await transformProduct(config, infoProductBigCommerce);
+            await insertProductToGoogleMerchant(config, transformedProduct);
             console.log("Producto creado en Google Merchant.");
         } else {
             console.log("Producto no cumple con las condiciones para ser creado en Google Merchant.");
@@ -120,9 +120,10 @@ routerWebHooks.post("/createdProduct/:feedID", async (req, res) => {
         accessToken: accessToken,
         storeHash: storeHash,
         client_email: feed.client_email,
-        privateKey: privateKey,
-        merchantId: merchantId
-      };
+        private_key: privateKey,
+        merchantId: merchantId,
+        domain: feed.domain
+    };
 
     try {
         const productData = req.body;
@@ -131,12 +132,12 @@ routerWebHooks.post("/createdProduct/:feedID", async (req, res) => {
         console.log(`El producto creado: ${JSON.stringify(productData, null, 2)}`);
         console.log(`ID del Producto: `, idProduct);
 
-        const hasImage = await checkCustomField(config,idProduct);
+        const hasImage = await checkCustomField(config, idProduct);
 
         if (hasImage) {
-            const product = await fetchProductById(config,idProduct);
-            const transformedProducto = await transformProduct(config,product);
-            const response = await insertProductToGoogleMerchant(config,transformedProducto);
+            const product = await fetchProductById(config, idProduct);
+            const transformedProducto = await transformProduct(config, product);
+            const response = await insertProductToGoogleMerchant(config, transformedProducto);
 
             console.log("Producto insertado en Google Merchant con éxito: ");
             res.status(200).send("Producto creado y sincronizado correctamente con Google Merchant.");
