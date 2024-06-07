@@ -410,6 +410,7 @@
 
                     // Obtener todas las compañías seleccionadas
                     const selectedCompanies = Array.from(document.querySelectorAll('.company-checkbox:checked')).map(checkbox => checkbox.value);
+                    console.log("selectedCompanies: ", selectedCompanies); // Añadir mensaje de consola
 
                     if (password !== confirmPassword) {
                         alert("Las contraseñas no coinciden");
@@ -422,7 +423,7 @@
                     }
 
                     const primaryCompanyId = selectedCompanies[0];
-                    console.log("primaryCompanyId: ", primaryCompanyId)
+                    console.log("primaryCompanyId: ", primaryCompanyId); // Añadir mensaje de consola
 
                     // Crear usuario
                     fetch('/users/createUser', {
