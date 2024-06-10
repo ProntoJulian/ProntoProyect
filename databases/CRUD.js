@@ -119,6 +119,8 @@ async function deleteFromTable(tableName, keyColumn, id) {
         console.error(`Error al eliminar de ${tableName}:`, error);
         throw error;
     }
+
+    
 }
 
 async function deleteFromTableMultiple(tableName, keyColumns, ids) {
