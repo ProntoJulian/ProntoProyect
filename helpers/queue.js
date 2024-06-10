@@ -47,7 +47,6 @@ const startCronJob = () => {
 };
 
 
-
 module.exports = {
     syncQueue,
     startCronJob
