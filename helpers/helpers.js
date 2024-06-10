@@ -3,15 +3,15 @@ const crypto = require('crypto');
 const cron = require('node-cron');
 
 
-async function transformProduct(config,bcProduct) {
+async function transformProduct(config, bcProduct) {
   const { getProductImages } = require("../api/imagesBigCommerceApi");
-  const {fetchCategoryNameById, getStoreDomain} = require("../api/categoriesBigCommerceApi");
+  const { fetchCategoryNameById, getStoreDomain } = require("../api/categoriesBigCommerceApi");
 
-  const {primerImagen, ImagenesRestantes} = await getProductImages(config,bcProduct.id);
+  const { primerImagen, ImagenesRestantes } = await getProductImages(config, bcProduct.id);
   //const domain = getStoreDomain(config);
 
   //console.log("Dominio: ", config.domain)
-  
+
   // Configura aquí las propiedades que son comunes entre BigCommerce y Google Merchant Center
   const googleProductFormat = {
     offerId: bcProduct.sku,
@@ -20,7 +20,7 @@ async function transformProduct(config,bcProduct) {
     imageLink: `<g:image_link>${primerImagen.url_standard}</g:image_link>`,
     contentLanguage: "en",
     targetCountry: "us",
-    link:`${config.domain}${bcProduct.custom_url.url}`,
+    link: `${config.domain}${bcProduct.custom_url.url}`,
     channel: "online",
     googleProductCategory: 'Home & Garden', // Ejemplo, debería ser específico para tu producto
     condition: bcProduct.condition,
@@ -34,26 +34,26 @@ async function transformProduct(config,bcProduct) {
     // A continuación, se muestran algunos campos adicionales que podrías querer mapear:
     brand: "Home & Garden",
     mpn: bcProduct.mpn,
-    
+
   };
-  
-  if(bcProduct.gtin !== ""){
+
+  if (bcProduct.gtin !== "") {
     console.log()
-    googleProductFormat.gtin= bcProduct.gtin
+    googleProductFormat.gtin = bcProduct.gtin
   }
 
   if (bcProduct.categories.length > 0) {
     //console.log("ID de la categoria: ", bcProduct.categories[0])
-    
+
     try {
       const Category = await fetchCategoryNameById(config, bcProduct.categories[0]);
-      googleProductFormat.productTypes= Category
-  } catch (error) {
+      googleProductFormat.productTypes = Category
+    } catch (error) {
       console.error('Error fetching category:', error);
-  }
+    }
   }
 
-  if(bcProduct.sale_price>0 && bcProduct.sale_price> bcProduct.price){
+  if (bcProduct.sale_price > 0 && bcProduct.sale_price > bcProduct.price) {
     googleProductFormat.sale_price = `<g:sale_price>${parseFloat(bcProduct.sale_price).toFixed(2)} USD</g:sale_price>`;
 
   }
@@ -75,7 +75,7 @@ async function transformProduct(config,bcProduct) {
   }
 
   // Calcula la fecha de hoy y agrega 21 días
-  
+
   const today = new Date();
   today.setDate(today.getDate() + 21);
   const availabilityDate = today.toISOString().slice(0, 19) + '+00:00'; // Formato ISO 8601 con desplazamiento de zona horaria
@@ -84,7 +84,7 @@ async function transformProduct(config,bcProduct) {
     googleProductFormat.availability = "preorder";
 
     googleProductFormat.availability_date = availabilityDate;
-  }else if(bcProduct.availability === "disabled"){
+  } else if (bcProduct.availability === "disabled") {
     googleProductFormat.availability = "out_of_stock"
   }
 
@@ -96,35 +96,35 @@ function delay(time) {
 }
 
 const formatPriceForGoogleMerchant = (price) => {
-    return {
-        value: price.toFixed(2), // Asegura que el precio tenga dos decimales
-        currency: 'USD' // Ajusta la moneda según sea necesario
-    };
+  return {
+    value: price.toFixed(2), // Asegura que el precio tenga dos decimales
+    currency: 'USD' // Ajusta la moneda según sea necesario
+  };
 };
 
 async function fetchWithRetry(url, options, retries = 3, backoff = 2000) { //800 bien hasta 6 1200 con 8 //1500 Para El 2
-    try {
-        const response = await fetch(url, options);
-        if (!response.ok && retries > 0) {
-            await delay(backoff);
-            return fetchWithRetry(url, options, retries - 1, backoff * 2); // Incrementa el tiempo de espera
-        }
-        return response;
-    } catch (error) {
-        if (retries > 0) {
-            await delay(backoff);
-            return fetchWithRetry(url, options, retries - 1, backoff * 2);
-        }
-        throw error;
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok && retries > 0) {
+      await delay(backoff);
+      return fetchWithRetry(url, options, retries - 1, backoff * 2); // Incrementa el tiempo de espera
     }
+    return response;
+  } catch (error) {
+    if (retries > 0) {
+      await delay(backoff);
+      return fetchWithRetry(url, options, retries - 1, backoff * 2);
+    }
+    throw error;
+  }
 }
 
 
 
 function generateHash(data) {
-    const hash = crypto.createHash('sha1');
-    hash.update(JSON.stringify(data));  // Convierte los datos a una cadena JSON y actualiza el hash con ella
-    return hash.digest('hex');  // Devuelve el hash en formato hexadecimal
+  const hash = crypto.createHash('sha1');
+  hash.update(JSON.stringify(data));  // Convierte los datos a una cadena JSON y actualiza el hash con ella
+  return hash.digest('hex');  // Devuelve el hash en formato hexadecimal
 }
 
 const algorithm = 'aes-256-cbc';  // Puedes elegir otro algoritmo
@@ -165,66 +165,134 @@ function logMemoryUsage(label) {
 }
 
 
-function createCronJobs(selectedDays, intervalHour, isActive) {
-    if (!isActive) {
-        console.log("Cron is not active. Skipping cron creation.");
-        return;
-    }
 
-    // Mapping days of the week to cron format
-    const dayMap = {
-        'monday': '1',
-        'tuesday': '2',
-        'wednesday': '3',
-        'thursday': '4',
-        'friday': '5',
-        'saturday': '6',
-        'sunday': '0'
-    };
 
-    // Split the selectedDays string into an array
-    const daysArray = selectedDays.split(';').map(day => day.trim());
+async function generateCronPattern(configCron) {
+  const { selectedDays, intervalHour, isActive } = configCron;
 
-    // Convert the array of days to a string format that cron can use
-    const cronDays = daysArray.map(day => dayMap[day.toLowerCase()]).join(',');
+  console.log("selectedDays: ", selectedDays);
+  console.log("intervalHour: ", intervalHour);
+  console.log("isActive: ", isActive);
 
-    // Convert intervalHour to cron format
-    const cronExpression = `0 */${intervalHour} * * ${cronDays}`;
+  const dayMap = {
+    'monday': '1',
+    'tuesday': '2',
+    'wednesday': '3',
+    'thursday': '4',
+    'friday': '5',
+    'saturday': '6',
+    'sunday': '0'
+  };
 
-    // Ensure no duplicate cron jobs are created
-    if (cron.validate(cronExpression)) {
-        cron.schedule(cronExpression, () => {
-            console.log(`Running cron job on days: ${selectedDays} every ${intervalHour} hour(s)`);
-            // Your cron job code here
-        });
+  if (isActive) {
+    console.log("Cron is not active. Skipping cron creation.");
+    return [];
+  }
 
-        console.log(`Cron job created with expression: ${cronExpression}`);
-    } else {
-        console.log(`Invalid cron expression: ${cronExpression}`);
-    }
+  // Split the selectedDays string into an array
+  const daysArray = selectedDays.split(';').map(day => day.trim());
+
+  // Generate cron expressions for each day
+  return daysArray.map(day => {
+    const cronDay = dayMap[day.toLowerCase()];
+    return `0 */${intervalHour} * * ${cronDay}`;
+  });
 }
-
 
 const createSimpleCron = async () => {
   const cronExpression = '*/10 * * * * *'; // cada 10 segundos
   let executionCount = 0; // Variable para contar las ejecuciones
 
   if (cron.validate(cronExpression)) {
-      cron.schedule(cronExpression, () => {
-          executionCount++; // Incrementar el contador en cada ejecución
-          console.log(`Cron job running every 10 seconds. Execution count: ${executionCount}`);
-          // Aquí puedes poner el código que deseas que se ejecute cada 10 segundos
-      });
+    cron.schedule(cronExpression, () => {
+      executionCount++; // Incrementar el contador en cada ejecución
+      console.log(`Cron job running every 10 seconds. Execution count: ${executionCount}`);
+      // Aquí puedes poner el código que deseas que se ejecute cada 10 segundos
+    });
 
-      console.log(`Cron job created with expression: ${cronExpression}`);
+    console.log(`Cron job created with expression: ${cronExpression}`);
   } else {
-      console.log(`Invalid cron expression: ${cronExpression}`);
+    console.log(`Invalid cron expression: ${cronExpression}`);
   }
 };
 
 
-
+const pm2 = require('pm2');
 // Usar fetchWithRetry en lugar de fetch directamente
+
+// Función para crear el trabajo cron
+
+async function createCronJob(feedId, configCron) {
+  const scriptPath = 'cron-task.js';
+  const deleteScriptPath = 'deleteProductsWeekly.js';
+  
+  // Asegúrate de que `configCron` tiene los valores correctos
+  console.log('configCron:', configCron);
+  
+  const cronPatterns = await generateCronPattern(configCron);
+  
+  // Verifica que `cronPatterns` es un array
+  console.log('cronPatterns:', cronPatterns);
+
+  if (!Array.isArray(cronPatterns)) {
+    return Promise.reject(new Error('generateCronPattern did not return an array'));
+  }
+
+  return new Promise((resolve, reject) => {
+    pm2.connect((err) => {
+      if (err) {
+        return reject(err);
+      }
+
+      // Crear múltiples trabajos cron, uno por cada patrón cron
+      const promises = cronPatterns.map((cronPattern, index) => {
+        return new Promise((res, rej) => {
+          pm2.start({
+            script: scriptPath,
+            name: `cron-task-${feedId}-${index}`,
+            cron: '* * * * *',
+            args: [feedId],  // Pasar feedId como argumento de línea de comandos
+            autorestart: false
+          }, (err, apps) => {
+            if (err) {
+              return rej(err);
+            }
+            res(`Trabajo cron ${index} creado exitosamente para feedId: ${feedId} con expresión cron: ${cronPattern}`);
+          });
+        });
+      });
+
+      // Crear un trabajo cron para ejecutar deleteProductsWeekly.js todos los días a las 11 pm
+      const deleteCronJob = new Promise((res, rej) => {
+        pm2.start({
+          script: deleteScriptPath,
+          name: `delete-products-weekly-${feedId}`,
+          /*cron: '0 23 * * *',*/  // Todos los días a las 11 pm
+          cron: '* * * * *',
+          args: [feedId],
+          autorestart: false
+        }, (err, apps) => {
+          if (err) {
+            return rej(err);
+          }
+          res(`Trabajo cron para eliminar productos creado exitosamente para feedId: ${feedId}`);
+        });
+      });
+
+      promises.push(deleteCronJob);
+
+      Promise.all(promises)
+        .then(messages => {
+          pm2.disconnect();
+          resolve(messages);
+        })
+        .catch(err => {
+          pm2.disconnect();
+          reject(err);
+        });
+    });
+  });
+}
 
 
 module.exports = {
@@ -235,6 +303,6 @@ module.exports = {
   encrypt,
   decrypt,
   logMemoryUsage,
-  createCronJobs,
+  createCronJob,
   createSimpleCron
 };

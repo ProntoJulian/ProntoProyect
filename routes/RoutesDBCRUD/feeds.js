@@ -1,6 +1,6 @@
 const express = require("express");
 const { authenticateToken } = require("../../middleware/index");
-const { encrypt, decrypt, logMemoryUsage, createSimpleCron } = require("../../helpers/helpers");
+const { encrypt, decrypt, logMemoryUsage, createSimpleCron, createCronJob } = require("../../helpers/helpers");
 const { insertIntoTable,
     updateTable,
     fetchDataFromTable,
@@ -207,13 +207,11 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
         if (feed) {
             const storeHash = feed.store_hash;
             const accessToken = feed.x_auth_token;
-
-            console.log("Store Hash: ", storeHash);
-            console.log("Access Token: ", accessToken);
-
             const privateKey = feed.private_key; // decrypt(JSON.parse(feed.private_key));
             const merchantId = feed.client_id;
-
+            
+            console.log("Store Hash: ", storeHash);
+            console.log("Access Token: ", accessToken);
 
             const config = {
                 accessToken: accessToken,
@@ -223,6 +221,8 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
                 merchantId: merchantId,
                 domain: feed.domain
             };
+
+
 
             // Ejecutar las operaciones asíncronas en segundo plano
             setImmediate(async () => {
@@ -252,7 +252,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
                         preorder_products: preorderProducts
                     };
 
-                    //await createSimpleCron();
+                    /*await createCronJob(feedId,configCron);*/
 
                     await updateFeed(feedId, updateData);
 
@@ -268,6 +268,41 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
         } else {
             res.status(404).json({ message: "Feed no encontrado" });
         }
+    } catch (error) {
+        console.error('Error al obtener el feed:', error);
+        res.status(500).json({ message: "Error interno del servidor al intentar obtener el feed" });
+
+    }
+});
+
+routerFeeds.get("/feeds/createJobs/:feedId", /*authenticateToken,*/ async (req, res) => {
+    const { feedId } = req.params;
+    try {
+        const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
+
+        const storeHash = feed.store_hash;
+            const accessToken = feed.x_auth_token;
+            const privateKey = feed.private_key; // decrypt(JSON.parse(feed.private_key));
+            const merchantId = feed.client_id;
+
+        const config = {
+            accessToken: accessToken,
+            storeHash: storeHash,
+            client_email: feed.client_email,
+            private_key: privateKey,
+            merchantId: merchantId,
+            domain: feed.domain
+        };
+    
+        const configCron = {
+            selectedDays: feed.selectedDays,
+            intervalHour: feed.intervalHour,
+            isActive: feed.isActive
+        }
+    
+        await createCronJob(feedId, configCron);
+
+        res.status(200).json({ message: "Se ha creado el cron" });
     } catch (error) {
         console.error('Error al obtener el feed:', error);
         res.status(500).json({ message: "Error interno del servidor al intentar obtener el feed" });

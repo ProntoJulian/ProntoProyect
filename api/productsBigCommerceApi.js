@@ -176,7 +176,7 @@ async function manageProductProcessing(config,totalPages) {
   return totalValidCount;
 }
 
-async function manageDeleteProductsProcessing(totalPages, googleMerchantSKUs) {
+async function manageDeleteProductsProcessing(totalPages, googleMerchantSKUs, config) {
   const { deleteBatchProducts } = require("../api/googleMerchantAPI");
 
   const divisionOfPages = 10;
@@ -188,7 +188,7 @@ async function manageDeleteProductsProcessing(totalPages, googleMerchantSKUs) {
 
   for (let i = 0; i < divisionOfPages; i++) {
     const endPage = currentPage + segmentSize - 1 > totalPages ? totalPages : currentPage + segmentSize - 1;
-    const products = await getAvailableProducts3(currentPage, endPage);
+    const products = await getAvailableProducts(config,currentPage, endPage);
 
     // Extract SKUs from products
     const bigCommerceSKUs = products.allValidProductIds.map(product => product.sku);
@@ -200,7 +200,7 @@ async function manageDeleteProductsProcessing(totalPages, googleMerchantSKUs) {
   const skusToDelete = googleMerchantSKUs.filter(sku => !allBigCommerceSKUs.includes(sku));
 
   if (skusToDelete.length > 0) {
-    await deleteBatchProducts(skusToDelete); // Assuming this function accepts an array of SKUs and handles batch deletion
+    await deleteBatchProducts(skusToDelete,config); // Assuming this function accepts an array of SKUs and handles batch deletion
     console.log(`Deleted ${skusToDelete.length} products from Google Merchant not present in BigCommerce.`);
   }
 
@@ -432,6 +432,8 @@ async function countTotalProducts(config) {
 
   return totalCount;
 }
+
+
 
 module.exports = {
   fetchProductById,

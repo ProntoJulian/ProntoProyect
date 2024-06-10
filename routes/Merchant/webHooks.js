@@ -214,4 +214,37 @@ routerWebHooks.get('/runCronTask', (req, res) => {
     res.send('Hola mundo, funciona el cron correctamente');
 });
 
+const pm2 = require('pm2');
+
+routerWebHooks.get('/pm2Cron', (req, res) => {
+    const cronPattern = '* * * * *';  // Cada minuto (puedes ajustar el patrón cron según tus necesidades)
+    //const scriptPath = require("./cron-task")
+    const scriptPath = './cron-task.js';
+
+
+    pm2.connect((err) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error al conectar con PM2');
+            return;
+        }
+
+        pm2.start({
+            script: scriptPath,
+            name: 'cron-task',
+            cron: cronPattern,
+            autorestart: false
+        }, (err, apps) => {
+            pm2.disconnect();  // Desconecta PM2
+            if (err) {
+                console.error(err);
+                res.status(500).send('Error al crear el trabajo cron');
+                return;
+            }
+
+            res.status(200).send('Trabajo cron creado exitosamente');
+        });
+    });
+});
+
 module.exports = routerWebHooks;

@@ -495,6 +495,75 @@ function createExcel(products, returnBuffer = false) {
   }
 }
 
+async function deleteBatchProducts(productIds,config) {
+  const { content, merchantId } = await initializeGoogleAuth(config);
+
+  const batchRequest = { entries: [] };
+
+  productIds.forEach((productId, index) => {
+    batchRequest.entries.push({
+      batchId: index + 1,
+      merchantId: merchantId,
+      method: "delete",
+      productId: "online:en:US:"+productId,
+    });
+  });
+
+  console.time("DeleteProductBatchTime"); // Inicia el temporizador
+
+  try {
+    const response = await content.products.custombatch({
+      resource: batchRequest,
+    });
+    console.timeEnd("DeleteProductBatchTime"); // Termina el temporizador y muestra el tiempo
+    console.log(response.data); // Ver la respuesta de la API
+  } catch (error) {
+    console.log("Hubo un error");
+    console.timeEnd("DeleteProductBatchTime"); // Asegúrate de detener el temporizador si hay un error
+    console.error(error);
+  }
+}
+
+async function listAllProductIds(config) {
+  const { content, merchantId } = await initializeGoogleAuth(config);
+  let productIds = [];
+  let nextPageToken = null; // Inicializamos el nextPageToken como null
+  const maxResults = 250; // Máximo de resultados por página
+
+  console.time("Duración del listado de IDs de productos"); // Inicia el temporizador
+
+  try {
+    do {
+      const params = {
+        merchantId,
+        maxResults,
+      };
+      if (nextPageToken) {
+        params.pageToken = nextPageToken; // Añade el pageToken solo si existe
+      }
+
+      const response = await content.products.list(params);
+
+      if (response.data.resources) {
+        response.data.resources.forEach(product => {
+          const parts = product.id.split(':'); // Divide el ID usando ':' como delimitador
+          if (parts.length > 3) { // Asegúrate de que el ID tiene suficientes partes
+            productIds.push(parts[3]); // Agrega solo la parte después de "online:en:US:"
+          }
+        });
+        nextPageToken = response.data.nextPageToken; // Actualizamos el nextPageToken con el nuevo valor
+      }
+    } while (nextPageToken); // Continúa mientras haya un nextPageToken
+
+    console.log("Total de IDs de productos listados: ", productIds.length);
+    console.timeEnd("Duración del listado de IDs de productos"); // Detiene el temporizador y muestra la duración
+    return productIds; // Devuelve el array de IDs
+  } catch (error) {
+    console.error("Error al listar los IDs de los productos: ", error);
+    console.timeEnd("Duración del listado de IDs de productos"); // Asegúrate de detener el temporizador si hay un error
+    throw error;
+  }
+}
 
 
 module.exports = {
@@ -510,5 +579,6 @@ module.exports = {
   deleteBatchProducts,
   initializeGoogleAuth,
   getInfoOfAllProducts,
-  createExcel
+  createExcel,
+  listAllProductIds
 };
