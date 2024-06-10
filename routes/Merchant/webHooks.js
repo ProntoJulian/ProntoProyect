@@ -210,6 +210,7 @@ routerWebHooks.get('/createCronJob', async (req, res) => {
 });
 
 app.get('/runCronTask', (req, res) => {
+    console.log('Hola mundo');
     res.send('Hola mundo, funciona el cron correctamente');
 });
 
