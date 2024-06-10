@@ -120,7 +120,6 @@ async function deleteFromTable(tableName, keyColumn, id) {
         throw error;
     }
 
-    
 }
 
 async function deleteFromTableMultiple(tableName, keyColumns, ids) {
