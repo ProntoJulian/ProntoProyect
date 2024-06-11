@@ -385,6 +385,16 @@
                 var confirmPassword = document.getElementById('editConfirmPassword').value;
                 var companyId = document.getElementById('editCompanyId').value;
                 var roleId = document.getElementById('editRoleId').value;
+                const companyCheckboxes = document.querySelectorAll('.company-checkbox');
+                const selectedCompanies = Array.from(companyCheckboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
+
+                console.log("selectedCompanies: ", companyCheckboxes); // Añadir mensaje de consola
+
+                if (selectedCompanies.length === 0) {
+                    alert("Debe seleccionar al menos una compañía.");
+                    return;
+                }
+                
                 if (newPassword !== confirmPassword) {
                     alert("Las contraseñas no coinciden");
                     return;
@@ -462,16 +472,16 @@
 
                 console.log("selectedCompanies: ", companyCheckboxes); // Añadir mensaje de consola
 
+                if (selectedCompanies.length === 0) {
+                    alert("Debe seleccionar al menos una compañía.");
+                    return;
+                }
 
                 if (password !== confirmPassword) {
                     alert("Las contraseñas no coinciden");
                     return;
                 }
 
-                if (selectedCompanies.length === 0) {
-                    alert("Debe seleccionar al menos una compañía.");
-                    return;
-                }
 
                 const primaryCompanyId = parseInt(selectedCompanies[0], 10);
                 console.log("primaryCompanyId: ", primaryCompanyId); // Añadir mensaje de consola
