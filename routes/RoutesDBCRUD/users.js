@@ -7,7 +7,8 @@ const { insertIntoTable,
     fetchOneFromTable,
     updateUserCompany,
     insertIntoTableMultiple,
-    fetchAllFromTableByUserId } = require("../../databases/CRUD");
+    fetchAllFromTableByUserId,
+    deleteFromTableMultiple } = require("../../databases/CRUD");
 const routerUsers = express.Router();
 const bcrypt = require('bcrypt');
 
