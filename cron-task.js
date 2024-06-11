@@ -19,17 +19,17 @@ if (!feedId) {
 async function synchronizeFeedCron(feedId) {
 
     console.log("El cron funciona correctamente y el Feed id es: ", feedId)
-    /*
+
     try {
         const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
         if (feed) {
             const storeHash = feed.store_hash;
-            const accessToken = feed.x_auth_token;     
+            const accessToken = feed.x_auth_token;
             const privateKey = feed.private_key;
             const merchantId = feed.client_id;
-            
-                        console.log("Store Hash: ", storeHash);
-                        console.log("Access Token: ", accessToken);
+
+            console.log("Store Hash: ", storeHash);
+            console.log("Access Token: ", accessToken);
 
             const config = {
                 accessToken: accessToken,
@@ -82,7 +82,7 @@ async function synchronizeFeedCron(feedId) {
     } catch (error) {
         console.error('Error al obtener el feed:', error);
     }
-    */
+
 }
 
 // Ejecutar la función de sincronización

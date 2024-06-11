@@ -244,21 +244,19 @@ async function createCronJob(feedId, configCron) {
         return reject(err);
       }
 
-      // Crear múltiples trabajos cron, uno por cada patrón cron
-      const promises = cronPatterns.map((cronPattern, index) => {
-        return new Promise((res, rej) => {
-          pm2.start({
-            script: scriptPath,
-            name: `cron-task-${feedId}-${index}`,
-            cron: '* * * * *',
-            args: [feedId],  // Pasar feedId como argumento de línea de comandos
-            autorestart: false
-          }, (err, apps) => {
-            if (err) {
-              return rej(err);
-            }
-            res(`Trabajo cron ${index} creado exitosamente para feedId: ${feedId} con expresión cron: ${cronPattern}`);
-          });
+      // Crear un trabajo cron que se ejecute todos los días a las 8:45
+      const mainCronJob = new Promise((res, rej) => {
+        pm2.start({
+          script: scriptPath,
+          name: `cron-task-${feedId}`,
+          cron: '45 8 * * *',  // Todos los días a las 8:45 am
+          args: [feedId],  // Pasar feedId como argumento de línea de comandos
+          autorestart: false
+        }, (err, apps) => {
+          if (err) {
+            return rej(err);
+          }
+          res(`Trabajo cron creado exitosamente para feedId: ${feedId} con expresión cron: 45 8 * * *`);
         });
       });
 
@@ -267,8 +265,7 @@ async function createCronJob(feedId, configCron) {
         pm2.start({
           script: deleteScriptPath,
           name: `delete-products-weekly-${feedId}`,
-          /*cron: '0 23 * * *',*/  // Todos los días a las 11 pm
-          cron: '* * * * *',
+          cron: '0 23 * * *',  // Todos los días a las 11 pm
           args: [feedId],
           autorestart: false
         }, (err, apps) => {
@@ -279,9 +276,7 @@ async function createCronJob(feedId, configCron) {
         });
       });
 
-      promises.push(deleteCronJob);
-
-      Promise.all(promises)
+      Promise.all([mainCronJob, deleteCronJob])
         .then(messages => {
           pm2.disconnect();
           resolve(messages);
@@ -293,6 +288,7 @@ async function createCronJob(feedId, configCron) {
     });
   });
 }
+
 
 
 module.exports = {
