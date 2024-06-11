@@ -7,7 +7,6 @@ const axios = require('axios');
 const telegramToken = process.env.TELEGRAM_TOKEN;
 const chatId = process.env.CHAT_ID;
 
-
 async function sendTelegramNotification(feedId, message) {
   const telegramUrl = `https://api.telegram.org/bot${telegramToken}/sendMessage`;
   const payload = {
@@ -49,4 +48,15 @@ if (!feedId) {
 deleteFeedCron(feedId).catch(error => {
   console.error('Error en deleteFeedCron:', error.message);
   process.exit(1);
+});
+
+// Manejo de señales
+process.on('SIGINT', () => {
+  console.log('Recibida señal SIGINT, limpiando y cerrando el proceso...');
+  process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  console.log('Recibida señal SIGTERM, limpiando y cerrando el proceso...');
+  process.exit(0);
 });
