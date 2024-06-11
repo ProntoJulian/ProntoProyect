@@ -394,7 +394,7 @@
                     alert("Debe seleccionar al menos una compañía.");
                     return;
                 }
-                
+
                 if (newPassword !== confirmPassword) {
                     alert("Las contraseñas no coinciden");
                     return;
@@ -404,7 +404,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username, password, newPassword, companyId, roleId })
+                    body: JSON.stringify({ username, password, newPassword, companyId, roleId , selectedCompanies: selectedCompanies})
                 })
                     .then(response => response.json())
                     .then(data => {

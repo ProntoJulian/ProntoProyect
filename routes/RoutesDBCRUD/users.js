@@ -6,7 +6,8 @@ const {insertIntoTable,
     deleteFromTable,
     fetchOneFromTable,
     updateUserCompany,
-    insertIntoTableMultiple} = require("../../databases/CRUD");
+    insertIntoTableMultiple,
+    fetchAllFromTableByUserId} = require("../../databases/CRUD");
 const routerUsers = express.Router();
 const bcrypt = require('bcrypt');
 
@@ -79,6 +80,15 @@ routerUsers.post("/users/createUser", authenticateToken, async (req, res) => {
 routerUsers.put("/users/updateUser/:userId", authenticateToken, async (req, res) => {
     const { userId } = req.params;
     const { username, password, newPassword, companyId, roleId } = req.body;
+
+    // Guardar las compañías seleccionadas en una constante y eliminar del objeto userData
+    const selectedCompanies = userData.selectedCompanies;
+    delete userData.selectedCompanies;
+
+    const userCompanies = await fetchAllFromTableByUserId(userId);
+
+    console.log("User Companies:",userCompanies)
+    console.log("Selected Companies:",selectedCompanies)
 
     try {
         // Obtener el usuario actual de la base de datos
