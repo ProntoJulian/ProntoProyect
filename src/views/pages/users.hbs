@@ -519,7 +519,8 @@
                             createModal.hide();
                             window.location.reload();
                         } else {
-                            alert("Error al crear el usuario: " + data.message);
+                            //alert("Error al crear el usuario: " + data.message);
+                            window.location.reload();
                         }
                     })
                     .catch(error => {
