@@ -316,7 +316,7 @@
                                         <tr>
                                             <td>{{this.company_name}}</td>
                                             <td>
-                                                <input type="checkbox" class="form-check-input company-checkbox"
+                                                <input type="checkbox" class="form-check-input company-checkbox-edit"
                                                     value="{{this.company_id}}">
                                             </td>
                                         </tr>
@@ -385,7 +385,7 @@
                 var confirmPassword = document.getElementById('editConfirmPassword').value;
                 var companyId = document.getElementById('editCompanyId').value;
                 var roleId = document.getElementById('editRoleId').value;
-                const companyCheckboxes = document.querySelectorAll('.company-checkbox');
+                const companyCheckboxes = document.querySelectorAll('.company-checkbox-edit');
                 const selectedCompanies = Array.from(companyCheckboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
 
                 console.log("selectedCompanies: ", companyCheckboxes); // Añadir mensaje de consola
