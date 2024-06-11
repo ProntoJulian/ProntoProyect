@@ -96,8 +96,9 @@
                             {{#unless (eq ../roleModule.0.access_type "Read Only")}}
                             <td class="text-center">
                                 <button class="btn btn-primary btn-edit" data-user-id="{{this.user_id}}"
-                                    data-role-name="{{this.username}}" data-company-id="{{this.company_id}}"
-                                    data-company-name="{{this.company_name}}" title="Actualizar">
+                                    data-username="{{this.username}}" data-company-id="{{this.company_id}}"
+                                    data-company-name="{{this.company_name}}" data-role-id="{{this.role_id}}"
+                                    title="Actualizar">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="btn btn-danger btn-delete" data-user-id="{{this.user_id}}"
@@ -131,6 +132,7 @@
             </div>
         </div>
     </div>
+
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
         aria-hidden="true">
@@ -183,6 +185,7 @@
                                 </span>
                             </div>
                         </div>
+                        <!-- Etiqueta para el campo del nombre de la compañía 
                         <div class="mb-3">
                             <label for="newCompanyName" class="form-label">Company Name</label>
                             {{#if (includes permisos 'modules')}}
@@ -199,7 +202,7 @@
                             </select>
                             {{/if}}
                         </div>
-
+                        -->
 
                         <!-- Temporal -->
 
@@ -296,6 +299,35 @@
                             </select>
                         </div>
 
+                        <!-- Temporal -->
+
+                        <div class="mb-3">
+                            <label class="form-label">Company Name</label>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Company Name</th>
+                                            <th>Select</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each companies}}
+                                        <tr>
+                                            <td>{{this.company_name}}</td>
+                                            <td>
+                                                <input type="checkbox" class="form-check-input company-checkbox"
+                                                    value="{{this.company_id}}">
+                                            </td>
+                                        </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Temporal -->
+
                         <div class="mb-3">
                             <label for="editRoleId" class="form-label">Role</label>
                             <select class="form-control" id="editRoleId">
@@ -321,10 +353,17 @@
                     var username = btn.getAttribute('data-username');
                     var companyId = btn.getAttribute('data-company-id');
                     var roleId = btn.getAttribute('data-role-id');
+
+                    console.log('UserId:', userId); // Debugging
+                    console.log('Username:', username); // Debugging
+                    console.log('CompanyId:', companyId); // Debugging
+                    console.log('RoleId:', roleId); // Debugging
+
                     document.getElementById('editUserId').value = userId;
                     document.getElementById('editUsername').value = username;
                     document.getElementById('editCompanyId').value = companyId;
                     document.getElementById('editRoleId').value = roleId;
+
                     var editModal = new bootstrap.Modal(document.getElementById('editModal'));
                     editModal.show();
                 });
