@@ -176,7 +176,7 @@ routerWebHooks.get("/webhooks/deleteWebhook", async (req, res) => {
     //console.log("WebHooks: ", totalWebHooks);
 })
 
-const {CloudSchedulerClient} = require('@google-cloud/scheduler');
+const { CloudSchedulerClient } = require('@google-cloud/scheduler');
 const client = new CloudSchedulerClient();
 
 routerWebHooks.get('/createCronJob', async (req, res) => {
