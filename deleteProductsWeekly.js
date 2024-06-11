@@ -7,16 +7,6 @@ const axios = require('axios');
 const telegramToken = process.env.TELEGRAM_TOKEN;
 const chatId = process.env.CHAT_ID;
 
-// Función principal del cron
-const args = process.argv.slice(2);
-const feedId = args[0];
-
-async function deleteFeedCron(feedId){
-
-    console.log("El cron de eliminar productos funciona correctamente: ", feedId)
-
-}
-
 
 async function sendTelegramNotification(feedId, message) {
   const telegramUrl = `https://api.telegram.org/bot${telegramToken}/sendMessage`;
@@ -26,10 +16,11 @@ async function sendTelegramNotification(feedId, message) {
   };
 
   try {
-    await axios.post(telegramUrl, payload);
-    console.log('Notificación enviada a Telegram');
+    const response = await axios.post(telegramUrl, payload);
+    console.log('Notificación enviada a Telegram:', response.data);
   } catch (error) {
-    console.error('Error al enviar notificación a Telegram:', error);
+    console.error('Error al enviar notificación a Telegram:', error.response ? error.response.data : error.message);
+    throw error;
   }
 }
 
@@ -37,9 +28,25 @@ async function deleteFeedCron(feedId) {
   const message = `El cron de eliminar productos funciona correctamente: ${feedId} at ${new Date().toISOString()}`;
   console.log(message);
 
-  // Enviar notificación a Telegram
-  await sendTelegramNotification(feedId, message);
+  try {
+    // Enviar notificación a Telegram
+    await sendTelegramNotification(feedId, message);
+  } catch (error) {
+    console.error('Error durante la ejecución del cron:', error.message);
+  }
+}
+
+// Obtener el feedId desde los argumentos de la línea de comandos
+const args = process.argv.slice(2);
+const feedId = args[0];
+
+if (!feedId) {
+  console.error('Error: FEED_ID no proporcionado');
+  process.exit(1);
 }
 
 // Simulación de la ejecución del cron
-deleteFeedCron(feedId);
+deleteFeedCron(feedId).catch(error => {
+  console.error('Error en deleteFeedCron:', error.message);
+  process.exit(1);
+});
