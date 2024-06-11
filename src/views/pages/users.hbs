@@ -399,12 +399,15 @@
                     alert("Las contraseñas no coinciden");
                     return;
                 }
+
+                const primaryCompanyId = parseInt(selectedCompanies[0], 10);
+
                 fetch(`/users/updateUser/${userId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username, password, newPassword, companyId, roleId , selectedCompanies: selectedCompanies})
+                    body: JSON.stringify({ username, password, newPassword, companyId: primaryCompanyId, roleId , selectedCompanies: selectedCompanies})
                 })
                     .then(response => response.json())
                     .then(data => {
