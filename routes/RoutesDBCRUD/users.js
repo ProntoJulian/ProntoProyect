@@ -80,6 +80,7 @@ routerUsers.post("/users/createUser", authenticateToken, async (req, res) => {
 routerUsers.put("/users/updateUser/:userId", authenticateToken, async (req, res) => {
     const { userId } = req.params;
     const { username, password, newPassword, companyId, roleId } = req.body;
+    const userData = req.body;
 
     // Guardar las compañías seleccionadas en una constante y eliminar del objeto userData
     const selectedCompanies = userData.selectedCompanies;
