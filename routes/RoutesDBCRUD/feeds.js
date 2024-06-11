@@ -129,8 +129,19 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
     const privateKey = feed.private_key;
     const merchantId = feed.client_id;
 
-    await getConfig(accessToken, storeHash);
-    await initializeGoogleAuth(feed.client_email, privateKey, merchantId);
+    const config = {
+        accessToken: accessToken,
+        storeHash: storeHash,
+        client_email: feed.client_email,
+        private_key: privateKey,
+        merchantId: merchantId,
+        domain: feed.domain
+    };
+
+    
+
+    await getConfig(config);
+    await initializeGoogleAuth(config);
 
     try {
 

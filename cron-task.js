@@ -28,9 +28,7 @@ async function synchronizeFeedCron(feedId) {
             const privateKey = feed.private_key;
             const merchantId = feed.client_id;
 
-            console.log("Store Hash: ", storeHash);
-            console.log("Access Token: ", accessToken);
-
+            
             const config = {
                 accessToken: accessToken,
                 storeHash: storeHash,
@@ -40,13 +38,15 @@ async function synchronizeFeedCron(feedId) {
                 domain: feed.domain
             };
 
+            console.log("Config: ", config);
+
             // Ejecutar las operaciones asíncronas en segundo plano
             setImmediate(async () => {
                 try {
                     const conteoPages = await countPages(config);
+                    console.log("Conteo: ", conteoPages);
                     const conteoByTipo = await manageProductProcessing(config, conteoPages);
 
-                    console.log("Conteo: ", conteoPages);
 
                     const WebHooks = await fetchWebHooks(config);
 
