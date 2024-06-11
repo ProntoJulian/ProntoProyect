@@ -138,6 +138,8 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
         domain: feed.domain
     };
 
+    console.log("Config: ",config)
+
     
 
     await getConfig(config);
