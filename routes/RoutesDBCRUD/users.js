@@ -80,7 +80,7 @@ routerUsers.post("/users/createUser", authenticateToken, async (req, res) => {
 
 routerUsers.put("/users/updateUser/:userId", authenticateToken, async (req, res) => {
     const { userId } = req.params;
-    const { username, password, newPassword, companyId, roleId } = req.body;
+    const { username, password, newPassword, primaryCompanyId, roleId } = req.body;
     const userData = req.body;
 
     // Guardar las compañías seleccionadas en una constante y eliminar del objeto userData
@@ -109,7 +109,7 @@ routerUsers.put("/users/updateUser/:userId", authenticateToken, async (req, res)
         // Preparar los datos para la actualización
         const updateData = {
             username,
-            company_id: companyId,
+            company_id: primaryCompanyId,
             role_id: roleId
         };
 
@@ -131,9 +131,9 @@ routerUsers.put("/users/updateUser/:userId", authenticateToken, async (req, res)
             }
 
             // Insertar las nuevas relaciones user_companies
-            const userCompaniesData = selectedCompanies.map(companyId => ({
+            const userCompaniesData = selectedCompanies.map(primaryCompanyId => ({
                 user_id: userId,
-                company_id: companyId
+                company_id: primaryCompanyId
             }));
 
             let totalAffectedRows = 0;
