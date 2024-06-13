@@ -119,6 +119,7 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
     const updateData = req.body;
 
     const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
+    
 
     const lastUpdate = new Date(updateData.last_update);
     const formattedLastUpdate = lastUpdate.toISOString().replace('T', ' ').substring(0, 19);

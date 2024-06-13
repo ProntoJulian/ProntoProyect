@@ -249,7 +249,7 @@ async function createCronJob(feedId, configCron) {
         pm2.start({
           script: scriptPath,
           name: `cron-task-${feedId}`,
-          cron: '23 9 * * *',  // Todos los días a las 8:45 am
+          cron: '0 23 * * *',  // Todos los días a las 8:45 am
           args: [feedId],  // Pasar feedId como argumento de línea de comandos
           autorestart: false
         }, (err, apps) => {
@@ -265,7 +265,7 @@ async function createCronJob(feedId, configCron) {
         pm2.start({
           script: deleteScriptPath,
           name: `delete-products-weekly-${feedId}`,
-          cron: '20 9 * * *',  // Todos los días a las 11 pm
+          cron: '0 6 * * *',  // Todos los días a las 11 pm
           args: [feedId],
           autorestart: false
         }, (err, apps) => {

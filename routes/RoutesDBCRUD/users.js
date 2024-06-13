@@ -131,13 +131,14 @@ routerUsers.put("/users/updateUser/:userId", authenticateToken, async (req, res)
             }
 
             // Insertar las nuevas relaciones user_companies
-            const userCompaniesData = selectedCompanies.map(primaryCompanyId => ({
+            const userCompaniesData = selectedCompanies.map(CompanyId => ({
                 user_id: userId,
-                company_id: primaryCompanyId
+                company_id: CompanyId
             }));
 
             let totalAffectedRows = 0;
             for (const userCompany of userCompaniesData) {
+                
                 const userCompanyResult = await insertIntoTableMultiple('user_companies', userCompany, ['user_id', 'company_id']);
                 totalAffectedRows += userCompanyResult.affectedRows;
             }
