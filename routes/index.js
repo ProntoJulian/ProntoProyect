@@ -176,7 +176,7 @@ appRouter.get("/app/roles", authenticateToken, superUsuarioPages, async function
 
 
 appRouter.get("/app/modules", authenticateToken, superUsuarioPages,async function (req, res) {
-    modules = await fetchDataFromTable('modules');
+    const modules = await fetchDataFromTable('modules');
     res.render("pages/modules",{ modules: modules });
 });
 
