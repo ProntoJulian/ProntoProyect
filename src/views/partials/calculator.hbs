@@ -89,7 +89,7 @@
                         <div onclick="showTab('fields')">FIELDS</div>
                         <div onclick="showTab('operators')">OPERATORS</div>
                         <div onclick="showTab('values')">VALUES</div>
-                        <div onclick="showTab('group')">GROUP</div>
+                        <div onclick="showTab('logical_operators')">LOGICAL OPERATORS</div>
                     </div>
                     <div class="result-display" id="currentSelection"></div>
                     <div id="fields" class="tab-content">
@@ -109,6 +109,14 @@
                     <div id="values" class="tab-content">
                         <table id="valueTable">
                             <!-- Los valores se cargarán dinámicamente aquí -->
+                        </table>
+                    </div>
+                    <div id="logical_operators" class="tab-content">
+                        <table>
+                            <tr>
+                                <td onclick="selectLogicalOperator('AND')">AND</td>
+                                <td onclick="selectLogicalOperator('OR')">OR</td>
+                            </tr>
                         </table>
                     </div>
                     <div id="group" class="tab-content">
@@ -148,7 +156,10 @@
         is_featured: ['true', 'false']
     };
 
+    var selectionStage = 0; // Etapa actual de la selección
+
     function selectField(field) {
+        selectionStage = 1;
         var operatorTable = document.getElementById('operatorTable');
         operatorTable.innerHTML = ''; // Limpiar operadores anteriores
         var row = document.createElement('tr');
@@ -166,6 +177,7 @@
     }
 
     function selectValue(field) {
+        selectionStage = 2;
         var valueTable = document.getElementById('valueTable');
         valueTable.innerHTML = ''; // Limpiar valores anteriores
         var row = document.createElement('tr');
@@ -174,11 +186,24 @@
             cell.innerText = val;
             cell.onclick = function() {
                 addToResult(val);
+                finalizeSelection(); // Finalizar selección después de seleccionar un valor
             };
             row.appendChild(cell);
         });
         valueTable.appendChild(row);
         showTab('values');
+    }
+
+    function finalizeSelection() {
+        selectionStage = 0;
+        var currentSelection = document.getElementById('currentSelection');
+        currentSelection.innerText = '[' + currentSelection.innerText.trim() + '] ';
+        showTab('logical_operators');
+    }
+
+    function selectLogicalOperator(logicOp) {
+        addToResult(logicOp);
+        showTab('fields');
     }
 
     function toggleCalculator() {
