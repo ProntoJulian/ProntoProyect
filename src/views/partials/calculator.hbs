@@ -247,26 +247,35 @@
 
     function editExpression(button) {
         var text = button.innerText;
-        var currentSelection = document.getElementById('currentSelection');
-        var index = fullExpression.findIndex(expr => expr.includes(text));
-        if (index !== -1) {
-            fullExpression.splice(index, 1);
-        }
         if (fields.includes(text)) {
-            selectedFields.delete(text); // Habilitar campo al eliminar
-        }
-        currentSelection.innerHTML = fullExpression.join(' ');
-        loadFields(); // Actualizar campos disponibles
-
-        if (operators[currentExpression[1]]) {
-            showTab('operators');
-            loadOperators(currentExpression[0], currentExpression[1]); // Cargar operadores
+            editField(text);
+        } else if (operators[currentExpression[1]]) {
+            editOperator(text);
         } else if (values[currentExpression[2]]) {
-            showTab('values');
-            loadValues(currentExpression[0], currentExpression[2]); // Cargar valores
-        } else {
-            showTab('fields');
+            editValue(text);
         }
+    }
+
+    function editField(field) {
+        var index = currentExpression.indexOf(field);
+        if (index !== -1) {
+            currentExpression.splice(index, 1);
+            selectedFields.delete(field); // Habilitar campo al eliminar
+        }
+        loadFields(); // Actualizar campos disponibles
+        showTab('fields');
+    }
+
+    function editOperator(operator) {
+        var field = currentExpression[0];
+        loadOperators(field, operator);
+        showTab('operators');
+    }
+
+    function editValue(value) {
+        var field = currentExpression[0];
+        loadValues(field, value);
+        showTab('values');
     }
 
     function loadOperators(field, selectedOperator) {
