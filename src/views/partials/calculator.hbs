@@ -160,13 +160,11 @@
         is_featured: ['true', 'false']
     };
 
-    var selectionStage = 0; // Etapa actual de la selección
     var currentExpression = []; // Almacena la expresión actual
+    var fullExpression = []; // Almacena la expresión completa
 
     function selectField(field) {
-        selectionStage = 1;
         currentExpression = [field];
-        updateCurrentSelection();
         var operatorTable = document.getElementById('operatorTable');
         operatorTable.innerHTML = ''; // Limpiar operadores anteriores
         var row = document.createElement('tr');
@@ -175,7 +173,6 @@
             cell.innerText = op;
             cell.onclick = function() {
                 currentExpression.push(op);
-                updateCurrentSelection();
                 selectValue(field); // Cargar valores después de seleccionar un operador
             };
             row.appendChild(cell);
@@ -185,7 +182,6 @@
     }
 
     function selectValue(field) {
-        selectionStage = 2;
         var valueTable = document.getElementById('valueTable');
         valueTable.innerHTML = ''; // Limpiar valores anteriores
         var row = document.createElement('tr');
@@ -194,7 +190,6 @@
             cell.innerText = val;
             cell.onclick = function() {
                 currentExpression.push(val);
-                updateCurrentSelection();
                 finalizeSelection(); // Finalizar selección después de seleccionar un valor
             };
             row.appendChild(cell);
@@ -204,34 +199,35 @@
     }
 
     function finalizeSelection() {
-        selectionStage = 0;
         var currentSelection = document.getElementById('currentSelection');
         var expressionHtml = '[';
         currentExpression.forEach(function(item) {
             expressionHtml += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' + item + '</button> ';
         });
         expressionHtml += '] ';
-        currentSelection.innerHTML += expressionHtml;
+        fullExpression.push(expressionHtml);
+        currentSelection.innerHTML = fullExpression.join(' ');
         currentExpression = [];
         showTab('logical_operators');
     }
 
     function selectLogicalOperator(logicOp) {
         var currentSelection = document.getElementById('currentSelection');
-        currentSelection.innerHTML += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' +
-            logicOp + '</button> ';
+        fullExpression.push('<button class="btn btn-outline-secondary" onclick="editExpression(this)">' +
+            logicOp + '</button> ');
+        currentSelection.innerHTML = fullExpression.join(' ');
         showTab('fields');
     }
 
     function editExpression(button) {
         var text = button.innerText;
         var currentSelection = document.getElementById('currentSelection');
-        currentSelection.innerHTML = currentSelection.innerHTML.replace(button.outerHTML, '');
+        fullExpression = fullExpression.filter(expr => !expr.includes(text));
+        currentSelection.innerHTML = fullExpression.join(' ');
         if (text === '[' || text === ']') {
             return;
         }
         currentExpression = [text];
-        updateCurrentSelection();
         if (operators[text]) {
             showTab('operators');
         } else if (values[text]) {
@@ -250,17 +246,11 @@
         }
     }
 
-    function addToResult(value) {
-        var result = document.getElementById('result');
-        var currentSelection = document.getElementById('currentSelection');
-        result.value += value + ' ';
-        currentSelection.innerText += value + ' ';
-    }
-
     function clearAll() {
         document.getElementById('result').value = '';
         document.getElementById('currentSelection').innerHTML = '';
         currentExpression = [];
+        fullExpression = [];
     }
 
     function clearLast() {
@@ -288,13 +278,6 @@
             tabs[i].style.display = 'none';
         }
         document.getElementById(tabName).style.display = 'block';
-    }
-
-    function updateCurrentSelection() {
-        var currentSelection = document.getElementById('currentSelection');
-        currentSelection.innerHTML = currentExpression.map(function(item) {
-            return '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' + item + '</button>';
-        }).join(' ') + ' ';
     }
 
     // Mostrar la primera pestaña por defecto
