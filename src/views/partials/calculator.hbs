@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,11 +10,13 @@
         .calculator {
             padding: 15px;
         }
+
         .calculator table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 15px;
         }
+
         .calculator td {
             border: 1px solid #ddd;
             padding: 10px;
@@ -21,13 +24,16 @@
             cursor: pointer;
             border-radius: 5px;
         }
+
         .calculator td:hover {
             background-color: #f0f0f0;
         }
+
         .buttons {
             margin-top: 10px;
             text-align: center;
         }
+
         .buttons button {
             margin: 5px;
             padding: 10px 20px;
@@ -38,9 +44,11 @@
             color: black;
             width: 120px;
         }
+
         .buttons button:hover {
             background-color: #e9e9e9;
         }
+
         .tab-buttons {
             display: flex;
             justify-content: space-around;
@@ -49,16 +57,20 @@
             padding: 10px 0;
             border-radius: 5px 5px 0 0;
         }
+
         .tab-buttons div {
             cursor: pointer;
             padding: 10px 20px;
         }
+
         .tab-buttons div:hover {
             background-color: #555;
         }
+
         .tab-content {
             display: none;
         }
+
         .result-display {
             background-color: #f9f9f9;
             border: 1px solid #ccc;
@@ -68,245 +80,246 @@
             min-height: 50px;
             white-space: pre-wrap;
         }
+
         .result-display .btn {
             margin-right: 5px;
             margin-bottom: 5px;
         }
+
         .disabled {
             color: #ccc;
             pointer-events: none;
         }
     </style>
 </head>
+
 <body>
-<input type="text" id="result" class="form-control" placeholder="Nombre" readonly data-toggle="modal" data-target="#calculatorModal">
-<div class="modal fade" id="calculatorModal" tabindex="-1" role="dialog" aria-labelledby="calculatorModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="calculatorModalLabel">Calculadora de Selección</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="calculator">
-                    <div class="tab-buttons">
-                        <div onclick="showTab('fields')">FIELDS</div>
-                        <div onclick="showTab('operators')">OPERATORS</div>
-                        <div onclick="showTab('values')">VALUES</div>
-                        <div onclick="showTab('logical_operators')">LOGICAL OPERATORS</div>
-                    </div>
-                    <div class="result-display" id="currentSelection"></div>
-                    <div id="fields" class="tab-content">
-                        <table>
-                            <tr>
-                                <td onclick="selectField('type')">type</td>
-                                <td onclick="selectField('price')">price</td>
-                                <td onclick="selectField('is_featured')">is_featured</td>
-                            </tr>
-                        <table id="fieldsTable">
-                            <!-- Campos se cargarán dinámicamente aquí -->
-                        </table>
-                    </div>
-                    <div id="operators" class="tab-content">
-                        <table id="operatorTable">
-                            <!-- Los operadores se cargarán dinámicamente aquí -->
-                        </table>
-                    </div>
-                    <div id="values" class="tab-content">
-                        <table id="valueTable">
-                            <!-- Los valores se cargarán dinámicamente aquí -->
-                        </table>
-                    </div>
-                    <div id="logical_operators" class="tab-content">
-                        <table>
-                            <tr>
-                                <td onclick="selectLogicalOperator('AND')">AND</td>
-                                <td onclick="selectLogicalOperator('OR')">OR</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div id="group" class="tab-content">
-                        <table>
-                            <tr>
-                                <td>Grupo1</td>
-                                <td>Grupo2</td>
-                                <td>Grupo3</td>
-                                <td>Grupo4</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="buttons">
-                        <button onclick="clearAll()" class="btn btn-secondary">Borrar todo</button>
-                        <button onclick="clearLast()" class="btn btn-secondary">Borrar último</button>
-                        <button onclick="finalize()" class="btn btn-primary">Finalizar</button>
+    <input type="text" id="result" class="form-control" placeholder="Nombre" readonly data-toggle="modal"
+        data-target="#calculatorModal">
+    <div class="modal fade" id="calculatorModal" tabindex="-1" role="dialog" aria-labelledby="calculatorModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="calculatorModalLabel">Calculadora de Selección</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="calculator">
+                        <div class="tab-buttons">
+                            <div onclick="showTab('fields')">FIELDS</div>
+                            <div onclick="showTab('operators')">OPERATORS</div>
+                            <div onclick="showTab('values')">VALUES</div>
+                            <div onclick="showTab('logical_operators')">LOGICAL OPERATORS</div>
+                        </div>
+                        <div class="result-display" id="currentSelection"></div>
+                        <div id="fields" class="tab-content">
+
+                            <table id="fieldsTable">
+                                <!-- Campos se cargarán dinámicamente aquí -->
+                            </table>
+                        </div>
+                        <div id="operators" class="tab-content">
+                            <table id="operatorTable">
+                                <!-- Los operadores se cargarán dinámicamente aquí -->
+                            </table>
+                        </div>
+                        <div id="values" class="tab-content">
+                            <table id="valueTable">
+                                <!-- Los valores se cargarán dinámicamente aquí -->
+                            </table>
+                        </div>
+                        <div id="logical_operators" class="tab-content">
+                            <table>
+                                <tr>
+                                    <td onclick="selectLogicalOperator('AND')">AND</td>
+                                    <td onclick="selectLogicalOperator('OR')">OR</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div id="group" class="tab-content">
+                            <table>
+                                <tr>
+                                    <td>Grupo1</td>
+                                    <td>Grupo2</td>
+                                    <td>Grupo3</td>
+                                    <td>Grupo4</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="buttons">
+                            <button onclick="clearAll()" class="btn btn-secondary">Borrar todo</button>
+                            <button onclick="clearLast()" class="btn btn-secondary">Borrar último</button>
+                            <button onclick="finalize()" class="btn btn-primary">Finalizar</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script>
-    var operators = {
-        type: ['=', '!='],
-        price: ['=', '!=', '>', '<', '>=', '<='],
-        is_featured: ['=', '!=']
-    };
-    var values = {
-        type: ['digital', 'physical'],
-        price: [], // Puedes llenar esto según tus necesidades
-        is_featured: ['true', 'false']
-    };
-    var fields = ['type', 'price', 'is_featured'];
-    var selectedFields = new Set(); // Almacena los campos seleccionados
-    var currentExpression = []; // Almacena la expresión actual
-    var fullExpression = []; // Almacena la expresión completa
-    function loadFields() {
-        var fieldsTable = document.getElementById('fieldsTable');
-        fieldsTable.innerHTML = ''; // Limpiar campos anteriores
-        var row = document.createElement('tr');
-        fields.forEach(function(field) {
-            var cell = document.createElement('td');
-            cell.innerText = field;
-            cell.className = selectedFields.has(field) ? 'disabled' : '';
-            cell.onclick = function() {
-                if (!selectedFields.has(field)) {
-                    selectField(field);
-                }
-            };
-            row.appendChild(cell);
-        });
-        fieldsTable.appendChild(row);
-    }
-    function selectField(field) {
-        currentExpression = [field];
-        selectedFields.add(field);
-        loadFields(); // Actualizar campos disponibles
-        var operatorTable = document.getElementById('operatorTable');
-        operatorTable.innerHTML = ''; // Limpiar operadores anteriores
-        var row = document.createElement('tr');
-        operators[field].forEach(function(op) {
-            var cell = document.createElement('td');
-            cell.innerText = op;
-            cell.onclick = function() {
-                currentExpression.push(op);
-                selectValue(field); // Cargar valores después de seleccionar un operador
-            };
-            row.appendChild(cell);
-        });
-        operatorTable.appendChild(row);
-        showTab('operators');
-    }
-    function selectValue(field) {
-        var valueTable = document.getElementById('valueTable');
-        valueTable.innerHTML = ''; // Limpiar valores anteriores
-        var row = document.createElement('tr');
-        values[field].forEach(function(val) {
-            var cell = document.createElement('td');
-            cell.innerText = val;
-            cell.onclick = function() {
-                currentExpression.push(val);
-                finalizeSelection(); // Finalizar selección después de seleccionar un valor
-            };
-            row.appendChild(cell);
-        });
-        valueTable.appendChild(row);
-        showTab('values');
-    }
-    function finalizeSelection() {
-        var currentSelection = document.getElementById('currentSelection');
-        var expressionHtml = '[';
-        currentExpression.forEach(function(item) {
-            expressionHtml += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' + item + '</button> ';
-        });
-        expressionHtml += '] ';
-        fullExpression.push(expressionHtml);
-        currentSelection.innerHTML = fullExpression.join(' ');
-        currentExpression = [];
-        showTab('logical_operators');
-    }
-    function selectLogicalOperator(logicOp) {
-        var currentSelection = document.getElementById('currentSelection');
-        fullExpression.push('<button class="btn btn-outline-secondary" onclick="editExpression(this)">' +
-            logicOp + '</button> ');
-        currentSelection.innerHTML = fullExpression.join(' ');
-        showTab('fields');
-    }
-    function editExpression(button) {
-        var text = button.innerText;
-        var currentSelection = document.getElementById('currentSelection');
-        var index = fullExpression.findIndex(expr => expr.includes(text));
-        if (index !== -1) {
-            fullExpression.splice(index, 1);
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        var operators = {
+            type: ['=', '!='],
+            price: ['=', '!=', '>', '<', '>=', '<='],
+            is_featured: ['=', '!=']
+        };
+        var values = {
+            type: ['digital', 'physical'],
+            price: [], // Puedes llenar esto según tus necesidades
+            is_featured: ['true', 'false']
+        };
+        var fields = ['type', 'price', 'is_featured'];
+        var selectedFields = new Set(); // Almacena los campos seleccionados
+        var currentExpression = []; // Almacena la expresión actual
+        var fullExpression = []; // Almacena la expresión completa
+        function loadFields() {
+            var fieldsTable = document.getElementById('fieldsTable');
+            fieldsTable.innerHTML = ''; // Limpiar campos anteriores
+            var row = document.createElement('tr');
+            fields.forEach(function (field) {
+                var cell = document.createElement('td');
+                cell.innerText = field;
+                cell.className = selectedFields.has(field) ? 'disabled' : '';
+                cell.onclick = function () {
+                    if (!selectedFields.has(field)) {
+                        selectField(field);
+                    }
+                };
+                row.appendChild(cell);
+            });
+            fieldsTable.appendChild(row);
         }
-        if (fields.includes(text)) {
-            selectedFields.delete(text); // Habilitar campo al eliminar
-        }
-        currentSelection.innerHTML = fullExpression.join(' ');
-        loadFields(); // Actualizar campos disponibles
-        if (text === '[' || text === ']') {
-            return;
-        }
-        currentExpression = [text];
-        if (operators[currentExpression[0]]) {
+        function selectField(field) {
+            currentExpression = [field];
+            selectedFields.add(field);
+            loadFields(); // Actualizar campos disponibles
+            var operatorTable = document.getElementById('operatorTable');
+            operatorTable.innerHTML = ''; // Limpiar operadores anteriores
+            var row = document.createElement('tr');
+            operators[field].forEach(function (op) {
+                var cell = document.createElement('td');
+                cell.innerText = op;
+                cell.onclick = function () {
+                    currentExpression.push(op);
+                    selectValue(field); // Cargar valores después de seleccionar un operador
+                };
+                row.appendChild(cell);
+            });
+            operatorTable.appendChild(row);
             showTab('operators');
-        } else if (values[currentExpression[0]]) {
+        }
+        function selectValue(field) {
+            var valueTable = document.getElementById('valueTable');
+            valueTable.innerHTML = ''; // Limpiar valores anteriores
+            var row = document.createElement('tr');
+            values[field].forEach(function (val) {
+                var cell = document.createElement('td');
+                cell.innerText = val;
+                cell.onclick = function () {
+                    currentExpression.push(val);
+                    finalizeSelection(); // Finalizar selección después de seleccionar un valor
+                };
+                row.appendChild(cell);
+            });
+            valueTable.appendChild(row);
             showTab('values');
-        } else {
+        }
+        function finalizeSelection() {
+            var currentSelection = document.getElementById('currentSelection');
+            var expressionHtml = '[';
+            currentExpression.forEach(function (item) {
+                expressionHtml += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' + item + '</button> ';
+            });
+            expressionHtml += '] ';
+            fullExpression.push(expressionHtml);
+            currentSelection.innerHTML = fullExpression.join(' ');
+            currentExpression = [];
+            showTab('logical_operators');
+        }
+        function selectLogicalOperator(logicOp) {
+            var currentSelection = document.getElementById('currentSelection');
+            fullExpression.push('<button class="btn btn-outline-secondary" onclick="editExpression(this)">' +
+                logicOp + '</button> ');
+            currentSelection.innerHTML = fullExpression.join(' ');
             showTab('fields');
         }
-    }
-    function toggleCalculator() {
-        var calculator = document.getElementById('calculator');
-        if (calculator.style.display === 'block') {
-            calculator.style.display = 'none';
-        } else {
-            calculator.style.display = 'block';
-        }
-    }
-    function clearAll() {
-        document.getElementById('result').value = '';
-        document.getElementById('currentSelection').innerHTML = '';
-        currentExpression = [];
-        fullExpression = [];
-        selectedFields.clear();
-        loadFields();
-    }
-    function clearLast() {
-        if (fullExpression.length > 0) {
-            fullExpression.pop();
-            var lastExpression = fullExpression.pop();
-            var fieldMatch = lastExpression.match(/\b(type|price|is_featured)\b/);
-            if (fieldMatch) {
-                selectedFields.delete(fieldMatch[0]); // Habilitar campo al eliminar
+        function editExpression(button) {
+            var text = button.innerText;
+            var currentSelection = document.getElementById('currentSelection');
+            var index = fullExpression.findIndex(expr => expr.includes(text));
+            if (index !== -1) {
+                fullExpression.splice(index, 1);
             }
-            document.getElementById('currentSelection').innerHTML = fullExpression.join(' ');
+            if (fields.includes(text)) {
+                selectedFields.delete(text); // Habilitar campo al eliminar
+            }
+            currentSelection.innerHTML = fullExpression.join(' ');
+            loadFields(); // Actualizar campos disponibles
+            if (text === '[' || text === ']') {
+                return;
+            }
+            currentExpression = [text];
+            if (operators[currentExpression[0]]) {
+                showTab('operators');
+            } else if (values[currentExpression[0]]) {
+                showTab('values');
+            } else {
+                showTab('fields');
+            }
+        }
+        function toggleCalculator() {
+            var calculator = document.getElementById('calculator');
+            if (calculator.style.display === 'block') {
+                calculator.style.display = 'none';
+            } else {
+                calculator.style.display = 'block';
+            }
+        }
+        function clearAll() {
+            document.getElementById('result').value = '';
+            document.getElementById('currentSelection').innerHTML = '';
+            currentExpression = [];
+            fullExpression = [];
+            selectedFields.clear();
             loadFields();
         }
-    }
-    function finalize() {
-        var result = document.getElementById('result');
-        var currentSelection = document.getElementById('currentSelection').innerText.trim();
-        result.value = currentSelection;
-        $('#calculatorModal').modal('hide');
-    }
-    function showTab(tabName) {
-        var tabs = document.getElementsByClassName('tab-content');
-        for (var i = 0; i < tabs.length; i++) {
-            tabs[i].style.display = 'none';
+        function clearLast() {
+            if (fullExpression.length > 0) {
+                fullExpression.pop();
+                var lastExpression = fullExpression.pop();
+                var fieldMatch = lastExpression.match(/\b(type|price|is_featured)\b/);
+                if (fieldMatch) {
+                    selectedFields.delete(fieldMatch[0]); // Habilitar campo al eliminar
+                }
+                document.getElementById('currentSelection').innerHTML = fullExpression.join(' ');
+                loadFields();
+            }
         }
-        document.getElementById(tabName).style.display = 'block';
-    }
-    // Mostrar la primera pestaña por defecto
-    // Mostrar la primera pestaña por defecto y cargar los campos
-    document.addEventListener('DOMContentLoaded', function() {
-        loadFields();
-        showTab('fields');
-    });
-</script>
+        function finalize() {
+            var result = document.getElementById('result');
+            var currentSelection = document.getElementById('currentSelection').innerText.trim();
+            result.value = currentSelection;
+            $('#calculatorModal').modal('hide');
+        }
+        function showTab(tabName) {
+            var tabs = document.getElementsByClassName('tab-content');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].style.display = 'none';
+            }
+            document.getElementById(tabName).style.display = 'block';
+        }
+        // Mostrar la primera pestaña por defecto
+        // Mostrar la primera pestaña por defecto y cargar los campos
+        document.addEventListener('DOMContentLoaded', function () {
+            loadFields();
+            showTab('fields');
+        });
+    </script>
 </body>
+
 </html>
