@@ -66,7 +66,7 @@
             padding: 10px;
             margin-bottom: 15px;
             min-height: 50px;
-            white-space: pre-wrap; /* Asegura que los espacios se respeten */
+            white-space: pre-wrap;
         }
     </style>
 </head>
@@ -95,29 +95,15 @@
                     <div id="fields" class="tab-content">
                         <table>
                             <tr>
-                                <td>Administración</td>
-                                <td>Agencia</td>
-                                <td>Agrupación</td>
-                                <td>Almacén</td>
+                                <td onclick="selectField('text')">type</td>
+                                <td onclick="selectField('number')">price</td>
+                                <td onclick="selectField('boolean')">is_featured</td>
                             </tr>
-                            <tr>
-                                <td>Altillo</td>
-                                <td>Apartado</td>
-                                <td>Apartamento</td>
-                                <td>Autopista</td>
-                            </tr>
-                            <!-- Agrega más filas según sea necesario -->
                         </table>
                     </div>
                     <div id="operators" class="tab-content">
-                        <table>
-                            <tr>
-                                <td>Operador1</td>
-                                <td>Operador2</td>
-                                <td>Operador3</td>
-                                <td>Operador4</td>
-                            </tr>
-                            <!-- Agrega más filas según sea necesario -->
+                        <table id="operatorTable">
+                            <!-- Los operadores se cargarán dinámicamente aquí -->
                         </table>
                     </div>
                     <div id="logical_operators" class="tab-content">
@@ -128,7 +114,6 @@
                                 <td>NOT</td>
                                 <td>XOR</td>
                             </tr>
-                            <!-- Agrega más filas según sea necesario -->
                         </table>
                     </div>
                     <div id="group" class="tab-content">
@@ -139,7 +124,6 @@
                                 <td>Grupo3</td>
                                 <td>Grupo4</td>
                             </tr>
-                            <!-- Agrega más filas según sea necesario -->
                         </table>
                     </div>
                     <div class="buttons">
@@ -157,6 +141,28 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
+    var operators = {
+        text: ['=', '!='],
+        number: ['=', '!=', '>', '<', '>=', '<='],
+        boolean: ['=', '!=']
+    };
+
+    function selectField(type) {
+        var operatorTable = document.getElementById('operatorTable');
+        operatorTable.innerHTML = ''; // Limpiar operadores anteriores
+        var row = document.createElement('tr');
+        operators[type].forEach(function(op) {
+            var cell = document.createElement('td');
+            cell.innerText = op;
+            cell.onclick = function() {
+                addToResult(op);
+            };
+            row.appendChild(cell);
+        });
+        operatorTable.appendChild(row);
+        showTab('operators');
+    }
+
     function toggleCalculator() {
         var calculator = document.getElementById('calculator');
         if (calculator.style.display === 'block') {
