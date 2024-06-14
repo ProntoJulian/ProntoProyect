@@ -175,7 +175,7 @@
             cell.innerText = op;
             cell.onclick = function() {
                 currentExpression.push(op);
-                addToResult(op);
+                updateCurrentSelection();
                 selectValue(field); // Cargar valores después de seleccionar un operador
             };
             row.appendChild(cell);
@@ -194,7 +194,7 @@
             cell.innerText = val;
             cell.onclick = function() {
                 currentExpression.push(val);
-                addToResult(val);
+                updateCurrentSelection();
                 finalizeSelection(); // Finalizar selección después de seleccionar un valor
             };
             row.appendChild(cell);
@@ -206,8 +206,12 @@
     function finalizeSelection() {
         selectionStage = 0;
         var currentSelection = document.getElementById('currentSelection');
-        currentSelection.innerHTML += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' +
-            '[' + currentExpression.join(' ') + ']' + '</button> ';
+        var expressionHtml = '<button class="btn btn-outline-secondary" onclick="editExpression(this)">[</button>';
+        currentExpression.forEach(function(item) {
+            expressionHtml += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' + item + '</button>';
+        });
+        expressionHtml += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">]</button>';
+        currentSelection.innerHTML += expressionHtml + ' ';
         currentExpression = [];
         showTab('logical_operators');
     }
@@ -216,7 +220,6 @@
         var currentSelection = document.getElementById('currentSelection');
         currentSelection.innerHTML += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' +
             logicOp + '</button> ';
-        addToResult(logicOp);
         showTab('fields');
     }
 
@@ -224,13 +227,17 @@
         var text = button.innerText;
         var currentSelection = document.getElementById('currentSelection');
         currentSelection.innerHTML = currentSelection.innerHTML.replace(button.outerHTML, '');
-        currentExpression = text.replace('[', '').replace(']', '').split(' ');
-        if (currentExpression.includes('AND') || currentExpression.includes('OR')) {
-            showTab('logical_operators');
-        } else if (operators[currentExpression[0]]) {
+        if (text === '[' || text === ']') {
+            return;
+        }
+        currentExpression = [text];
+        updateCurrentSelection();
+        if (operators[text]) {
             showTab('operators');
-        } else if (values[currentExpression[0]]) {
+        } else if (values[text]) {
             showTab('values');
+        } else {
+            showTab('fields');
         }
     }
 
