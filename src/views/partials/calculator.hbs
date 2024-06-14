@@ -285,9 +285,9 @@
             var text = button.innerText;
             if (fields.includes(text)) {
                 editField(text);
-            } else if (operators[currentExpression[0]].includes(text)) {
+            } else if (operators[currentExpression[0]] && operators[currentExpression[0]].includes(text)) {
                 editOperator(text);
-            } else if (values[currentExpression[0]].includes(text)) {
+            } else if (values[currentExpression[0]] && values[currentExpression[0]].includes(text)) {
                 editValue(text);
             }
         }
@@ -305,8 +305,7 @@
         function editOperator(operator) {
             var index = fullExpression.findIndex(expr => expr.includes(operator));
             if (index !== -1) {
-                var field = fullExpression[index].match(/\b(type|price|is_featured)\b/)[0];
-                currentExpression = [field];
+                var field = currentExpression[0];
                 loadOperators(field, operator);
                 showTab('operators');
             }
@@ -315,8 +314,7 @@
         function editValue(value) {
             var index = fullExpression.findIndex(expr => expr.includes(value));
             if (index !== -1) {
-                var field = fullExpression[index].match(/\b(type|price|is_featured)\b/)[0];
-                currentExpression = [field];
+                var field = currentExpression[0];
                 loadValues(field, value);
                 showTab('values');
             }
