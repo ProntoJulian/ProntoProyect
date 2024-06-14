@@ -181,7 +181,12 @@
         var currentSelection = document.getElementById('currentSelection').innerText.trim();
         var wordsCurrentSelection = currentSelection.split(' ');
         wordsCurrentSelection.pop();
-        document.getElementById('currentSelection').innerText = wordsCurrentSelection.join(' ') + ' ';
+        document.getElementById('currentSelection').innerText = wordsCurrentSelection.join(' ');
+
+        var result = document.getElementById('result').value.trim();
+        var wordsResult = result.split(' ');
+        wordsResult.pop();
+        document.getElementById('result').value = wordsResult.join(' ') + ' ';
     }
 
     function finalize() {
