@@ -359,10 +359,62 @@
         }
 
         function finalize() {
-            var result = document.getElementById('result');
-            var currentSelection = document.getElementById('currentSelection').innerText.trim();
-            result.value = currentSelection;
-            $('#calculatorModal').modal('hide');
+            if (validateExpression()) {
+                var result = document.getElementById('result');
+                var currentSelection = document.getElementById('currentSelection').innerText.trim();
+                result.value = currentSelection;
+                $('#calculatorModal').modal('hide');
+            }
+        }
+
+        function validateExpression() {
+            // Validar que cada condición tenga un campo, operador y valor
+            let isValid = true;
+            let expressionText = document.getElementById('currentSelection').innerText.trim();
+            let conditions = expressionText.split(/\s(AND|OR)\s/); // Dividir por operadores lógicos
+
+            conditions.forEach(condition => {
+                // Eliminar corchetes y extraer partes
+                let cleanCondition = condition.replace(/[\[\]]/g, '').trim();
+                let parts = cleanCondition.split(/\s+/);
+
+                if (parts.length !== 3) {
+                    isValid = false;
+                } else {
+                    let field = parts[0];
+                    let operator = parts[1];
+                    let value = parts[2];
+
+                    if (fields.indexOf(field) === -1 || operators[field].indexOf(operator) === -1 || (!values[field].includes(value) && field !== 'price')) {
+                        isValid = false;
+                    }
+
+                    // Validar rangos de precio lógicos
+                    if (field === 'price') {
+                        conditions.forEach(otherCondition => {
+                            let otherCleanCondition = otherCondition.replace(/[\[\]]/g, '').trim();
+                            let otherParts = otherCleanCondition.split(/\s+/);
+                            if (otherParts[0] === 'price' && otherParts.length === 3) {
+                                let otherOperator = otherParts[1];
+                                let otherValue = parseFloat(otherParts[2]);
+
+                                if ((operator === '>' && otherOperator === '<=' && parseFloat(value) >= otherValue) ||
+                                    (operator === '>=' && otherOperator === '<' && parseFloat(value) > otherValue) ||
+                                    (operator === '<' && otherOperator === '>=' && parseFloat(value) <= otherValue) ||
+                                    (operator === '<=' && otherOperator === '>' && parseFloat(value) < otherValue)) {
+                                    isValid = false;
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+            if (!isValid) {
+                alert("La expresión no es válida. Por favor, revisa las condiciones.");
+            }
+
+            return isValid;
         }
 
         function showTab(tabName) {
@@ -378,7 +430,6 @@
             loadFields();
             showTab('fields');
         });
-
     </script>
 </body>
 
