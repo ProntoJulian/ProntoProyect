@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -91,6 +92,7 @@
         }
     </style>
 </head>
+
 <body>
     <input type="text" id="result" class="form-control" placeholder="Nombre" readonly data-toggle="modal"
         data-target="#calculatorModal">
@@ -114,6 +116,7 @@
                         </div>
                         <div class="result-display" id="currentSelection"></div>
                         <div id="fields" class="tab-content">
+
                             <table id="fieldsTable">
                                 <!-- Campos se cargarán dinámicamente aquí -->
                             </table>
@@ -167,15 +170,13 @@
         };
         var values = {
             type: ['digital', 'physical'],
-            price: [], // Se llenará dinámicamente
+            price: [], // Puedes llenar esto según tus necesidades
             is_featured: ['true', 'false']
         };
         var fields = ['type', 'price', 'is_featured'];
         var selectedFields = new Set(); // Almacena los campos seleccionados
         var currentExpression = []; // Almacena la expresión actual
         var fullExpression = []; // Almacena la expresión completa
-        var maxPriceValue = 100; // Valor máximo configurable para price
-
         function loadFields() {
             var fieldsTable = document.getElementById('fieldsTable');
             fieldsTable.innerHTML = ''; // Limpiar campos anteriores
@@ -193,16 +194,10 @@
             });
             fieldsTable.appendChild(row);
         }
-
         function selectField(field) {
             currentExpression = [field];
             selectedFields.add(field);
             loadFields(); // Actualizar campos disponibles
-            loadOperators(field);
-            showTab('operators');
-        }
-
-        function loadOperators(field) {
             var operatorTable = document.getElementById('operatorTable');
             operatorTable.innerHTML = ''; // Limpiar operadores anteriores
             var row = document.createElement('tr');
@@ -211,19 +206,14 @@
                 cell.innerText = op;
                 cell.onclick = function () {
                     currentExpression.push(op);
-                    if (field === 'price') {
-                        showNumberSelector(field); // Mostrar selector de números para el campo price
-                    } else {
-                        loadValues(field);
-                        showTab('values');
-                    }
+                    selectValue(field); // Cargar valores después de seleccionar un operador
                 };
                 row.appendChild(cell);
             });
             operatorTable.appendChild(row);
+            showTab('operators');
         }
-
-        function loadValues(field) {
+        function selectValue(field) {
             var valueTable = document.getElementById('valueTable');
             valueTable.innerHTML = ''; // Limpiar valores anteriores
             var row = document.createElement('tr');
@@ -232,34 +222,13 @@
                 cell.innerText = val;
                 cell.onclick = function () {
                     currentExpression.push(val);
-                    finalizeSelection();
+                    finalizeSelection(); // Finalizar selección después de seleccionar un valor
                 };
                 row.appendChild(cell);
             });
             valueTable.appendChild(row);
-        }
-
-        function showNumberSelector(field) {
-            var valueTable = document.getElementById('valueTable');
-            valueTable.innerHTML = ''; // Limpiar valores anteriores
-            var row = document.createElement('tr');
-            var cell = document.createElement('td');
-            var numberInput = document.createElement('input');
-            numberInput.type = 'number';
-            numberInput.min = 0;
-            numberInput.max = maxPriceValue;
-            numberInput.value = 0;
-            numberInput.className = 'form-control';
-            numberInput.onchange = function () {
-                currentExpression.push(numberInput.value);
-                finalizeSelection();
-            };
-            cell.appendChild(numberInput);
-            row.appendChild(cell);
-            valueTable.appendChild(row);
             showTab('values');
         }
-
         function finalizeSelection() {
             var currentSelection = document.getElementById('currentSelection');
             var expressionHtml = '[';
@@ -272,7 +241,6 @@
             currentExpression = [];
             showTab('logical_operators');
         }
-
         function selectLogicalOperator(logicOp) {
             var currentSelection = document.getElementById('currentSelection');
             fullExpression.push('<button class="btn btn-outline-secondary" onclick="editExpression(this)">' +
@@ -280,95 +248,30 @@
             currentSelection.innerHTML = fullExpression.join(' ');
             showTab('fields');
         }
-
         function editExpression(button) {
             var text = button.innerText;
-            if (fields.includes(text)) {
-                editField(text);
-            } else if (operators[currentExpression[0]] && operators[currentExpression[0]].includes(text)) {
-                editOperator(text);
-            } else if (values[currentExpression[0]] && values[currentExpression[0]].includes(text)) {
-                editValue(text);
-            }
-        }
-
-        function editField(field) {
-            var index = fullExpression.findIndex(expr => expr.includes(field));
+            var currentSelection = document.getElementById('currentSelection');
+            var index = fullExpression.findIndex(expr => expr.includes(text));
             if (index !== -1) {
                 fullExpression.splice(index, 1);
-                selectedFields.delete(field);
-                loadFields();
+            }
+            if (fields.includes(text)) {
+                selectedFields.delete(text); // Habilitar campo al eliminar
+            }
+            currentSelection.innerHTML = fullExpression.join(' ');
+            loadFields(); // Actualizar campos disponibles
+            if (text === '[' || text === ']') {
+                return;
+            }
+            currentExpression = [text];
+            if (operators[currentExpression[0]]) {
+                showTab('operators');
+            } else if (values[currentExpression[0]]) {
+                showTab('values');
+            } else {
                 showTab('fields');
             }
         }
-
-        function editOperator(operator) {
-            var index = fullExpression.findIndex(expr => expr.includes(operator));
-            if (index !== -1) {
-                var field = currentExpression[0];
-                loadOperators(field, operator);
-                showTab('operators');
-            }
-        }
-
-        function editValue(value) {
-            var index = fullExpression.findIndex(expr => expr.includes(value));
-            if (index !== -1) {
-                var field = currentExpression[0];
-                loadValues(field, value);
-                showTab('values');
-            }
-        }
-
-        function loadOperators(field, selectedOperator) {
-            var operatorTable = document.getElementById('operatorTable');
-            operatorTable.innerHTML = ''; // Limpiar operadores anteriores
-            var row = document.createElement('tr');
-            operators[field].forEach(function (op) {
-                var cell = document.createElement('td');
-                cell.innerText = op;
-                cell.className = op === selectedOperator ? 'disabled' : '';
-                cell.onclick = function () {
-                    if (op !== selectedOperator) {
-                        currentExpression[1] = op;
-                        updateCurrentSelection();
-                    }
-                };
-                row.appendChild(cell);
-            });
-            operatorTable.appendChild(row);
-        }
-
-        function loadValues(field, selectedValue) {
-            var valueTable = document.getElementById('valueTable');
-            valueTable.innerHTML = ''; // Limpiar valores anteriores
-            var row = document.createElement('tr');
-            values[field].forEach(function (val) {
-                var cell = document.createElement('td');
-                cell.innerText = val;
-                cell.className = val === selectedValue ? 'disabled' : '';
-                cell.onclick = function () {
-                    if (val !== selectedValue) {
-                        currentExpression[2] = val;
-                        updateCurrentSelection();
-                    }
-                };
-                row.appendChild(cell);
-            });
-            valueTable.appendChild(row);
-        }
-
-        function updateCurrentSelection() {
-            var currentSelection = document.getElementById('currentSelection');
-            var expressionHtml = '[';
-            currentExpression.forEach(function (item) {
-                expressionHtml += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' + item + '</button> ';
-            });
-            expressionHtml += '] ';
-            fullExpression[fullExpression.length - 1] = expressionHtml;
-            currentSelection.innerHTML = fullExpression.join(' ');
-        }
-
         function toggleCalculator() {
             var calculator = document.getElementById('calculator');
             if (calculator.style.display === 'block') {
@@ -377,7 +280,6 @@
                 calculator.style.display = 'block';
             }
         }
-
         function clearAll() {
             document.getElementById('result').value = '';
             document.getElementById('currentSelection').innerHTML = '';
@@ -386,7 +288,6 @@
             selectedFields.clear();
             loadFields();
         }
-
         function clearLast() {
             if (fullExpression.length > 0) {
                 fullExpression.pop();
@@ -399,14 +300,12 @@
                 loadFields();
             }
         }
-
         function finalize() {
             var result = document.getElementById('result');
             var currentSelection = document.getElementById('currentSelection').innerText.trim();
             result.value = currentSelection;
             $('#calculatorModal').modal('hide');
         }
-
         function showTab(tabName) {
             var tabs = document.getElementsByClassName('tab-content');
             for (var i = 0; i < tabs.length; i++) {
@@ -414,7 +313,7 @@
             }
             document.getElementById(tabName).style.display = 'block';
         }
-
+        // Mostrar la primera pestaña por defecto
         // Mostrar la primera pestaña por defecto y cargar los campos
         document.addEventListener('DOMContentLoaded', function () {
             loadFields();
@@ -422,4 +321,5 @@
         });
     </script>
 </body>
+
 </html>
