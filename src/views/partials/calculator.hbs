@@ -183,7 +183,7 @@
             is_free_shipping: ['true', 'false']
         };
 
-        var fields = ['type', 'price', 'is_featured', 'availability','is_visible','is_free_shipping'];
+        var fields = ['type', 'price', 'is_featured', 'availability', 'is_visible', 'is_free_shipping'];
         var selectedFields = new Set(); // Almacena los campos seleccionados
         var currentExpression = []; // Almacena la expresión actual
         var fullExpression = []; // Almacena la expresión completa
@@ -192,7 +192,7 @@
             var fieldsTable = document.getElementById('fieldsTable');
             fieldsTable.innerHTML = ''; // Limpiar campos anteriores
             var row = document.createElement('tr');
-            fields.forEach(function (field) {
+            fields.forEach(function (field, index) {
                 var cell = document.createElement('td');
                 cell.innerText = field;
                 cell.className = (selectedFields.has(field) && field !== 'price') ? 'disabled' : '';
@@ -202,9 +202,15 @@
                     }
                 };
                 row.appendChild(cell);
+                // Crear una nueva fila cada 4 campos
+                if ((index + 1) % 4 === 0) {
+                    fieldsTable.appendChild(row);
+                    row = document.createElement('tr');
+                }
             });
             fieldsTable.appendChild(row);
         }
+
 
         function selectField(field) {
             currentExpression = [field];
