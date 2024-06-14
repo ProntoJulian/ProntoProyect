@@ -222,15 +222,18 @@
     function editExpression(button) {
         var text = button.innerText;
         var currentSelection = document.getElementById('currentSelection');
-        fullExpression = fullExpression.filter(expr => !expr.includes(text));
+        var index = fullExpression.findIndex(expr => expr.includes(text));
+        if (index !== -1) {
+            fullExpression.splice(index, 1);
+        }
         currentSelection.innerHTML = fullExpression.join(' ');
         if (text === '[' || text === ']') {
             return;
         }
         currentExpression = [text];
-        if (operators[text]) {
+        if (operators[currentExpression[0]]) {
             showTab('operators');
-        } else if (values[text]) {
+        } else if (values[currentExpression[0]]) {
             showTab('values');
         } else {
             showTab('fields');
@@ -254,15 +257,10 @@
     }
 
     function clearLast() {
-        var currentSelection = document.getElementById('currentSelection').innerText.trim();
-        var wordsCurrentSelection = currentSelection.split(' ');
-        wordsCurrentSelection.pop();
-        document.getElementById('currentSelection').innerText = wordsCurrentSelection.join(' ') + ' ';
-
-        var result = document.getElementById('result').value.trim();
-        var wordsResult = result.split(' ');
-        wordsResult.pop();
-        document.getElementById('result').value = wordsResult.join(' ') + ' ';
+        if (fullExpression.length > 0) {
+            fullExpression.pop();
+            document.getElementById('currentSelection').innerHTML = fullExpression.join(' ');
+        }
     }
 
     function finalize() {
