@@ -68,6 +68,10 @@
             min-height: 50px;
             white-space: pre-wrap;
         }
+        .result-display .btn {
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
@@ -157,9 +161,12 @@
     };
 
     var selectionStage = 0; // Etapa actual de la selección
+    var currentExpression = []; // Almacena la expresión actual
 
     function selectField(field) {
         selectionStage = 1;
+        currentExpression = [field];
+        updateCurrentSelection();
         var operatorTable = document.getElementById('operatorTable');
         operatorTable.innerHTML = ''; // Limpiar operadores anteriores
         var row = document.createElement('tr');
@@ -167,6 +174,7 @@
             var cell = document.createElement('td');
             cell.innerText = op;
             cell.onclick = function() {
+                currentExpression.push(op);
                 addToResult(op);
                 selectValue(field); // Cargar valores después de seleccionar un operador
             };
@@ -185,6 +193,7 @@
             var cell = document.createElement('td');
             cell.innerText = val;
             cell.onclick = function() {
+                currentExpression.push(val);
                 addToResult(val);
                 finalizeSelection(); // Finalizar selección después de seleccionar un valor
             };
@@ -197,13 +206,32 @@
     function finalizeSelection() {
         selectionStage = 0;
         var currentSelection = document.getElementById('currentSelection');
-        currentSelection.innerText = '[' + currentSelection.innerText.trim() + '] ';
+        currentSelection.innerHTML += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' +
+            '[' + currentExpression.join(' ') + ']' + '</button> ';
+        currentExpression = [];
         showTab('logical_operators');
     }
 
     function selectLogicalOperator(logicOp) {
+        var currentSelection = document.getElementById('currentSelection');
+        currentSelection.innerHTML += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' +
+            logicOp + '</button> ';
         addToResult(logicOp);
         showTab('fields');
+    }
+
+    function editExpression(button) {
+        var text = button.innerText;
+        var currentSelection = document.getElementById('currentSelection');
+        currentSelection.innerHTML = currentSelection.innerHTML.replace(button.outerHTML, '');
+        currentExpression = text.replace('[', '').replace(']', '').split(' ');
+        if (currentExpression.includes('AND') || currentExpression.includes('OR')) {
+            showTab('logical_operators');
+        } else if (operators[currentExpression[0]]) {
+            showTab('operators');
+        } else if (values[currentExpression[0]]) {
+            showTab('values');
+        }
     }
 
     function toggleCalculator() {
@@ -224,7 +252,8 @@
 
     function clearAll() {
         document.getElementById('result').value = '';
-        document.getElementById('currentSelection').innerText = '';
+        document.getElementById('currentSelection').innerHTML = '';
+        currentExpression = [];
     }
 
     function clearLast() {
@@ -254,16 +283,16 @@
         document.getElementById(tabName).style.display = 'block';
     }
 
+    function updateCurrentSelection() {
+        var currentSelection = document.getElementById('currentSelection');
+        currentSelection.innerHTML = currentExpression.map(function(item) {
+            return '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' + item + '</button>';
+        }).join(' ') + ' ';
+    }
+
     // Mostrar la primera pestaña por defecto
     document.addEventListener('DOMContentLoaded', function() {
         showTab('fields');
-    });
-
-    // Agrega un evento de clic a cada celda de la calculadora
-    document.querySelectorAll('.calculator td').forEach(function(cell) {
-        cell.addEventListener('click', function() {
-            addToResult(cell.innerText);
-        });
     });
 </script>
 
