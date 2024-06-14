@@ -12,6 +12,7 @@
         .calculator table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 15px;
         }
         .calculator td {
             border: 1px solid #ddd;
@@ -57,6 +58,14 @@
         .tab-content {
             display: none;
         }
+        .result-display {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 15px;
+            min-height: 50px;
+        }
     </style>
 </head>
 <body>
@@ -80,6 +89,7 @@
                         <div onclick="showTab('logical_operators')">LOGICAL OPERATORS</div>
                         <div onclick="showTab('group')">GROUP</div>
                     </div>
+                    <div class="result-display" id="currentSelection"></div>
                     <div id="fields" class="tab-content">
                         <table>
                             <tr>
@@ -156,23 +166,29 @@
 
     function addToResult(value) {
         var result = document.getElementById('result');
+        var currentSelection = document.getElementById('currentSelection');
         result.value += value + ' ';
+        currentSelection.innerText += value + ' ';
     }
 
     function clearAll() {
         document.getElementById('result').value = '';
+        document.getElementById('currentSelection').innerText = '';
     }
 
     function clearLast() {
         var result = document.getElementById('result').value.trim();
-        var words = result.split(' ');
-        words.pop();
-        document.getElementById('result').value = words.join(' ') + ' ';
+        var currentSelection = document.getElementById('currentSelection').innerText.trim();
+        var wordsResult = result.split(' ');
+        var wordsCurrentSelection = currentSelection.split(' ');
+        wordsResult.pop();
+        wordsCurrentSelection.pop();
+        document.getElementById('result').value = wordsResult.join(' ') + ' ';
+        document.getElementById('currentSelection').innerText = wordsCurrentSelection.join(' ') + ' ';
     }
 
     function finalize() {
         $('#calculatorModal').modal('hide');
-        // Aquí puedes agregar más lógica si es necesario
     }
 
     function showTab(tabName) {
@@ -194,7 +210,6 @@
             addToResult(cell.innerText);
         });
     });
-    
 </script>
 
 </body>
