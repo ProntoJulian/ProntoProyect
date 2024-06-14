@@ -248,34 +248,24 @@
 
     function editExpression(button) {
         var text = button.innerText;
-        if (fields.includes(text)) {
-            editField(text);
-        } else if (operators[currentExpression[0]].includes(text)) {
-            editOperator(text);
-        } else if (values[currentExpression[0]].includes(text)) {
-            editValue(text);
+        var currentSelection = document.getElementById('currentSelection').innerText;
+        currentExpression = currentSelection.replace('[', '').replace(']', '').split(' ');
+        var index = currentExpression.indexOf(text);
+
+        if (index !== -1) {
+            currentExpression.splice(index, 1);
+            if (fields.includes(text)) {
+                selectedFields.delete(text); // Habilitar campo al eliminar
+                loadFields();
+                showTab('fields');
+            } else if (operators[currentExpression[0]].includes(text)) {
+                loadOperators(currentExpression[0], text);
+                showTab('operators');
+            } else if (values[currentExpression[0]].includes(text)) {
+                loadValues(currentExpression[0], text);
+                showTab('values');
+            }
         }
-    }
-
-    function editField(field) {
-        currentExpression = [field];
-        selectedFields.delete(field); // Habilitar campo al eliminar
-        loadFields(); // Actualizar campos disponibles
-        showTab('fields');
-    }
-
-    function editOperator(operator) {
-        currentExpression[1] = operator;
-        var field = currentExpression[0];
-        loadOperators(field, operator);
-        showTab('operators');
-    }
-
-    function editValue(value) {
-        currentExpression[2] = value;
-        var field = currentExpression[0];
-        loadValues(field, value);
-        showTab('values');
     }
 
     function loadOperators(field, selectedOperator) {
