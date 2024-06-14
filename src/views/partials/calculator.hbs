@@ -88,16 +88,16 @@
                     <div class="tab-buttons">
                         <div onclick="showTab('fields')">FIELDS</div>
                         <div onclick="showTab('operators')">OPERATORS</div>
-                        <div onclick="showTab('logical_operators')">LOGICAL OPERATORS</div>
+                        <div onclick="showTab('values')">VALUES</div>
                         <div onclick="showTab('group')">GROUP</div>
                     </div>
                     <div class="result-display" id="currentSelection"></div>
                     <div id="fields" class="tab-content">
                         <table>
                             <tr>
-                                <td onclick="selectField('text')">type</td>
-                                <td onclick="selectField('number')">price</td>
-                                <td onclick="selectField('boolean')">is_featured</td>
+                                <td onclick="selectField('type')">type</td>
+                                <td onclick="selectField('price')">price</td>
+                                <td onclick="selectField('is_featured')">is_featured</td>
                             </tr>
                         </table>
                     </div>
@@ -106,14 +106,9 @@
                             <!-- Los operadores se cargarán dinámicamente aquí -->
                         </table>
                     </div>
-                    <div id="logical_operators" class="tab-content">
-                        <table>
-                            <tr>
-                                <td>AND</td>
-                                <td>OR</td>
-                                <td>NOT</td>
-                                <td>XOR</td>
-                            </tr>
+                    <div id="values" class="tab-content">
+                        <table id="valueTable">
+                            <!-- Los valores se cargarán dinámicamente aquí -->
                         </table>
                     </div>
                     <div id="group" class="tab-content">
@@ -142,25 +137,48 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
     var operators = {
-        text: ['=', '!='],
-        number: ['=', '!=', '>', '<', '>=', '<='],
-        boolean: ['=', '!=']
+        type: ['=', '!='],
+        price: ['=', '!=', '>', '<', '>=', '<='],
+        is_featured: ['=', '!=']
     };
 
-    function selectField(type) {
+    var values = {
+        type: ['digital', 'physical'],
+        price: [], // Puedes llenar esto según tus necesidades
+        is_featured: ['true', 'false']
+    };
+
+    function selectField(field) {
         var operatorTable = document.getElementById('operatorTable');
         operatorTable.innerHTML = ''; // Limpiar operadores anteriores
         var row = document.createElement('tr');
-        operators[type].forEach(function(op) {
+        operators[field].forEach(function(op) {
             var cell = document.createElement('td');
             cell.innerText = op;
             cell.onclick = function() {
                 addToResult(op);
+                selectValue(field); // Cargar valores después de seleccionar un operador
             };
             row.appendChild(cell);
         });
         operatorTable.appendChild(row);
         showTab('operators');
+    }
+
+    function selectValue(field) {
+        var valueTable = document.getElementById('valueTable');
+        valueTable.innerHTML = ''; // Limpiar valores anteriores
+        var row = document.createElement('tr');
+        values[field].forEach(function(val) {
+            var cell = document.createElement('td');
+            cell.innerText = val;
+            cell.onclick = function() {
+                addToResult(val);
+            };
+            row.appendChild(cell);
+        });
+        valueTable.appendChild(row);
+        showTab('values');
     }
 
     function toggleCalculator() {
