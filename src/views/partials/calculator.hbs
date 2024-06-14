@@ -225,11 +225,22 @@
         numberInput.type = 'number';
         numberInput.min = 0;
         numberInput.className = 'form-control';
-        numberInput.onchange = function () {
+        
+        var confirmButton = document.createElement('button');
+        confirmButton.className = 'btn btn-success';
+        confirmButton.innerText = '✔';
+        confirmButton.onclick = function () {
             currentExpression.push(numberInput.value);
             finalizeSelection(); // Finalizar selección después de seleccionar un valor
         };
-        cell.appendChild(numberInput);
+
+        var inputWrapper = document.createElement('div');
+        inputWrapper.style.display = 'flex';
+        inputWrapper.style.alignItems = 'center';
+        inputWrapper.appendChild(numberInput);
+        inputWrapper.appendChild(confirmButton);
+
+        cell.appendChild(inputWrapper);
         row.appendChild(cell);
     } else {
         values[field].forEach(function (val) {
@@ -245,6 +256,7 @@
     valueTable.appendChild(row);
     showTab('values');
 }
+
 
 
         function finalizeSelection() {
