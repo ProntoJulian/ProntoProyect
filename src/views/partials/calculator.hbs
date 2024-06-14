@@ -164,23 +164,24 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         var operators = {
-    type: ['=', '!='],
-    price: ['=', '!=', '>', '<', '>=', '<='],
-    is_featured: ['=', '!='],
-    availability: ['=', '!='] // Añadido availability
-};
+            type: ['=', '!='],
+            price: ['=', '!=', '>', '<', '>=', '<='],
+            is_featured: ['=', '!='],
+            availability: ['=', '!=']
+        };
 
-var values = {
-    type: ['digital', 'physical'],
-    price: [], // Puedes llenar esto según tus necesidades
-    is_featured: ['true', 'false'],
-    availability: ['available', 'disabled', 'preorder'] // Añadido availability
-};
+        var values = {
+            type: ['digital', 'physical'],
+            price: [], // Puedes llenar esto según tus necesidades
+            is_featured: ['true', 'false'],
+            availability: ['available', 'disabled', 'preorder']
+        };
 
-var fields = ['type', 'price', 'is_featured', 'availability']; // Añadido availability
+        var fields = ['type', 'price', 'is_featured', 'availability'];
         var selectedFields = new Set(); // Almacena los campos seleccionados
         var currentExpression = []; // Almacena la expresión actual
         var fullExpression = []; // Almacena la expresión completa
+
         function loadFields() {
             var fieldsTable = document.getElementById('fieldsTable');
             fieldsTable.innerHTML = ''; // Limpiar campos anteriores
@@ -188,9 +189,9 @@ var fields = ['type', 'price', 'is_featured', 'availability']; // Añadido avail
             fields.forEach(function (field) {
                 var cell = document.createElement('td');
                 cell.innerText = field;
-                cell.className = selectedFields.has(field) ? 'disabled' : '';
+                cell.className = (selectedFields.has(field) && field !== 'price') ? 'disabled' : '';
                 cell.onclick = function () {
-                    if (!selectedFields.has(field)) {
+                    if (!selectedFields.has(field) || field === 'price') {
                         selectField(field);
                     }
                 };
@@ -201,8 +202,15 @@ var fields = ['type', 'price', 'is_featured', 'availability']; // Añadido avail
 
         function selectField(field) {
             currentExpression = [field];
-            selectedFields.add(field);
+            if (field !== 'price') {
+                selectedFields.add(field);
+            }
             loadFields(); // Actualizar campos disponibles
+            loadOperators(field);
+            showTab('operators');
+        }
+
+        function loadOperators(field) {
             var operatorTable = document.getElementById('operatorTable');
             operatorTable.innerHTML = ''; // Limpiar operadores anteriores
             var row = document.createElement('tr');
@@ -211,57 +219,54 @@ var fields = ['type', 'price', 'is_featured', 'availability']; // Añadido avail
                 cell.innerText = op;
                 cell.onclick = function () {
                     currentExpression.push(op);
-                    selectValue(field); // Cargar valores después de seleccionar un operador
+                    loadValues(field); // Cargar valores después de seleccionar un operador
+                    showTab('values');
                 };
                 row.appendChild(cell);
             });
             operatorTable.appendChild(row);
-            showTab('operators');
         }
 
-        function selectValue(field) {
-    var valueTable = document.getElementById('valueTable');
-    valueTable.innerHTML = ''; // Limpiar valores anteriores
-    var row = document.createElement('tr');
-    if (field === 'price') {
-        var cell = document.createElement('td');
-        var numberInput = document.createElement('input');
-        numberInput.type = 'number';
-        numberInput.min = 0;
-        numberInput.className = 'form-control';
-        
-        var confirmButton = document.createElement('button');
-        confirmButton.className = 'btn btn-success';
-        confirmButton.innerText = '✔';
-        confirmButton.onclick = function () {
-            currentExpression.push(numberInput.value);
-            finalizeSelection(); // Finalizar selección después de seleccionar un valor
-        };
+        function loadValues(field) {
+            var valueTable = document.getElementById('valueTable');
+            valueTable.innerHTML = ''; // Limpiar valores anteriores
+            var row = document.createElement('tr');
+            if (field === 'price') {
+                var cell = document.createElement('td');
+                var numberInput = document.createElement('input');
+                numberInput.type = 'number';
+                numberInput.min = 0;
+                numberInput.className = 'form-control';
 
-        var inputWrapper = document.createElement('div');
-        inputWrapper.style.display = 'flex';
-        inputWrapper.style.alignItems = 'center';
-        inputWrapper.appendChild(numberInput);
-        inputWrapper.appendChild(confirmButton);
+                var confirmButton = document.createElement('button');
+                confirmButton.className = 'btn btn-success';
+                confirmButton.innerText = '✔';
+                confirmButton.onclick = function () {
+                    currentExpression.push(numberInput.value);
+                    finalizeSelection(); // Finalizar selección después de seleccionar un valor
+                };
 
-        cell.appendChild(inputWrapper);
-        row.appendChild(cell);
-    } else {
-        values[field].forEach(function (val) {
-            var cell = document.createElement('td');
-            cell.innerText = val;
-            cell.onclick = function () {
-                currentExpression.push(val);
-                finalizeSelection(); // Finalizar selección después de seleccionar un valor
-            };
-            row.appendChild(cell);
-        });
-    }
-    valueTable.appendChild(row);
-    showTab('values');
-}
+                var inputWrapper = document.createElement('div');
+                inputWrapper.style.display = 'flex';
+                inputWrapper.style.alignItems = 'center';
+                inputWrapper.appendChild(numberInput);
+                inputWrapper.appendChild(confirmButton);
 
-
+                cell.appendChild(inputWrapper);
+                row.appendChild(cell);
+            } else {
+                values[field].forEach(function (val) {
+                    var cell = document.createElement('td');
+                    cell.innerText = val;
+                    cell.onclick = function () {
+                        currentExpression.push(val);
+                        finalizeSelection(); // Finalizar selección después de seleccionar un valor
+                    };
+                    row.appendChild(cell);
+                });
+            }
+            valueTable.appendChild(row);
+        }
 
         function finalizeSelection() {
             var currentSelection = document.getElementById('currentSelection');
@@ -291,7 +296,7 @@ var fields = ['type', 'price', 'is_featured', 'availability']; // Añadido avail
             if (index !== -1) {
                 fullExpression.splice(index, 1);
             }
-            if (fields.includes(text)) {
+            if (fields.includes(text) && text !== 'price') {
                 selectedFields.delete(text); // Habilitar campo al eliminar
             }
             currentSelection.innerHTML = fullExpression.join(' ');
@@ -299,15 +304,24 @@ var fields = ['type', 'price', 'is_featured', 'availability']; // Añadido avail
             if (text === '[' || text === ']') {
                 return;
             }
-            currentExpression = [text];
-            if (operators[currentExpression[0]]) {
+            if (fields.includes(text)) {
+                currentExpression = [text];
+                loadOperators(text); // Cargar operadores del campo seleccionado
                 showTab('operators');
-            } else if (values[currentExpression[0]]) {
+            } else if (operators[currentExpression[0]] && operators[currentExpression[0]].includes(text)) {
+                currentExpression[1] = text;
+                if (currentExpression[0] === 'price') {
+                    showNumberSelector(currentExpression[0]); // Mostrar selector de números para price
+                } else {
+                    loadValues(currentExpression[0]); // Cargar valores del campo seleccionado
+                }
                 showTab('values');
             } else {
+                loadFields(); // Volver a mostrar los campos disponibles
                 showTab('fields');
             }
         }
+
         function toggleCalculator() {
             var calculator = document.getElementById('calculator');
             if (calculator.style.display === 'block') {
@@ -327,23 +341,22 @@ var fields = ['type', 'price', 'is_featured', 'availability']; // Añadido avail
         }
 
         function clearLast() {
-    if (fullExpression.length > 0) {
-        fullExpression.pop();
-        if (fullExpression.length > 0) {
-            var lastExpression = fullExpression.pop();
-            if (lastExpression) {
-                var fieldMatch = lastExpression.match(/\b(type|price|is_featured)\b/);
-                if (fieldMatch) {
-                    selectedFields.delete(fieldMatch[0]); // Habilitar campo al eliminar
+            if (fullExpression.length > 0) {
+                fullExpression.pop();
+                if (fullExpression.length > 0) {
+                    var lastExpression = fullExpression.pop();
+                    if (lastExpression) {
+                        var fieldMatch = lastExpression.match(/\b(type|price|is_featured|availability)\b/);
+                        if (fieldMatch && fieldMatch[0] !== 'price') {
+                            selectedFields.delete(fieldMatch[0]); // Habilitar campo al eliminar
+                        }
+                        fullExpression.push(lastExpression); // Volver a añadir la última expresión
+                    }
                 }
-                fullExpression.push(lastExpression); // Volver a añadir la última expresión
+                document.getElementById('currentSelection').innerHTML = fullExpression.join(' ');
+                loadFields();
             }
         }
-        document.getElementById('currentSelection').innerHTML = fullExpression.join(' ');
-        loadFields();
-    }
-}
-
 
         function finalize() {
             var result = document.getElementById('result');
@@ -360,13 +373,12 @@ var fields = ['type', 'price', 'is_featured', 'availability']; // Añadido avail
             document.getElementById(tabName).style.display = 'block';
         }
 
-        // Mostrar la primera pestaña por defecto
         // Mostrar la primera pestaña por defecto y cargar los campos
         document.addEventListener('DOMContentLoaded', function () {
             loadFields();
             showTab('fields');
         });
-        
+
     </script>
 </body>
 
