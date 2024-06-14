@@ -206,12 +206,12 @@
     function finalizeSelection() {
         selectionStage = 0;
         var currentSelection = document.getElementById('currentSelection');
-        var expressionHtml = '<button class="btn btn-outline-secondary" onclick="editExpression(this)">[</button>';
+        var expressionHtml = '[';
         currentExpression.forEach(function(item) {
-            expressionHtml += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' + item + '</button>';
+            expressionHtml += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' + item + '</button> ';
         });
-        expressionHtml += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">]</button>';
-        currentSelection.innerHTML += expressionHtml + ' ';
+        expressionHtml += '] ';
+        currentSelection.innerHTML += expressionHtml;
         currentExpression = [];
         showTab('logical_operators');
     }
