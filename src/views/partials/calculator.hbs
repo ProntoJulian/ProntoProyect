@@ -211,9 +211,12 @@
         values[field].forEach(function(val) {
             var cell = document.createElement('td');
             cell.innerText = val;
+            cell.className = currentExpression.includes(val) ? 'disabled' : '';
             cell.onclick = function() {
-                currentExpression.push(val);
-                finalizeSelection(); // Finalizar selección después de seleccionar un valor
+                if (!currentExpression.includes(val)) {
+                    currentExpression.push(val);
+                    finalizeSelection(); // Finalizar selección después de seleccionar un valor
+                }
             };
             row.appendChild(cell);
         });
@@ -254,17 +257,54 @@
         }
         currentSelection.innerHTML = fullExpression.join(' ');
         loadFields(); // Actualizar campos disponibles
-        if (text === '[' || text === ']') {
-            return;
-        }
-        currentExpression = [text];
-        if (operators[currentExpression[0]]) {
+
+        if (operators[currentExpression[1]]) {
             showTab('operators');
-        } else if (values[currentExpression[0]]) {
+            loadOperators(currentExpression[0], currentExpression[1]); // Cargar operadores
+        } else if (values[currentExpression[2]]) {
             showTab('values');
+            loadValues(currentExpression[0], currentExpression[2]); // Cargar valores
         } else {
             showTab('fields');
         }
+    }
+
+    function loadOperators(field, selectedOperator) {
+        var operatorTable = document.getElementById('operatorTable');
+        operatorTable.innerHTML = ''; // Limpiar operadores anteriores
+        var row = document.createElement('tr');
+        operators[field].forEach(function(op) {
+            var cell = document.createElement('td');
+            cell.innerText = op;
+            cell.className = op === selectedOperator ? 'disabled' : '';
+            cell.onclick = function() {
+                if (op !== selectedOperator) {
+                    currentExpression[1] = op;
+                    finalizeSelection(); // Finalizar selección después de seleccionar un operador
+                }
+            };
+            row.appendChild(cell);
+        });
+        operatorTable.appendChild(row);
+    }
+
+    function loadValues(field, selectedValue) {
+        var valueTable = document.getElementById('valueTable');
+        valueTable.innerHTML = ''; // Limpiar valores anteriores
+        var row = document.createElement('tr');
+        values[field].forEach(function(val) {
+            var cell = document.createElement('td');
+            cell.innerText = val;
+            cell.className = val === selectedValue ? 'disabled' : '';
+            cell.onclick = function() {
+                if (val !== selectedValue) {
+                    currentExpression[2] = val;
+                    finalizeSelection(); // Finalizar selección después de seleccionar un valor
+                }
+            };
+            row.appendChild(cell);
+        });
+        valueTable.appendChild(row);
     }
 
     function toggleCalculator() {
