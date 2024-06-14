@@ -23,6 +23,10 @@ appRouter.get("/", (req, res) => {
 
 })
 
+appRouter.get("/calculator", (req, res) => {
+    res.render("partials/calculator");
+})
+
 appRouter.get("/app/logout", authenticateToken,superUsuarioPages, function (req, res) {
   res.clearCookie('accessToken');
   req.session.destroy((err) => {

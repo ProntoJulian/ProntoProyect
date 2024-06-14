@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Selección</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .calculator {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            padding: 10px;
+            z-index: 1;
+        }
+
+        .calculator table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .calculator td {
+            border: 1px solid #ddd;
+            padding: 5px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .calculator td:hover {
+            background-color: #ddd;
+        }
+
+        .buttons {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .buttons button {
+            margin: 0 5px;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <input type="text" id="result" placeholder="Nombre" readonly onclick="toggleCalculator()">
+    <div id="calculator" class="calculator">
+        <table>
+            <tr>
+                <td>Administración</td>
+                <td>Agencia</td>
+                <td>Agrupación</td>
+                <td>Almacén</td>
+                <td>Altillo</td>
+                <!-- Agrega más elementos aquí -->
+            </tr>
+            <!-- Agrega más filas según sea necesario -->
+        </table>
+        <div class="buttons">
+            <button onclick="clearAll()">Borrar todo</button>
+            <button onclick="clearLast()">Borrar último</button>
+            <button onclick="finalize()">Finalizar</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleCalculator() {
+            var calculator = document.getElementById('calculator');
+            if (calculator.style.display === 'block') {
+                calculator.style.display = 'none';
+            } else {
+                calculator.style.display = 'block';
+            }
+        }
+
+        function addToResult(value) {
+            var result = document.getElementById('result');
+            result.value += value + ' ';
+        }
+
+        function clearAll() {
+            document.getElementById('result').value = '';
+        }
+
+        function clearLast() {
+            var result = document.getElementById('result').value.trim();
+            var words = result.split(' ');
+            words.pop();
+            document.getElementById('result').value = words.join(' ') + ' ';
+        }
+
+        function finalize() {
+            toggleCalculator();
+            // Aquí puedes agregar más lógica si es necesario
+        }
+
+        // Agrega un evento de clic a cada celda de la calculadora
+        document.querySelectorAll('.calculator td').forEach(function (cell) {
+            cell.addEventListener('click', function () {
+                addToResult(cell.innerText);
+            });
+        });
+
+        // Cerrar la calculadora al hacer clic fuera de ella
+        document.addEventListener('click', function (event) {
+            var calculator = document.getElementById('calculator');
+            var result = document.getElementById('result');
+            if (!calculator.contains(event.target) && event.target !== result) {
+                calculator.style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
+
+</html>

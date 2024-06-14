@@ -92,6 +92,7 @@ const routerModules = require("./routes/RoutesDBCRUD/modules.js");
 const routerFeeds = require("./routes/RoutesDBCRUD/feeds");
 const routerRoles = require("./routes/RoutesDBCRUD/roles");
 const routerUsers = require("./routes/RoutesDBCRUD/users");
+const routerUserRoles = require("./routes/RoutesDBCRUD/userRoles.js");
 const routerRoleModules = require("./routes/RoutesDBCRUD/roleModules.js");
 const routerUserCompany = require("./routes/RoutesDBCRUD/userCompany.js");
 const routerUserFeeds = require("./routes/RoutesDBCRUD/userFeed");
@@ -105,6 +106,7 @@ const appRouter = require("./routes/index");
 
 // Register routers
 app.use(routerOrders);
+app.use(routerUserRoles);
 app.use(routerProducts);
 app.use(routerRoleModules);
 app.use(routerModules);
