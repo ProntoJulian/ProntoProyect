@@ -188,6 +188,11 @@
         currentExpression = [field];
         selectedFields.add(field);
         loadFields(); // Actualizar campos disponibles
+        loadOperators(field);
+        showTab('operators');
+    }
+
+    function loadOperators(field) {
         var operatorTable = document.getElementById('operatorTable');
         operatorTable.innerHTML = ''; // Limpiar operadores anteriores
         var row = document.createElement('tr');
@@ -196,32 +201,28 @@
             cell.innerText = op;
             cell.onclick = function() {
                 currentExpression.push(op);
-                selectValue(field); // Cargar valores después de seleccionar un operador
+                loadValues(field);
+                showTab('values');
             };
             row.appendChild(cell);
         });
         operatorTable.appendChild(row);
-        showTab('operators');
     }
 
-    function selectValue(field) {
+    function loadValues(field) {
         var valueTable = document.getElementById('valueTable');
         valueTable.innerHTML = ''; // Limpiar valores anteriores
         var row = document.createElement('tr');
         values[field].forEach(function(val) {
             var cell = document.createElement('td');
             cell.innerText = val;
-            cell.className = currentExpression.includes(val) ? 'disabled' : '';
             cell.onclick = function() {
-                if (!currentExpression.includes(val)) {
-                    currentExpression.push(val);
-                    finalizeSelection(); // Finalizar selección después de seleccionar un valor
-                }
+                currentExpression.push(val);
+                finalizeSelection();
             };
             row.appendChild(cell);
         });
         valueTable.appendChild(row);
-        showTab('values');
     }
 
     function finalizeSelection() {
@@ -249,30 +250,29 @@
         var text = button.innerText;
         if (fields.includes(text)) {
             editField(text);
-        } else if (operators[currentExpression[1]]) {
+        } else if (operators[currentExpression[0]].includes(text)) {
             editOperator(text);
-        } else if (values[currentExpression[2]]) {
+        } else if (values[currentExpression[0]].includes(text)) {
             editValue(text);
         }
     }
 
     function editField(field) {
-        var index = currentExpression.indexOf(field);
-        if (index !== -1) {
-            currentExpression.splice(index, 1);
-            selectedFields.delete(field); // Habilitar campo al eliminar
-        }
+        currentExpression = [field];
+        selectedFields.delete(field); // Habilitar campo al eliminar
         loadFields(); // Actualizar campos disponibles
         showTab('fields');
     }
 
     function editOperator(operator) {
+        currentExpression[1] = operator;
         var field = currentExpression[0];
         loadOperators(field, operator);
         showTab('operators');
     }
 
     function editValue(value) {
+        currentExpression[2] = value;
         var field = currentExpression[0];
         loadValues(field, value);
         showTab('values');
@@ -289,7 +289,7 @@
             cell.onclick = function() {
                 if (op !== selectedOperator) {
                     currentExpression[1] = op;
-                    finalizeSelection(); // Finalizar selección después de seleccionar un operador
+                    updateCurrentSelection();
                 }
             };
             row.appendChild(cell);
@@ -308,12 +308,23 @@
             cell.onclick = function() {
                 if (val !== selectedValue) {
                     currentExpression[2] = val;
-                    finalizeSelection(); // Finalizar selección después de seleccionar un valor
+                    updateCurrentSelection();
                 }
             };
             row.appendChild(cell);
         });
         valueTable.appendChild(row);
+    }
+
+    function updateCurrentSelection() {
+        var currentSelection = document.getElementById('currentSelection');
+        var expressionHtml = '[';
+        currentExpression.forEach(function(item) {
+            expressionHtml += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' + item + '</button> ';
+        });
+        expressionHtml += '] ';
+        fullExpression[fullExpression.length - 1] = expressionHtml;
+        currentSelection.innerHTML = fullExpression.join(' ');
     }
 
     function toggleCalculator() {
