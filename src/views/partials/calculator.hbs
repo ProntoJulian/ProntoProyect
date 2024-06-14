@@ -66,6 +66,7 @@
             padding: 10px;
             margin-bottom: 15px;
             min-height: 50px;
+            white-space: pre-wrap; /* Asegura que los espacios se respeten */
         }
     </style>
 </head>
@@ -181,7 +182,7 @@
         var currentSelection = document.getElementById('currentSelection').innerText.trim();
         var wordsCurrentSelection = currentSelection.split(' ');
         wordsCurrentSelection.pop();
-        document.getElementById('currentSelection').innerText = wordsCurrentSelection.join(' ');
+        document.getElementById('currentSelection').innerText = wordsCurrentSelection.join(' ') + ' ';
 
         var result = document.getElementById('result').value.trim();
         var wordsResult = result.split(' ');
