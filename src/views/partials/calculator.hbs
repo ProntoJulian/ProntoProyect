@@ -72,6 +72,10 @@
             margin-right: 5px;
             margin-bottom: 5px;
         }
+        .disabled {
+            color: #ccc;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -97,12 +101,8 @@
                     </div>
                     <div class="result-display" id="currentSelection"></div>
                     <div id="fields" class="tab-content">
-                        <table>
-                            <tr>
-                                <td onclick="selectField('type')">type</td>
-                                <td onclick="selectField('price')">price</td>
-                                <td onclick="selectField('is_featured')">is_featured</td>
-                            </tr>
+                        <table id="fieldsTable">
+                            <!-- Campos se cargarán dinámicamente aquí -->
                         </table>
                     </div>
                     <div id="operators" class="tab-content">
@@ -160,11 +160,34 @@
         is_featured: ['true', 'false']
     };
 
+    var fields = ['type', 'price', 'is_featured'];
+    var selectedFields = new Set(); // Almacena los campos seleccionados
+
     var currentExpression = []; // Almacena la expresión actual
     var fullExpression = []; // Almacena la expresión completa
 
+    function loadFields() {
+        var fieldsTable = document.getElementById('fieldsTable');
+        fieldsTable.innerHTML = ''; // Limpiar campos anteriores
+        var row = document.createElement('tr');
+        fields.forEach(function(field) {
+            var cell = document.createElement('td');
+            cell.innerText = field;
+            cell.className = selectedFields.has(field) ? 'disabled' : '';
+            cell.onclick = function() {
+                if (!selectedFields.has(field)) {
+                    selectField(field);
+                }
+            };
+            row.appendChild(cell);
+        });
+        fieldsTable.appendChild(row);
+    }
+
     function selectField(field) {
         currentExpression = [field];
+        selectedFields.add(field);
+        loadFields(); // Actualizar campos disponibles
         var operatorTable = document.getElementById('operatorTable');
         operatorTable.innerHTML = ''; // Limpiar operadores anteriores
         var row = document.createElement('tr');
@@ -226,7 +249,11 @@
         if (index !== -1) {
             fullExpression.splice(index, 1);
         }
+        if (fields.includes(text)) {
+            selectedFields.delete(text); // Habilitar campo al eliminar
+        }
         currentSelection.innerHTML = fullExpression.join(' ');
+        loadFields(); // Actualizar campos disponibles
         if (text === '[' || text === ']') {
             return;
         }
@@ -254,12 +281,19 @@
         document.getElementById('currentSelection').innerHTML = '';
         currentExpression = [];
         fullExpression = [];
+        selectedFields.clear();
+        loadFields();
     }
 
     function clearLast() {
         if (fullExpression.length > 0) {
-            fullExpression.pop();
+            var lastExpression = fullExpression.pop();
+            var fieldMatch = lastExpression.match(/\b(type|price|is_featured)\b/);
+            if (fieldMatch) {
+                selectedFields.delete(fieldMatch[0]); // Habilitar campo al eliminar
+            }
             document.getElementById('currentSelection').innerHTML = fullExpression.join(' ');
+            loadFields();
         }
     }
 
@@ -278,8 +312,9 @@
         document.getElementById(tabName).style.display = 'block';
     }
 
-    // Mostrar la primera pestaña por defecto
+    // Mostrar la primera pestaña por defecto y cargar los campos
     document.addEventListener('DOMContentLoaded', function() {
+        loadFields();
         showTab('fields');
     });
 </script>
