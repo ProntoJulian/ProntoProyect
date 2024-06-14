@@ -164,22 +164,26 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
 
-        
+
         var operators = {
             type: ['=', '!='],
             price: ['=', '!=', '>', '<', '>=', '<='],
             is_featured: ['=', '!='],
-            availability: ['=', '!=']
+            availability: ['=', '!='],
+            is_visible: ['=', '!='],
+            is_free_shipping: ['=', '!=']
         };
 
         var values = {
             type: ['digital', 'physical'],
             price: [], // Puedes llenar esto según tus necesidades
             is_featured: ['true', 'false'],
-            availability: ['available', 'disabled', 'preorder']
+            availability: ['available', 'disabled', 'preorder'],
+            is_visible: ['true', 'false'],
+            is_free_shipping: ['true', 'false']
         };
 
-        var fields = ['type', 'price', 'is_featured', 'availability'];
+        var fields = ['type', 'price', 'is_featured', 'availability','is_visible','is_free_shipping'];
         var selectedFields = new Set(); // Almacena los campos seleccionados
         var currentExpression = []; // Almacena la expresión actual
         var fullExpression = []; // Almacena la expresión completa
