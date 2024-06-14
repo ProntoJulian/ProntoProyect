@@ -35,6 +35,7 @@
             border-radius: 5px;
             cursor: pointer;
             background-color: #f9f9f9;
+            color: black;
             width: 120px;
         }
         .buttons button:hover {
@@ -177,17 +178,16 @@
     }
 
     function clearLast() {
-        var result = document.getElementById('result').value.trim();
         var currentSelection = document.getElementById('currentSelection').innerText.trim();
-        var wordsResult = result.split(' ');
         var wordsCurrentSelection = currentSelection.split(' ');
-        wordsResult.pop();
         wordsCurrentSelection.pop();
-        document.getElementById('result').value = wordsResult.join(' ') + ' ';
         document.getElementById('currentSelection').innerText = wordsCurrentSelection.join(' ') + ' ';
     }
 
     function finalize() {
+        var result = document.getElementById('result');
+        var currentSelection = document.getElementById('currentSelection').innerText.trim();
+        result.value = currentSelection;
         $('#calculatorModal').modal('hide');
     }
 
