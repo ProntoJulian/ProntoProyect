@@ -379,72 +379,48 @@
             }
         }
 
-        async function validateExpression() {
-    let isValid = true;
-    let expressionText = document.getElementById('currentSelection').innerText.trim();
-    console.log("Expresión:", expressionText);
-    let conditions = expressionText.split(/\s(AND|OR)\s/); // Dividir por operadores lógicos
-    console.log("Condiciones:", conditions);
-
-    conditions.forEach((condition, index) => {
-        let cleanCondition = condition.replace(/[\[\]]/g, '').trim();
-        console.log("Condición limpia:", cleanCondition);
-        let parts = cleanCondition.split(/\s+/);
-        console.log("Partes:", parts);
-
-        if (parts.length !== 3) {
-            isValid = false;
-            console.log("Número de partes inválido:", parts.length);
-        } else {
-            let field = parts[0];
-            let operator = parts[1];
-            let value = parts[2];
-
-            if (fields.indexOf(field) === -1 || operators[field].indexOf(operator) === -1 || (!values[field].includes(value) && field !== 'price')) {
-                isValid = false;
-                console.log("Campo, operador o valor inválido:", field, operator, value);
-            }
-
-            if (field === 'price') {
-                let currentValue = parseFloat(value);
-                conditions.forEach((otherCondition, otherIndex) => {
-                    if (index !== otherIndex) {
-                        let otherCleanCondition = otherCondition.replace(/[\[\]]/g, '').trim();
-                        let otherParts = otherCleanCondition.split(/\s+/);
-                        if (otherParts[0] === 'price' && otherParts.length === 3) {
-                            let otherOperator = otherParts[1];
-                            let otherValue = parseFloat(otherParts[2]);
-
-                            if ((operator === '>' && otherOperator === '<=' && currentValue >= otherValue) ||
-                                (operator === '>=' && otherOperator === '<' && currentValue >= otherValue) ||
-                                (operator === '<' && otherOperator === '>=' && currentValue <= otherValue) ||
-                                (operator === '<=' && otherOperator === '>' && currentValue <= otherValue) ||
-                                (operator === '>' && otherOperator === '<' && currentValue >= otherValue) ||
-                                (operator === '<' && otherOperator === '>' && currentValue <= otherValue)) {
-                                isValid = false;
-                                console.log("Comparación de rango inválida:", operator, currentValue, otherOperator, otherValue);
-                            }
-
-                            if ((operator === '>' && otherOperator === '>' && currentValue >= otherValue) ||
-                                (operator === '<' && otherOperator === '<' && currentValue <= otherValue) ||
-                                (operator === '>=' && otherOperator === '>=' && currentValue >= otherValue) ||
-                                (operator === '<=' && otherOperator === '<=' && currentValue <= otherValue)) {
-                                isValid = false;
-                                console.log("Comparación de rango similar inválida:", operator, currentValue, otherOperator, otherValue);
-                            }
-                        }
+        function validateExpression() {
+            // Validar que cada condición tenga un campo, operador y valor
+            let isValid = true;
+            let expressionText = document.getElementById('currentSelection').innerText.trim();
+            let conditions = expressionText.split(/\s(AND|OR)\s/); // Dividir por operadores lógicos
+            conditions.forEach(condition => {
+                // Eliminar corchetes y extraer partes
+                let cleanCondition = condition.replace(/[\[\]]/g, '').trim();
+                let parts = cleanCondition.split(/\s+/);
+                if (parts.length !== 3) {
+                    isValid = false;
+                } else {
+                    let field = parts[0];
+                    let operator = parts[1];
+                    let value = parts[2];
+                    if (fields.indexOf(field) === -1 || operators[field].indexOf(operator) === -1 || (!values[field].includes(value) && field !== 'price')) {
+                        isValid = false;
                     }
-                });
+                    // Validar rangos de precio lógicos
+                    if (field === 'price') {
+                        conditions.forEach(otherCondition => {
+                            let otherCleanCondition = otherCondition.replace(/[\[\]]/g, '').trim();
+                            let otherParts = otherCleanCondition.split(/\s+/);
+                            if (otherParts[0] === 'price' && otherParts.length === 3) {
+                                let otherOperator = otherParts[1];
+                                let otherValue = parseFloat(otherParts[2]);
+                                if ((operator === '>' && otherOperator === '<=' && parseFloat(value) >= otherValue) ||
+                                    (operator === '>=' && otherOperator === '<' && parseFloat(value) > otherValue) ||
+                                    (operator === '<' && otherOperator === '>=' && parseFloat(value) <= otherValue) ||
+                                    (operator === '<=' && otherOperator === '>' && parseFloat(value) < otherValue)) {
+                                    isValid = false;
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+            if (!isValid) {
+                alert("La expresión no es válida. Por favor, revisa las condiciones.");
             }
+            return isValid;
         }
-    });
-
-    if (!isValid) {
-        alert("La expresión no es válida. Por favor, revisa las condiciones.");
-    }
-
-    return isValid;
-}
 
         function showTab(tabName) {
             var tabs = document.getElementsByClassName('tab-content');
