@@ -385,7 +385,7 @@
             let expressionText = document.getElementById('currentSelection').innerText.trim();
             let conditions = expressionText.split(/\s(AND|OR)\s/); // Dividir por operadores lógicos
 
-            conditions.forEach(condition => {
+            conditions.forEach((condition, index) => {
                 // Eliminar corchetes y extraer partes
                 let cleanCondition = condition.replace(/[\[\]]/g, '').trim();
                 let parts = cleanCondition.split(/\s+/);
@@ -403,18 +403,22 @@
 
                     // Validar rangos de precio lógicos
                     if (field === 'price') {
-                        conditions.forEach(otherCondition => {
-                            let otherCleanCondition = otherCondition.replace(/[\[\]]/g, '').trim();
-                            let otherParts = otherCleanCondition.split(/\s+/);
-                            if (otherParts[0] === 'price' && otherParts.length === 3) {
-                                let otherOperator = otherParts[1];
-                                let otherValue = parseFloat(otherParts[2]);
+                        conditions.forEach((otherCondition, otherIndex) => {
+                            if (index !== otherIndex) { // Evitar comparar la misma condición
+                                let otherCleanCondition = otherCondition.replace(/[\[\]]/g, '').trim();
+                                let otherParts = otherCleanCondition.split(/\s+/);
+                                if (otherParts[0] === 'price' && otherParts.length === 3) {
+                                    let otherOperator = otherParts[1];
+                                    let otherValue = parseFloat(otherParts[2]);
 
-                                if ((operator === '>' && otherOperator === '<=' && parseFloat(value) >= otherValue) ||
-                                    (operator === '>=' && otherOperator === '<' && parseFloat(value) > otherValue) ||
-                                    (operator === '<' && otherOperator === '>=' && parseFloat(value) <= otherValue) ||
-                                    (operator === '<=' && otherOperator === '>' && parseFloat(value) < otherValue)) {
-                                    isValid = false;
+                                    if ((operator === '>' && otherOperator === '<=' && parseFloat(value) >= otherValue) ||
+                                        (operator === '>=' && otherOperator === '<' && parseFloat(value) > otherValue) ||
+                                        (operator === '<' && otherOperator === '>=' && parseFloat(value) <= otherValue) ||
+                                        (operator === '<=' && otherOperator === '>' && parseFloat(value) < otherValue) ||
+                                        (operator === '>' && otherOperator === '<' && parseFloat(value) >= otherValue) ||
+                                        (operator === '<' && otherOperator === '>' && parseFloat(value) <= otherValue)) {
+                                        isValid = false;
+                                    }
                                 }
                             }
                         });
