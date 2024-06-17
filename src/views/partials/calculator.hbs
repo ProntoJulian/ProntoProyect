@@ -383,17 +383,15 @@
             // Validar que cada condición tenga un campo, operador y valor
             let isValid = true;
             let expressionText = document.getElementById('currentSelection').innerText.trim();
-            let conditions = expressionText.split(/\s(AND|OR)\s/); // Dividir por operadores lógicos
-
             console.log("Expresión:", expressionText);
+            let conditions = expressionText.split(/\s(AND|OR)\s/); // Dividir por operadores lógicos
             console.log("Condiciones:", conditions);
 
             conditions.forEach((condition, index) => {
                 // Eliminar corchetes y extraer partes
                 let cleanCondition = condition.replace(/[\[\]]/g, '').trim();
-                let parts = cleanCondition.split(/\s+/);
-
                 console.log("Condición limpia:", cleanCondition);
+                let parts = cleanCondition.split(/\s+/);
                 console.log("Partes:", parts);
 
                 if (parts.length !== 3) {
@@ -402,8 +400,6 @@
                     let field = parts[0];
                     let operator = parts[1];
                     let value = parts[2];
-
-                    console.log("Campo:", field, "Operador:", operator, "Valor:", value);
 
                     if (fields.indexOf(field) === -1 || operators[field].indexOf(operator) === -1 || (!values[field].includes(value) && field !== 'price')) {
                         isValid = false;
@@ -419,16 +415,15 @@
                                     let otherOperator = otherParts[1];
                                     let otherValue = parseFloat(otherParts[2]);
 
-                                    console.log("Comparando precios:", operator, value, otherOperator, otherValue);
+                                    console.log(`Campo: ${field} Operador: ${operator} Valor: ${value}`);
+                                    console.log(`Comparando precios: ${operator} ${value} ${otherOperator} ${otherValue}`);
 
-                                    if ((operator === '>' && otherOperator === '<' && parseFloat(value) >= otherValue) ||
+                                    if ((operator === '>' && otherOperator === '<=' && parseFloat(value) >= otherValue) ||
                                         (operator === '>=' && otherOperator === '<' && parseFloat(value) > otherValue) ||
                                         (operator === '<' && otherOperator === '>=' && parseFloat(value) <= otherValue) ||
                                         (operator === '<=' && otherOperator === '>' && parseFloat(value) < otherValue) ||
-                                        (operator === '>' && otherOperator === '<=' && parseFloat(value) >= otherValue) ||
-                                        (operator === '>=' && otherOperator === '<=' && parseFloat(value) > otherValue) ||
-                                        (operator === '<' && otherOperator === '>=' && parseFloat(value) <= otherValue) ||
-                                        (operator === '<=' && otherOperator === '>=' && parseFloat(value) < otherValue)) {
+                                        (operator === '>' && otherOperator === '<' && parseFloat(value) >= otherValue) ||
+                                        (operator === '<' && otherOperator === '>' && parseFloat(value) <= otherValue)) {
                                         isValid = false;
                                     }
                                 }
@@ -444,6 +439,7 @@
 
             return isValid;
         }
+
 
 
 
