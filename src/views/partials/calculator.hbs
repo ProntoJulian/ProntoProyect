@@ -426,6 +426,14 @@
                                         (operator === '<' && otherOperator === '>' && parseFloat(value) <= otherValue)) {
                                         isValid = false;
                                     }
+
+                                    // Agregar una condición adicional para verificar la lógica de los operadores de rango
+                                    if ((operator === '>' && otherOperator === '>' && parseFloat(value) >= otherValue) ||
+                                        (operator === '<' && otherOperator === '<' && parseFloat(value) <= otherValue) ||
+                                        (operator === '>=' && otherOperator === '>=' && parseFloat(value) >= otherValue) ||
+                                        (operator === '<=' && otherOperator === '<=' && parseFloat(value) <= otherValue)) {
+                                        isValid = false;
+                                    }
                                 }
                             }
                         });
@@ -439,6 +447,7 @@
 
             return isValid;
         }
+
 
 
 
