@@ -290,6 +290,44 @@ async function createCronJob(feedId, configCron) {
 }
 
 
+async function buildQueryUrl(baseUrl, expression) {
+  if (!expression) {
+      throw new Error('La expresión es undefined o null');
+  }
+
+  const queryParams = [];
+  const conditions = expression.split(/(AND|OR)/).map(cond => cond.trim());
+
+  conditions.forEach((condition, index) => {
+      if (condition !== 'AND' && condition !== 'OR') {
+          // Eliminar corchetes
+          condition = condition.replace(/\[|\]/g, '');
+          
+          const [field, operator, value] = condition.split(/\s+/);
+
+          if (operator === '=') {
+              queryParams.push(`${field}=${value}`);
+          } else if (operator === '!=') {
+              queryParams.push(`${field}:not=${value}`);
+          } else if (['>', '<', '>=', '<='].includes(operator)) {
+              const opMap = {
+                  '>': 'greater',
+                  '<': 'less',
+                  '>=': 'min',
+                  '<=': 'max'
+              };
+              queryParams.push(`${field}:${opMap[operator]}=${value}`);
+          }
+      }
+  });
+
+  // Unir condiciones con &
+  const joinedQueryParams = queryParams.join('&');
+
+  return `${baseUrl}?${joinedQueryParams}`;
+}
+
+
 
 module.exports = {
   transformProduct,
@@ -300,5 +338,6 @@ module.exports = {
   decrypt,
   logMemoryUsage,
   createCronJob,
-  createSimpleCron
+  createSimpleCron,
+  buildQueryUrl
 };
