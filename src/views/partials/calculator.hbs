@@ -370,8 +370,8 @@
             }
         }
 
-        function finalize() {
-            if (validateExpression()) {
+        async function finalize() {
+            if (await validateExpression()) {
                 var result = document.getElementById('result');
                 var currentSelection = document.getElementById('currentSelection').innerText.trim();
                 result.value = currentSelection;
@@ -379,7 +379,7 @@
             }
         }
 
-        function validateExpression() {
+        async function validateExpression() {
             // Validar que cada condición tenga un campo, operador y valor
             let isValid = true;
             let expressionText = document.getElementById('currentSelection').innerText.trim();
