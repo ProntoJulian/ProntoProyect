@@ -172,7 +172,8 @@
         is_visible: ['=', '!='],
         is_free_shipping: ['=', '!='],
         id: ['=', '!=', '>', '<', '>=', '<='], // Agregando operadores para id
-        weight: ['=', '!=', '>', '<', '>=', '<='] // Agregando operadores para weight
+        weight: ['=', '!=', '>', '<', '>=', '<='], // Agregando operadores para weight
+        condition: ['=', '!='],
     };
 
     var values = {
@@ -183,10 +184,11 @@
         is_visible: ['true', 'false'],
         is_free_shipping: ['true', 'false'],
         id: [], // Dejar como array vacío para que se comporte como price
-        weight: [] // Dejar como array vacío para que se comporte como price
+        weight: [], // Dejar como array vacío para que se comporte como price
+        condition: ["new","used","refurbished"]
     };
 
-    var fields = ['type', 'price', 'is_featured', 'availability', 'is_visible', 'is_free_shipping', 'id', 'weight']; // Agregar id y weight
+    var fields = ['type', 'price', 'is_featured', 'availability', 'is_visible', 'is_free_shipping', 'id', 'weight',"condition"]; // Agregar id y weight
     var selectedFields = new Set(); // Almacena los campos seleccionados
     var currentExpression = []; // Almacena la expresión actual
     var fullExpression = []; // Almacena la expresión completa

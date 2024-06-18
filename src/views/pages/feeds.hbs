@@ -4,619 +4,396 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabla de Feeds</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Calculadora de Selección</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .table td,
-        .table th {
-            padding: 0.75rem;
-            white-space: nowrap;
+        .calculator {
+            padding: 15px;
         }
 
-        .icon-btn {
-            border: none;
-            background: none;
-            padding: 0;
-            margin: 0 5px;
-            cursor: pointer;
-        }
-
-        .icon-btn i {
-            font-size: 1.2em;
-            color: #007BFF;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        .table thead th {
-            white-space: nowrap;
-        }
-
-        .highlight-row {
-            background-color: #f8f9fa;
-        }
-
-        .editable {
-            display: none;
-        }
-
-        .editing .editable {
-            display: inline;
-        }
-
-        .editing .non-editable {
-            display: none;
-        }
-
-        .action-buttons {
+        .calculator table {
+            width: 100%;
+            border-collapse: collapse;
             margin-bottom: 15px;
-            text-align: left;
         }
 
-        .password-protected {
-            -webkit-text-security: disc;
+        .calculator td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 5px;
         }
 
-        .hourglass-icon {
-            font-size: 48px;
-            color: #007BFF;
-            animation: rotateHourglass 5s infinite linear;
+        .calculator td:hover {
+            background-color: #f0f0f0;
         }
 
-        @keyframes rotateHourglass {
-            0% {
-                transform: rotate(0deg);
-            }
+        .buttons {
+            margin-top: 10px;
+            text-align: center;
+        }
 
-            50% {
-                transform: rotate(180deg);
-            }
+        .buttons button {
+            margin: 5px;
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #f9f9f9;
+            color: black;
+            width: 120px;
+        }
 
-            100% {
-                transform: rotate(360deg);
-            }
+        .buttons button:hover {
+            background-color: #e9e9e9;
+        }
+
+        .tab-buttons {
+            display: flex;
+            justify-content: space-around;
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .tab-buttons div {
+            cursor: pointer;
+            padding: 10px 20px;
+        }
+
+        .tab-buttons div:hover {
+            background-color: #555;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .result-display {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 15px;
+            min-height: 50px;
+            white-space: pre-wrap;
+        }
+
+        .result-display .btn {
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .disabled {
+            color: #ccc;
+            pointer-events: none;
         }
     </style>
 </head>
 
 <body>
-    <div class="container mt-5">
-        {{#unless (eq roleModule.0.access_type "Read Only")}}
-        <div class="action-buttons">
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">
-                <i class="fas fa-plus"></i> Create
-            </button>
-        </div>
-        {{/unless}}
-        <div class="card">
-            <div class="card-header">
-                <h2>Feed List</h2>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover table-striped">
-                    <thead class="table-dark">
-                        <tr>
-                            <th class="col-id">ID</th>
-                            <th class="col-name">Name</th>
-                            <th>Formulas</th>
-                            <th>Last Update</th>
-                            <th>GM Products</th>
-                            <th>BC Products</th>
-                            <th>Preorder Products</th>
-                            {{#unless (eq roleModule.0.access_type "Read Only")}}
-                            <th class="text-center">Actions</th>
-                            {{/unless}}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#each feeds}}
-                        <tr>
-                            <td><span class="non-editable">{{this.feed_id}}</span><span
-                                    class="editable">{{this.feed_id}}</span></td>
-                            <td><span class="non-editable">{{this.feed_name}}</span><input type="text"
-                                    class="form-control editable" value="{{this.feed_name}}"></td>
-                            <td><span class="non-editable">{{this.formulas}}</span><input type="text"
-                                    class="form-control editable" value="{{this.formulas}}"></td>
-                            <td><span class="non-editable">{{this.last_update}}</span><input type="text"
-                                    class="form-control editable" value="{{this.last_update}}"></td>
-                            <td><span class="non-editable">{{this.active_products_gm}}</span><input type="text"
-                                    class="form-control editable" value="{{this.active_products_gm}}"></td>
-                            <td><span class="non-editable">{{this.total_products_bc}}</span><input type="text"
-                                    class="form-control editable" value="{{this.total_products_bc}}"></td>
-                            <td><span class="non-editable">{{this.preorder_products}}</span><input type="text"
-                                    class="form-control editable" value="{{this.preorder_products}}"></td>
-                            {{#unless (eq ../roleModule.0.access_type "Read Only")}}
-                            <td class="text-center">
-                                <button class="btn btn-primary btn-edit" title="Update" data-feed-id="{{this.feed_id}}">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-danger btn-delete" title="Delete"
-                                    data-feed-id="{{this.feed_id}}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                                <button class="btn btn-success btn-save editable" title="Save">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                                <button class="btn btn-secondary btn-cancel editable" title="Cancel">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                                <button class="btn btn-info btn-sync" title="Synchronize"
-                                    data-feed-id="{{this.feed_id}}">
-                                    <i class="fas fa-sync-alt"></i>
-                                </button>
-                                <button class="btn btn-warning btn-download" title="Download"
-                                    data-feed-id="{{this.feed_id}}">
-                                    <i class="fas fa-download"></i>
-                                </button>
-                            </td>
-                            {{/unless}}
-                        </tr>
-                        {{/each}}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-
-
-    <!-- Modal de Confirmación -->
-    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <input type="text" id="result" class="form-control" placeholder="Nombre" readonly data-toggle="modal" data-target="#calculatorModal">
+    <div class="modal fade" id="calculatorModal" tabindex="-1" role="dialog" aria-labelledby="calculatorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="confirmModalLabel">Confirmation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="calculatorModalLabel">Calculadora de Selección</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
-                    Are you sure you want to save the changes?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="confirmSave">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Confirmación de Eliminación -->
-    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteConfirmModalLabel">Delete Confirmation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Are you sure you want to delete the feed with ID <span id="deleteFeedId"></span>?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para Crear Feed -->
-    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createModalLabel">Create New Feed</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="createForm">
-                        <div class="mb-3">
-                            <label for="feed_name" class="form-label">Feed Name</label>
-                            <input type="text" class="form-control" id="feed_name">
+                    <div class="calculator">
+                        <div class="tab-buttons">
+                            <div onclick="showTab('fields')">FIELDS</div>
+                            <div onclick="showTab('operators')">OPERATORS</div>
+                            <div onclick="showTab('values')">VALUES</div>
+                            <div onclick="showTab('logical_operators')">LOGICAL OPERATORS</div>
                         </div>
-                        <div class="mb-3">
-                            <label for="domain" class="form-label">Domain</label>
-                            <input type="text" class="form-control" id="domain">
+                        <div class="result-display" id="currentSelection"></div>
+                        <div id="fields" class="tab-content">
+                            <table id="fieldsTable">
+                                <!-- Campos se cargarán dinámicamente aquí -->
+                            </table>
                         </div>
-                        <div class="mb-3">
-                            <label for="store_hash" class="form-label">Store Hash</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="store_hash">
-                                <span class="input-group-text toggle-password" data-toggle="store_hash"><i
-                                        class="fas fa-eye"></i></span>
-                            </div>
+                        <div id="operators" class="tab-content">
+                            <table id="operatorTable">
+                                <!-- Los operadores se cargarán dinámicamente aquí -->
+                            </table>
                         </div>
-                        <div class="mb-3">
-                            <label for="x_auth_token" class="form-label">x_auth_token</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="x_auth_token">
-                                <span class="input-group-text toggle-password" data-toggle="x_auth_token"><i
-                                        class="fas fa-eye"></i></span>
-                            </div>
+                        <div id="values" class="tab-content">
+                            <table id="valueTable">
+                                <!-- Los valores se cargarán dinámicamente aquí -->
+                            </table>
                         </div>
-                        <div class="mb-3">
-                            <label for="client_id" class="form-label">Merchant ID</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" id="client_id">
-                                <span class="input-group-text toggle-password" data-toggle="client_id"><i
-                                        class="fas fa-eye"></i></span>
-                            </div>
+                        <div id="logical_operators" class="tab-content">
+                            <table>
+                                <tr>
+                                    <td onclick="selectLogicalOperator('AND')">AND</td>
+                                    <td onclick="selectLogicalOperator('OR')">OR</td>
+                                </tr>
+                            </table>
                         </div>
-                        <div class="mb-3">
-                            <label for="formulas" class="form-label">Formulas</label>
-                            <input type="text" class="form-control" id="formulas">
+                        <div id="group" class="tab-content">
+                            <table>
+                                <tr>
+                                    <td>Grupo1</td>
+                                    <td>Grupo2</td>
+                                    <td>Grupo3</td>
+                                    <td>Grupo4</td>
+                                </tr>
+                            </table>
                         </div>
-                        <div class="mb-3">
-                            <label for="company_id" class="form-label">Company</label>
-                            <select class="form-control" id="company_id" disabled>
-                                {{#each companies}}
-                                <option value="{{this.company_id}}">{{this.company_name}}</option>
-                                {{/each}}
-                            </select>
+                        <div class="buttons">
+                            <button onclick="clearAll()" class="btn btn-secondary">Borrar todo</button>
+                            <button onclick="clearLast()" class="btn btn-secondary">Borrar último</button>
+                            <button onclick="finalize()" class="btn btn-primary">Finalizar</button>
                         </div>
-
-
-                        <div class="mb-3">
-                            <label for="client_email" class="form-label">Client Email</label>
-                            <input type="email" class="form-control" id="client_email">
-                        </div>
-                        <div class="mb-3">
-                            <label for="private_key" class="form-label">Private Key</label>
-                            <div class="input-group">
-                                <textarea class="form-control password-protected" id="private_key" rows="3"
-                                    maxlength="2500"></textarea>
-                                <span class="input-group-text toggle-password" data-toggle="private_key"><i
-                                        class="fas fa-eye"></i></span>
-                            </div>
-                        </div>
-
-                        <!-- Nueva Sección para Repetir -->
-                        <div class="mb-3">
-                            <label class="form-label">Custom recurrence</label>
-                            <div class="input-group mb-3">
-                                <span class="input-group-text">Repeat every</span>
-                                <select class="form-control">
-                                    <option value="1">1 hour</option>
-                                    <option value="3">3 hours</option>
-                                    <option value="6">6 hours</option>
-                                    <option value="12">12 hours</option>
-                                </select>
-                            </div>
-                            <div class="btn-group" role="group" aria-label="Repeat on">
-                                <input type="checkbox" class="btn-check" id="monday" autocomplete="off">
-                                <label class="btn btn-outline-primary" for="monday">M</label>
-
-                                <input type="checkbox" class="btn-check" id="tuesday" autocomplete="off">
-                                <label class="btn btn-outline-primary" for="tuesday">T</label>
-
-                                <input type="checkbox" class="btn-check" id="wednesday" autocomplete="off">
-                                <label class="btn btn-outline-primary" for="wednesday">W</label>
-
-                                <input type="checkbox" class="btn-check" id="thursday" autocomplete="off">
-                                <label class="btn btn-outline-primary" for="thursday">T</label>
-
-                                <input type="checkbox" class="btn-check" id="friday" autocomplete="off">
-                                <label class="btn btn-outline-primary" for="friday">F</label>
-
-                                <input type="checkbox" class="btn-check" id="saturday" autocomplete="off">
-                                <label class="btn btn-outline-primary" for="saturday">S</label>
-
-                                <input type="checkbox" class="btn-check" id="sunday" autocomplete="off">
-                                <label class="btn btn-outline-primary" for="sunday">S</label>
-                            </div>
-                        </div>
-                        <!-- Fin de la Nueva Sección -->
-
-                        <div class="action-buttons">
-                            <button type="button" class="btn btn-primary" id="createButton">Create</button>
-                            <button type="button" class="btn btn-secondary" id="cancelButton">Cancel</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-
-    <!-- Modal de Sincronización -->
-    <div class="modal fade" id="syncModal" tabindex="-1" aria-labelledby="syncModalLabel" aria-hidden="true"
-        data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="syncModalLabel">Synchronization in Progress</h5>
-                </div>
-                <div class="modal-body text-center">
-                    <i class="fas fa-hourglass-half hourglass-icon"></i>
-                    <p class="mt-3">The synchronization has started, please do not close the page.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Generación de Excel -->
-    <div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel" aria-hidden="true"
-        data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="downloadModalLabel">Generating Excel File</h5>
-                </div>
-                <div class="modal-body text-center">
-                    <i class="fas fa-hourglass-half hourglass-icon"></i>
-                    <p class="mt-3">The Excel file is being generated, please do not close the page.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-
-    <!-- Bootstrap JS bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Funcionalidad de editar
-            document.querySelectorAll('.btn-edit').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    var feedId = btn.getAttribute('data-feed-id');
-                    window.location.href = `/feeds/updateFeed/${feedId}`;
-                });
-            });
+        var operators = {
+            type: ['=', '!='],
+            price: ['=', '!=', '>', '<', '>=', '<='],
+            is_featured: ['=', '!='],
+            availability: ['=', '!='],
+            is_visible: ['=', '!='],
+            is_free_shipping: ['=', '!='],
+            id: ['=', '!=', '>', '<', '>=', '<='], // Agregando operadores para id
+            weight: ['=', '!=', '>', '<', '>=', '<='], // Agregando operadores para weight
+            condition: ['=', '!='],
+        };
 
+        var values = {
+            type: ['digital', 'physical'],
+            price: [], // Puedes llenar esto según tus necesidades
+            is_featured: ['true', 'false'],
+            availability: ['available', 'disabled', 'preorder'],
+            is_visible: ['true', 'false'],
+            is_free_shipping: ['true', 'false'],
+            id: [], // Dejar como array vacío para que se comporte como price
+            weight: [], // Dejar como array vacío para que se comporte como price
+            condition: ["new", "used", "refurbished"]
+        };
 
-            // Funcionalidad de cancelar edición
-            document.querySelectorAll('.btn-cancel').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    var row = btn.closest('tr');
-                    row.classList.remove('editing');
-                });
-            });
+        var fields = ['type', 'price', 'is_featured', 'availability', 'is_visible', 'is_free_shipping', 'id', 'weight', "condition"]; // Agregar id y weight
+        var selectedFields = new Set(); // Almacena los campos seleccionados
+        var currentExpression = []; // Almacena la expresión actual
+        var fullExpression = []; // Almacena la expresión completa
 
-            // Funcionalidad de guardar cambios
-            document.querySelectorAll('.btn-save').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    var row = btn.closest('tr');
-                    var inputs = row.querySelectorAll('input');
-                    var confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-
-                    document.getElementById('confirmSave').onclick = function () {
-                        inputs.forEach(function (input) {
-                            var span = input.previousElementSibling;
-                            span.innerText = input.value;
-                        });
-                        row.classList.remove('editing');
-                        confirmModal.hide();
-                    };
-
-                    confirmModal.show();
-                });
-            });
-
-            // Funcionalidad de eliminar
-            document.querySelectorAll('.btn-delete').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    var feedId = btn.getAttribute('data-feed-id');
-                    var deleteFeedIdSpan = document.getElementById('deleteFeedId');
-                    deleteFeedIdSpan.textContent = feedId;
-
-                    var deleteConfirmModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-                    deleteConfirmModal.show();
-
-                    document.getElementById('confirmDelete').onclick = function () {
-                        fetch(`/feeds/deleteFeed/${feedId}`, {
-                            method: 'DELETE',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.message === "Feed deleted successfully") {
-                                    var row = btn.closest('tr');
-                                    row.remove();
-                                } else {
-                                    alert("Error deleting feed: " + data.message);
-                                    window.location.reload();
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                window.location.reload();
-                            });
-                        deleteConfirmModal.hide();
-                    };
-                });
-            });
-
-            // Funcionalidad de crear nuevo feed
-            document.getElementById('createButton').addEventListener('click', function () {
-                // Obtener los valores de los días seleccionados
-                const selectedDays = [];
-                ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].forEach(day => {
-                    if (document.getElementById(day).checked) {
-                        selectedDays.push(day);
+        function loadFields() {
+            var fieldsTable = document.getElementById('fieldsTable');
+            fieldsTable.innerHTML = ''; // Limpiar campos anteriores
+            var row = document.createElement('tr');
+            fields.forEach(function (field, index) {
+                var cell = document.createElement('td');
+                cell.innerText = field;
+                cell.className = (selectedFields.has(field) && field !== 'price' && field !== 'id' && field !== 'weight') ? 'disabled' : '';
+                cell.onclick = function () {
+                    if (!selectedFields.has(field) || field === 'price' || field === 'id' || field === 'weight') {
+                        selectField(field);
                     }
-                });
+                };
+                row.appendChild(cell);
+                // Crear una nueva fila cada 4 campos
+                if ((index + 1) % 4 === 0) {
+                    fieldsTable.appendChild(row);
+                    row = document.createElement('tr');
+                }
+            });
+            fieldsTable.appendChild(row);
+        }
 
-                // Obtener el valor del intervalo de tiempo
-                const intervalUnit = document.querySelector('.input-group select').value;
+        function selectField(field) {
+            currentExpression = [field];
+            if (field !== 'price' && field !== 'id' && field !== 'weight') {
+                selectedFields.add(field);
+            }
+            loadFields(); // Actualizar campos disponibles
+            loadOperators(field);
+            showTab('operators');
+        }
 
-                const feedData = {
-                    feed_name: document.getElementById('feed_name').value.trim(),
-                    store_hash: document.getElementById('store_hash').value.trim(),
-                    x_auth_token: document.getElementById('x_auth_token').value.trim(),
-                    client_id: document.getElementById('client_id').value.trim(),
-                    formulas: document.getElementById('formulas').value.trim(),
-                    company_id: document.getElementById('company_id').value.trim(),
-                    client_email: document.getElementById('client_email').value.trim(),
-                    private_key: document.getElementById('private_key').value.trim(),
-                    recurrence: {
-                        intervalUnit: intervalUnit,
-                        selectedDays: selectedDays
-                    },
-                    domain: document.getElementById('domain').value.trim()
+        function loadOperators(field) {
+            var operatorTable = document.getElementById('operatorTable');
+            operatorTable.innerHTML = ''; // Limpiar operadores anteriores
+            var row = document.createElement('tr');
+            operators[field].forEach(function (op) {
+                var cell = document.createElement('td');
+                cell.innerText = op;
+                cell.onclick = function () {
+                    currentExpression.push(op);
+                    loadValues(field); // Cargar valores después de seleccionar un operador
+                    showTab('values');
+                };
+                row.appendChild(cell);
+            });
+            operatorTable.appendChild(row);
+        }
+
+        function loadValues(field) {
+            var valueTable = document.getElementById('valueTable');
+            valueTable.innerHTML = ''; // Limpiar valores anteriores
+            var row = document.createElement('tr');
+            if (field === 'price' || field === 'id' || field === 'weight') {
+                var cell = document.createElement('td');
+                var numberInput = document.createElement('input');
+                numberInput.type = 'number';
+                numberInput.min = 0;
+                numberInput.className = 'form-control';
+
+                var confirmButton = document.createElement('button');
+                confirmButton.className = 'btn btn-success';
+                confirmButton.innerText = '✔';
+                confirmButton.onclick = function () {
+                    currentExpression.push(numberInput.value);
+                    finalizeSelection(); // Finalizar selección después de seleccionar un valor
                 };
 
-                // Verificar que ningún campo esté vacío (incluyendo los nuevos campos de recurrencia)
-                for (let key in feedData) {
-                    if (feedData[key] === "") {
-                        alert(`The field ${key} cannot be empty`);
-                        return;
+                var inputWrapper = document.createElement('div');
+                inputWrapper.style.display = 'flex';
+                inputWrapper.style.alignItems = 'center';
+                inputWrapper.appendChild(numberInput);
+                inputWrapper.appendChild(confirmButton);
+
+                cell.appendChild(inputWrapper);
+                row.appendChild(cell);
+            } else {
+                values[field].forEach(function (val) {
+                    var cell = document.createElement('td');
+                    cell.innerText = val;
+                    cell.onclick = function () {
+                        currentExpression.push(val);
+                        finalizeSelection(); // Finalizar selección después de seleccionar un valor
+                    };
+                    row.appendChild(cell);
+                });
+            }
+            valueTable.appendChild(row);
+        }
+
+        function finalizeSelection() {
+            var currentSelection = document.getElementById('currentSelection');
+            var expressionHtml = '[';
+            currentExpression.forEach(function (item) {
+                expressionHtml += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' + item + '</button> ';
+            });
+            expressionHtml += '] ';
+            fullExpression.push(expressionHtml);
+            currentSelection.innerHTML = fullExpression.join(' ');
+            currentExpression = [];
+            showTab('logical_operators');
+        }
+
+        function selectLogicalOperator(logicOp) {
+            var currentSelection = document.getElementById('currentSelection');
+            fullExpression.push('<button class="btn btn-outline-secondary" onclick="editExpression(this)">' +
+                logicOp + '</button> ');
+            currentSelection.innerHTML = fullExpression.join(' ');
+            showTab('fields');
+        }
+
+        function editExpression(button) {
+            var text = button.innerText;
+            var currentSelection = document.getElementById('currentSelection');
+            var index = fullExpression.findIndex(expr => expr.includes(text));
+            if (index !== -1) {
+                fullExpression.splice(index, 1);
+            }
+            if (fields.includes(text) && text !== 'price' && text !== 'id' && text !== 'weight') {
+                selectedFields.delete(text); // Habilitar campo al eliminar
+            }
+            currentSelection.innerHTML = fullExpression.join(' ');
+            loadFields(); // Actualizar campos disponibles
+            if (text === '[' || text === ']') {
+                return;
+            }
+            if (fields.includes(text)) {
+                currentExpression = [text];
+                loadOperators(text); // Cargar operadores del campo seleccionado
+                showTab('operators');
+            } else if (operators[currentExpression[0]] && operators[currentExpression[0]].includes(text)) {
+                currentExpression[1] = text;
+                if (currentExpression[0] === 'price' || currentExpression[0] === 'id' || currentExpression[0] === 'weight') {
+                    showNumberSelector(currentExpression[0]); // Mostrar selector de números para price, id y weight
+                } else {
+                    loadValues(currentExpression[0]); // Cargar valores del campo seleccionado
+                }
+                showTab('values');
+            } else {
+                loadFields(); // Volver a mostrar los campos disponibles
+                showTab('fields');
+            }
+        }
+
+        function toggleCalculator() {
+            var calculator = document.getElementById('calculator');
+            if (calculator.style.display === 'block') {
+                calculator.style.display = 'none';
+            } else {
+                calculator.style.display = 'block';
+            }
+        }
+
+        function clearAll() {
+            document.getElementById('result').value = '';
+            document.getElementById('currentSelection').innerHTML = '';
+            currentExpression = [];
+            fullExpression = [];
+            selectedFields.clear();
+            loadFields();
+        }
+
+        function clearLast() {
+            if (fullExpression.length > 0) {
+                fullExpression.pop();
+                if (fullExpression.length > 0) {
+                    var lastExpression = fullExpression.pop();
+                    if (lastExpression) {
+                        var fieldMatch = lastExpression.match(/\b(type|price|is_featured|availability|id|weight)\b/); // Incluir id y weight
+                        if (fieldMatch && fieldMatch[0] !== 'price' && fieldMatch[0] !== 'id' && fieldMatch[0] !== 'weight') {
+                            selectedFields.delete(fieldMatch[0]); // Habilitar campo al eliminar
+                        }
+                        fullExpression.push(lastExpression); // Volver a añadir la última expresión
                     }
                 }
+                document.getElementById('currentSelection').innerHTML = fullExpression.join(' ');
+                loadFields();
+            }
+        }
 
-                if (feedData.recurrence.selectedDays.length === 0) {
-                    alert("Please select at least one day of the week");
-                    return;
-                }
+        function finalize() {
+            // Mostrar un mensaje aleatorio
+            alert("La fórmula ha sido finalizada.");
+            var result = document.getElementById('result');
+            var currentSelection = document.getElementById('currentSelection').innerText.trim();
+            result.value = currentSelection;
+            $('#calculatorModal').modal('hide');
+        }
 
-                fetch('/feeds/createFeed', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(feedData)
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message === "Feed created successfully") {
-                            alert("Feed created successfully");
-                            window.location.reload();
-                        } else {
-                            alert("Error creating feed");
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert("Error creating feed");
-                    });
-            });
+        function showTab(tabName) {
+            var tabs = document.getElementsByClassName('tab-content');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].style.display = 'none';
+            }
+            document.getElementById(tabName).style.display = 'block';
+        }
 
-            // Funcionalidad de sincronización
-            document.querySelectorAll('.btn-sync').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    var feedId = btn.getAttribute('data-feed-id');
-
-                    // Desactivar todos los botones de sincronización
-                    document.querySelectorAll('.btn-sync').forEach(function (syncBtn) {
-                        syncBtn.disabled = true;
-                    });
-
-                    // Mostrar modal de sincronización
-                    var syncModal = new bootstrap.Modal(document.getElementById('syncModal'), {
-                        backdrop: 'static',
-                        keyboard: false
-                    });
-                    syncModal.show();
-
-                    fetch(`/feeds/synchronize/${feedId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                alert("Error en la sincronización");
-                                syncModal.hide();
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.message) {
-                                alert(data.message);
-                            } else {
-                                alert("Feed synchronized successfully");
-                            }
-                            window.location.reload();
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert("Error synchronizing feed");
-                            syncModal.hide(); // Cerrar el modal en caso de error
-                        })
-                        .finally(() => {
-                            // Volver a activar todos los botones de sincronización
-                            document.querySelectorAll('.btn-sync').forEach(function (syncBtn) {
-                                syncBtn.disabled = false;
-                            });
-                        });
-                });
-            });
-
-            // Toggle password visibility
-            document.querySelectorAll('.toggle-password').forEach(function (toggle) {
-                toggle.addEventListener('click', function () {
-                    var input = document.getElementById(toggle.getAttribute('data-toggle'));
-                    if (input.type === 'password' || input.classList.contains('password-protected')) {
-                        input.type = 'text';
-                        input.classList.remove('password-protected');
-                        toggle.innerHTML = '<i class="fas fa-eye-slash"></i>';
-                    } else {
-                        input.type = 'password';
-                        input.classList.add('password-protected');
-                        toggle.innerHTML = '<i class="fas fa-eye"></i>';
-                    }
-                });
-            });
-
-
-            // Funcionalidad de cancelar en el modal de creación
-            document.getElementById('cancelButton').addEventListener('click', function () {
-                window.location.reload();
-            });
-
-
-            // Funcionalidad de descarga
-            document.querySelectorAll('.btn-download').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    var feedId = btn.getAttribute('data-feed-id');
-
-                    // Mostrar modal de espera
-                    var downloadModal = new bootstrap.Modal(document.getElementById('downloadModal'), {
-                        backdrop: 'static',
-                        keyboard: false
-                    });
-                    downloadModal.show();
-
-                    fetch(`/feeds/downloadFeed/${feedId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                alert("Error al generar el archivo Excel");
-                                downloadModal.hide();
-                            }
-                            return response.blob();
-                        })
-                        .then(blob => {
-                            const url = window.URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.style.display = 'none';
-                            a.href = url;
-                            a.download = 'Products.xlsx';
-                            document.body.appendChild(a);
-                            a.click();
-                            window.URL.revokeObjectURL(url);
-                            downloadModal.hide(); // Cerrar el modal después de la descarga
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert("Error al generar el archivo Excel");
-                            downloadModal.hide(); // Cerrar el modal en caso de error
-                        });
-                });
-            });
+        // Mostrar la primera pestaña por defecto y cargar los campos
+        document.addEventListener('DOMContentLoaded', function () {
+            loadFields();
+            showTab('fields');
         });
     </script>
-    
+
 </body>
 
 </html>
