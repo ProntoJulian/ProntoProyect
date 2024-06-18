@@ -101,7 +101,7 @@ routerFeeds.get("/feeds/updateFeed/:feedId", authenticateToken, async (req, res)
     }
 });
 
-routerFeeds.get("app/feeds/createFeed", authenticateToken, async (req, res) => {
+routerFeeds.get("/app/feeds/createFeed", authenticateToken, async (req, res) => {
 
     console.log("Funciona?")
 
