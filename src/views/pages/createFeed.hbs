@@ -71,21 +71,24 @@
                             <label for="store_hash" class="form-label">Store Hash</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="store_hash">
-                                <span class="input-group-text toggle-password" data-toggle="store_hash"><i class="fas fa-eye"></i></span>
+                                <span class="input-group-text toggle-password" data-toggle="store_hash"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="x_auth_token" class="form-label">x_auth_token</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="x_auth_token">
-                                <span class="input-group-text toggle-password" data-toggle="x_auth_token"><i class="fas fa-eye"></i></span>
+                                <span class="input-group-text toggle-password" data-toggle="x_auth_token"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="client_id" class="form-label">Merchant ID</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="client_id">
-                                <span class="input-group-text toggle-password" data-toggle="client_id"><i class="fas fa-eye"></i></span>
+                                <span class="input-group-text toggle-password" data-toggle="client_id"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -95,8 +98,10 @@
                         <div class="mb-3">
                             <label for="private_key" class="form-label">Private Key</label>
                             <div class="input-group">
-                                <textarea class="form-control password-protected" id="private_key" rows="3" maxlength="2500"></textarea>
-                                <span class="input-group-text toggle-password" data-toggle="private_key"><i class="fas fa-eye"></i></span>
+                                <textarea class="form-control password-protected" id="private_key" rows="3"
+                                    maxlength="2500"></textarea>
+                                <span class="input-group-text toggle-password" data-toggle="private_key"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -168,10 +173,14 @@
                         <label for="formulaText" class="form-label">Formulas</label>
                         <input type="text" class="form-control" id="formulaText">
                     </div>
-                    <button type="button" class="btn btn-danger" id="deleteAllFormulasButton"><i class="fas fa-trash"></i> Eliminar Todo</button>
-                    <button type="button" class="btn btn-warning" id="undoFormulasButton"><i class="fas fa-undo"></i> Deshacer</button>
-                    <button type="button" class="btn btn-success" id="finishFormulasButton"><i class="fas fa-check"></i> Terminar</button>
-                    <button type="button" class="btn btn-secondary" id="closeModalButton" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" id="deleteAllFormulasButton"><i
+                            class="fas fa-trash"></i> Eliminar Todo</button>
+                    <button type="button" class="btn btn-warning" id="undoFormulasButton"><i class="fas fa-undo"></i>
+                        Deshacer</button>
+                    <button type="button" class="btn btn-success" id="finishFormulasButton"><i class="fas fa-check"></i>
+                        Terminar</button>
+                    <button type="button" class="btn btn-secondary" id="closeModalButton"
+                        data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -276,16 +285,14 @@
                 window.location.href = "/app/feeds";
             });
 
-            var formulasInput = document.getElementById('formulas');
-            if (formulasInput) {
-                formulasInput.addEventListener('click', function () {
-                    var formulasModal = new bootstrap.Modal(document.getElementById('formulasModal'), {
-                        backdrop: 'static',
-                        keyboard: false
-                    });
-                    formulasModal.show();
+            document.getElementById('formulas').addEventListener('click', function () {
+                var formulasModal = new bootstrap.Modal(document.getElementById('formulasModal'), {
+                    backdrop: 'static',
+                    keyboard: false
                 });
-            }
+                formulasModal.show();
+            });
+
 
             var closeModalButton = document.getElementById('closeModalButton');
             if (closeModalButton) {
