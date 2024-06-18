@@ -48,7 +48,9 @@
             }
         }
 
-        #fieldsTable td, #operatorTable td, #valueTable td {
+        #fieldsTable td,
+        #operatorTable td,
+        #valueTable td {
             border: 1px solid #dee2e6;
             padding: 8px;
             text-align: center;
@@ -56,11 +58,15 @@
             transition: background-color 0.3s;
         }
 
-        #fieldsTable td:hover, #operatorTable td:hover, #valueTable td:hover {
+        #fieldsTable td:hover,
+        #operatorTable td:hover,
+        #valueTable td:hover {
             background-color: #f8f9fa;
         }
 
-        #fieldsTable, #operatorTable, #valueTable {
+        #fieldsTable,
+        #operatorTable,
+        #valueTable {
             border-collapse: collapse;
             width: 100%;
         }
@@ -97,21 +103,24 @@
                             <label for="store_hash" class="form-label">Store Hash</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="store_hash">
-                                <span class="input-group-text toggle-password" data-toggle="store_hash"><i class="fas fa-eye"></i></span>
+                                <span class="input-group-text toggle-password" data-toggle="store_hash"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="x_auth_token" class="form-label">x_auth_token</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="x_auth_token">
-                                <span class="input-group-text toggle-password" data-toggle="x_auth_token"><i class="fas fa-eye"></i></span>
+                                <span class="input-group-text toggle-password" data-toggle="x_auth_token"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="client_id" class="form-label">Merchant ID</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="client_id">
-                                <span class="input-group-text toggle-password" data-toggle="client_id"><i class="fas fa-eye"></i></span>
+                                <span class="input-group-text toggle-password" data-toggle="client_id"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -121,8 +130,10 @@
                         <div class="mb-3">
                             <label for="private_key" class="form-label">Private Key</label>
                             <div class="input-group">
-                                <textarea class="form-control password-protected" id="private_key" rows="3" maxlength="2500"></textarea>
-                                <span class="input-group-text toggle-password" data-toggle="private_key"><i class="fas fa-eye"></i></span>
+                                <textarea class="form-control password-protected" id="private_key" rows="3"
+                                    maxlength="2500"></textarea>
+                                <span class="input-group-text toggle-password" data-toggle="private_key"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -204,9 +215,12 @@
                         <table id="valueTable"></table>
                     </div>
                     <div class="mt-3">
-                        <button type="button" class="btn btn-danger" id="deleteAllFormulasButton"><i class="fas fa-trash"></i> Eliminar Todo</button>
-                        <button type="button" class="btn btn-warning" id="undoFormulasButton"><i class="fas fa-undo"></i> Deshacer</button>
-                        <button type="button" class="btn btn-success" id="finishFormulasButton" data-bs-dismiss="modal"><i class="fas fa-check"></i> Terminar</button>
+                        <button type="button" class="btn btn-danger" id="deleteAllFormulasButton"><i
+                                class="fas fa-trash"></i> Eliminar Todo</button>
+                        <button type="button" class="btn btn-warning" id="undoFormulasButton"><i
+                                class="fas fa-undo"></i> Deshacer</button>
+                        <button type="button" class="btn btn-success" id="finishFormulasButton"
+                            data-bs-dismiss="modal"><i class="fas fa-check"></i> Terminar</button>
                     </div>
                 </div>
             </div>
@@ -350,8 +364,9 @@
             fullExpression.push(expressionStr);
             formulaText.value = fullExpression.join(' AND ');
             currentExpression = [];
-            showTab('fields');
+            showTab('logical_operators'); // Cambia 'fields' a 'logical_operators'
         }
+
 
         function clearAll() {
             console.log('clearAll called');
@@ -386,12 +401,14 @@
         }
 
         // Agregar evento de clic al campo de texto "formulas" para abrir el modal
-        document.getElementById('formulas').addEventListener('click', function() {
+        document.getElementById('formulas').addEventListener('click', function () {
             console.log('Formulas clicked');
             var modal = new bootstrap.Modal(document.getElementById('formulasModal'));
             modal.show();
         });
     </script>
 </body>
+
+
 
 </html>
