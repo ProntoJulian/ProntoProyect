@@ -50,7 +50,8 @@
 
         #fieldsTable td,
         #operatorTable td,
-        #valueTable td {
+        #valueTable td,
+        #logicalOperatorsTable td {
             border: 1px solid #dee2e6;
             padding: 8px;
             text-align: center;
@@ -60,13 +61,15 @@
 
         #fieldsTable td:hover,
         #operatorTable td:hover,
-        #valueTable td:hover {
+        #valueTable td:hover,
+        #logicalOperatorsTable td:hover {
             background-color: #f8f9fa;
         }
 
         #fieldsTable,
         #operatorTable,
-        #valueTable {
+        #valueTable,
+        #logicalOperatorsTable {
             border-collapse: collapse;
             width: 100%;
         }
@@ -223,9 +226,12 @@
                         </table>
                     </div>
                     <div class="mt-3">
-                        <button type="button" class="btn btn-danger" id="deleteAllFormulasButton"><i class="fas fa-trash"></i> Eliminar Todo</button>
-                        <button type="button" class="btn btn-warning" id="undoFormulasButton"><i class="fas fa-undo"></i> Deshacer</button>
-                        <button type="button" class="btn btn-success" id="finishFormulasButton" onclick="finalize()"><i class="fas fa-check"></i> Terminar</button>
+                        <button type="button" class="btn btn-danger" id="deleteAllFormulasButton"><i
+                                class="fas fa-trash"></i> Eliminar Todo</button>
+                        <button type="button" class="btn btn-warning" id="undoFormulasButton"><i
+                                class="fas fa-undo"></i> Deshacer</button>
+                        <button type="button" class="btn btn-success" id="finishFormulasButton"><i
+                                class="fas fa-check"></i> Terminar</button>
                     </div>
                 </div>
             </div>
@@ -365,30 +371,35 @@
         function finalizeSelection() {
             console.log('finalizeSelection called');
             console.log('currentExpression before finalizing:', currentExpression);
-            if (currentExpression.length > 0) {
-                var formulaText = document.getElementById('formulaText');
-                var expressionStr = currentExpression.join(' ');
-                fullExpression.push(expressionStr);
-                console.log('fullExpression after finalizing:', fullExpression);
-                formulaText.value = fullExpression.join(' ');
-                currentExpression = [];
-                showTab('logical_operators');
-            }
+            var formulaText = document.getElementById('formulaText');
+            var expressionStr = currentExpression.join(' ');
+            fullExpression.push(expressionStr);
+            console.log('fullExpression after finalizing:', fullExpression);
+            formulaText.value = fullExpression.join(' AND ');
+            currentExpression = [];
+            showTab('logical_operators');
         }
+
+
+
 
         function selectLogicalOperator(logicOp) {
             console.log('selectLogicalOperator called:', logicOp);
             var formulaText = document.getElementById('formulaText');
             console.log('fullExpression before adding logical operator:', fullExpression);
 
-            // Añadir operador lógico solo si el último elemento no es un operador lógico
-            if (fullExpression.length > 0 && (fullExpression[fullExpression.length - 1] !== 'AND' && fullExpression[fullExpression.length - 1] !== 'OR')) {
+            // Solo agregar operador lógico si el último no es un operador lógico
+            if (fullExpression.length > 0 && fullExpression[fullExpression.length - 1] !== 'AND' && fullExpression[fullExpression.length - 1] !== 'OR') {
                 fullExpression.push(logicOp);
-                console.log('fullExpression after adding logical operator:', fullExpression);
-                formulaText.value = fullExpression.join(' ');
-                showTab('fields');
             }
+            console.log('fullExpression after adding logical operator:', fullExpression);
+            formulaText.value = fullExpression.join(' ');
+            currentExpression = [];
+            showTab('fields');
         }
+
+
+
 
         function clearAll() {
             console.log('clearAll called');
