@@ -320,20 +320,25 @@
     </div>
 
     <!-- Modal para las Formulas -->
-    <div class="modal fade" id="formulasModal" tabindex="-1" aria-labelledby="formulasModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="formulasModalLabel">Edit Formulas</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="modal fade" id="formulasModal" tabindex="-1" aria-labelledby="formulasModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="formulasModalLabel">Edit Formulas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="formulaText" class="form-label">Formulas</label>
+                    <input type="text" class="form-control" id="formulaText">
                 </div>
-                <div class="modal-body">
-                    <p>Edit the formulas here...</p>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
+                <button type="button" class="btn btn-secondary" id="closeModalButton" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
+</div>
+
+
 
 
     <!-- Modal de Sincronización -->
@@ -367,6 +372,25 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal para las Formulas -->
+<div class="modal fade" id="formulasModal" tabindex="-1" aria-labelledby="formulasModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="formulasModalLabel">Edit Formulas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="formulaText" class="form-label">Formulas</label>
+                    <input type="text" class="form-control" id="formulaText">
+                </div>
+                <button type="button" class="btn btn-secondary" id="closeModalButton" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -632,13 +656,20 @@
             });
         });
 
-        // Funcionalidad para abrir el modal de fórmulas
+        /// Funcionalidad para abrir el modal de fórmulas
         document.getElementById('formulas').addEventListener('click', function () {
             var formulasModal = new bootstrap.Modal(document.getElementById('formulasModal'));
             formulasModal.show();
         });
+
+        // Funcionalidad para transferir el texto al modal de crear feed
+        document.getElementById('closeModalButton').addEventListener('click', function () {
+            var formulaText = document.getElementById('formulaText').value;
+            document.getElementById('formulas').value = formulaText;
+        });
+
     </script>
-    
+
 </body>
 
 </html>
