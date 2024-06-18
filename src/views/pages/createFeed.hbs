@@ -148,6 +148,9 @@
                         <div class="action-buttons">
                             <button type="button" class="btn btn-primary" id="createButton">Create</button>
                             <button type="button" class="btn btn-secondary" id="cancelButton">Cancel</button>
+                            <button type="button" class="btn btn-danger" id="deleteAllButton"><i class="fas fa-trash"></i> Eliminar Todo</button>
+                            <button type="button" class="btn btn-warning" id="undoButton"><i class="fas fa-undo"></i> Deshacer</button>
+                            <button type="button" class="btn btn-success" id="finishButton"><i class="fas fa-check"></i> Terminar</button>
                         </div>
                     </form>
                 </div>
@@ -155,7 +158,7 @@
         </div>
     </div>
 
-        <!-- Modal para las Formulas -->
+    <!-- Modal para las Formulas -->
     <div class="modal fade" id="formulasModal" tabindex="-1" aria-labelledby="formulasModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -168,8 +171,7 @@
                         <label for="formulaText" class="form-label">Formulas</label>
                         <input type="text" class="form-control" id="formulaText">
                     </div>
-                    <button type="button" class="btn btn-secondary" id="closeModalButton"
-                        data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id="closeModalButton" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -256,12 +258,26 @@
                         console.error('Error:', error);
                         alert("Error creating feed");
                     });
+            });
 
-                    
+            document.getElementById('deleteAllButton').addEventListener('click', function () {
+                if (confirm("¿Estás seguro de que deseas eliminar todos los campos?")) {
+                    document.getElementById('createForm').reset();
+                }
+            });
+
+            document.getElementById('undoButton').addEventListener('click', function () {
+                // Implementar la funcionalidad de deshacer si es necesario.
+                alert("Funcionalidad de deshacer no implementada");
+            });
+
+            document.getElementById('finishButton').addEventListener('click', function () {
+                alert("Operación terminada");
+                window.location.href = "/app/feeds";
             });
         });
 
-         var formulasInput = document.getElementById('formulas');
+        var formulasInput = document.getElementById('formulas');
         if (formulasInput) {
             formulasInput.addEventListener('click', function () {
                 var formulasModal = new bootstrap.Modal(document.getElementById('formulasModal'), {
@@ -272,7 +288,6 @@
             });
         }
 
-        // Funcionalidad para transferir el texto al modal de crear feed
         var closeModalButton = document.getElementById('closeModalButton');
         if (closeModalButton) {
             closeModalButton.addEventListener('click', function () {
