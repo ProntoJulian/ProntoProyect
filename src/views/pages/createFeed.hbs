@@ -370,23 +370,29 @@
 
         function finalizeSelection() {
             console.log('finalizeSelection called');
+            console.log('currentExpression before finalizing:', currentExpression);
             var formulaText = document.getElementById('formulaText');
             var expressionStr = currentExpression.join(' ');
             fullExpression.push(expressionStr);
+            console.log('fullExpression after finalizing:', fullExpression);
             formulaText.value = fullExpression.join(' AND ');
             currentExpression = [];
             showTab('logical_operators');
         }
 
 
+
         function selectLogicalOperator(logicOp) {
             console.log('selectLogicalOperator called:', logicOp);
             var formulaText = document.getElementById('formulaText');
+            console.log('fullExpression before adding logical operator:', fullExpression);
             fullExpression.push(logicOp);
+            console.log('fullExpression after adding logical operator:', fullExpression);
             formulaText.value = fullExpression.join(' ');
             currentExpression = [];  // Asegúrate de resetear la expresión actual
             showTab('fields');
         }
+
 
 
         function clearAll() {
