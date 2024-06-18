@@ -89,9 +89,16 @@
     <div class="container mt-5">
         {{#unless (eq roleModule.0.access_type "Read Only")}}
         <div class="action-buttons">
+            <!-- Modal de Confirmación
             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">
                 <i class="fas fa-plus"></i> Create
             </button>
+             -->
+
+            <a class="btn btn-success" href="/app/feeds/createFeed">
+                <i class="fas fa-plus"></i> Create
+            </a>
+
         </div>
         {{/unless}}
         <div class="card">
