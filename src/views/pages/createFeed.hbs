@@ -47,6 +47,11 @@
                 transform: rotate(360deg);
             }
         }
+
+        .field-buttons button {
+            width: 100%;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 
@@ -71,21 +76,24 @@
                             <label for="store_hash" class="form-label">Store Hash</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="store_hash">
-                                <span class="input-group-text toggle-password" data-toggle="store_hash"><i class="fas fa-eye"></i></span>
+                                <span class="input-group-text toggle-password" data-toggle="store_hash"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="x_auth_token" class="form-label">x_auth_token</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="x_auth_token">
-                                <span class="input-group-text toggle-password" data-toggle="x_auth_token"><i class="fas fa-eye"></i></span>
+                                <span class="input-group-text toggle-password" data-toggle="x_auth_token"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="client_id" class="form-label">Merchant ID</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="client_id">
-                                <span class="input-group-text toggle-password" data-toggle="client_id"><i class="fas fa-eye"></i></span>
+                                <span class="input-group-text toggle-password" data-toggle="client_id"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -95,8 +103,10 @@
                         <div class="mb-3">
                             <label for="private_key" class="form-label">Private Key</label>
                             <div class="input-group">
-                                <textarea class="form-control password-protected" id="private_key" rows="3" maxlength="2500"></textarea>
-                                <span class="input-group-text toggle-password" data-toggle="private_key"><i class="fas fa-eye"></i></span>
+                                <textarea class="form-control password-protected" id="private_key" rows="3"
+                                    maxlength="2500"></textarea>
+                                <span class="input-group-text toggle-password" data-toggle="private_key"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -168,14 +178,23 @@
                         <label for="formulaText" class="form-label">Formulas</label>
                         <input type="text" class="form-control" id="formulaText">
                     </div>
-                    <div id="fields" class="tab-content">
-                        <table id="fieldsTable">
-                            <!-- Campos se cargarán dinámicamente aquí -->
-                        </table>
+                    <div class="field-buttons">
+                        <button class="btn btn-outline-secondary" onclick="selectField('type')">type</button>
+                        <button class="btn btn-outline-secondary" onclick="selectField('price')">price</button>
+                        <button class="btn btn-outline-secondary" onclick="selectField('is_featured')">is_featured</button>
+                        <button class="btn btn-outline-secondary" onclick="selectField('availability')">availability</button>
+                        <button class="btn btn-outline-secondary" onclick="selectField('is_visible')">is_visible</button>
+                        <button class="btn btn-outline-secondary" onclick="selectField('is_free_shipping')">is_free_shipping</button>
+                        <button class="btn btn-outline-secondary" onclick="selectField('id')">id</button>
+                        <button class="btn btn-outline-secondary" onclick="selectField('weight')">weight</button>
+                        <button class="btn btn-outline-secondary" onclick="selectField('condition')">condition</button>
                     </div>
-                    <button type="button" class="btn btn-danger" id="deleteAllFormulasButton"><i class="fas fa-trash"></i> Eliminar Todo</button>
-                    <button type="button" class="btn btn-warning" id="undoFormulasButton"><i class="fas fa-undo"></i> Deshacer</button>
-                    <button type="button" class="btn btn-success" id="finishFormulasButton" data-bs-dismiss="modal"><i class="fas fa-check"></i> Terminar</button>
+                    <button type="button" class="btn btn-danger" id="deleteAllFormulasButton"><i
+                            class="fas fa-trash"></i> Eliminar Todo</button>
+                    <button type="button" class="btn btn-warning" id="undoFormulasButton"><i class="fas fa-undo"></i>
+                        Deshacer</button>
+                    <button type="button" class="btn btn-success" id="finishFormulasButton"><i class="fas fa-check"></i>
+                        Terminar</button>
                 </div>
             </div>
         </div>
@@ -305,7 +324,7 @@
                 });
             }
 
-            const closeModalButton = document.getElementById('closeModalButton');
+            const closeModalButton = document.getElementById('finishFormulasButton');
             if (closeModalButton) {
                 closeModalButton.addEventListener('click', function () {
                     var formulaText = document.getElementById('formulaText').value;
@@ -343,34 +362,6 @@
                     alert("Operación terminada");
                 });
             }
-
-            // Función para cargar los campos
-            const fields = ['type', 'price', 'is_featured', 'availability', 'is_visible', 'is_free_shipping', 'id', 'weight', 'condition'];
-            function loadFields() {
-                const fieldsTable = document.getElementById('fieldsTable');
-                fieldsTable.innerHTML = ''; // Limpiar campos anteriores
-                let row = document.createElement('tr');
-                fields.forEach((field, index) => {
-                    const cell = document.createElement('td');
-                    cell.innerText = field;
-                    cell.onclick = function () {
-                        selectField(field);
-                    };
-                    row.appendChild(cell);
-                    // Crear una nueva fila cada 4 campos
-                    if ((index + 1) % 4 === 0) {
-                        fieldsTable.appendChild(row);
-                        row = document.createElement('tr');
-                    }
-                });
-                fieldsTable.appendChild(row);
-            }
-
-            function selectField(field) {
-                document.getElementById('formulaText').value += field + ' ';
-            }
-
-            loadFields(); // Cargar los campos al cargar el documento
         });
 
     </script>
