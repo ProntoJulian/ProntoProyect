@@ -216,7 +216,7 @@
                     return;
                 }
 
-                fetch('/app/feed/createFeed', {
+                fetch('/feeds/createFeed', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -236,6 +236,8 @@
                         console.error('Error:', error);
                         alert("Error creating feed");
                     });
+
+                    
             });
         });
     </script>
