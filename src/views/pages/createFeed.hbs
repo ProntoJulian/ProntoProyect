@@ -148,9 +148,6 @@
                         <div class="action-buttons">
                             <button type="button" class="btn btn-primary" id="createButton">Create</button>
                             <button type="button" class="btn btn-secondary" id="cancelButton">Cancel</button>
-                            <button type="button" class="btn btn-danger" id="deleteAllButton"><i class="fas fa-trash"></i> Eliminar Todo</button>
-                            <button type="button" class="btn btn-warning" id="undoButton"><i class="fas fa-undo"></i> Deshacer</button>
-                            <button type="button" class="btn btn-success" id="finishButton"><i class="fas fa-check"></i> Terminar</button>
                         </div>
                     </form>
                 </div>
@@ -171,6 +168,9 @@
                         <label for="formulaText" class="form-label">Formulas</label>
                         <input type="text" class="form-control" id="formulaText">
                     </div>
+                    <button type="button" class="btn btn-danger" id="deleteAllFormulasButton"><i class="fas fa-trash"></i> Eliminar Todo</button>
+                    <button type="button" class="btn btn-warning" id="undoFormulasButton"><i class="fas fa-undo"></i> Deshacer</button>
+                    <button type="button" class="btn btn-success" id="finishFormulasButton"><i class="fas fa-check"></i> Terminar</button>
                     <button type="button" class="btn btn-secondary" id="closeModalButton" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -275,29 +275,48 @@
                 alert("Operación terminada");
                 window.location.href = "/app/feeds";
             });
-        });
 
-        var formulasInput = document.getElementById('formulas');
-        if (formulasInput) {
-            formulasInput.addEventListener('click', function () {
-                var formulasModal = new bootstrap.Modal(document.getElementById('formulasModal'), {
-                    backdrop: 'static',
-                    keyboard: false
+            var formulasInput = document.getElementById('formulas');
+            if (formulasInput) {
+                formulasInput.addEventListener('click', function () {
+                    var formulasModal = new bootstrap.Modal(document.getElementById('formulasModal'), {
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                    formulasModal.show();
                 });
-                formulasModal.show();
-            });
-        }
+            }
 
-        var closeModalButton = document.getElementById('closeModalButton');
-        if (closeModalButton) {
-            closeModalButton.addEventListener('click', function () {
+            var closeModalButton = document.getElementById('closeModalButton');
+            if (closeModalButton) {
+                closeModalButton.addEventListener('click', function () {
+                    var formulaText = document.getElementById('formulaText').value;
+                    var formulasInput = document.getElementById('formulas');
+                    if (formulasInput) {
+                        formulasInput.value = formulaText;
+                    }
+                });
+            }
+
+            document.getElementById('deleteAllFormulasButton').addEventListener('click', function () {
+                if (confirm("¿Estás seguro de que deseas eliminar todas las fórmulas?")) {
+                    document.getElementById('formulaText').value = '';
+                }
+            });
+
+            document.getElementById('undoFormulasButton').addEventListener('click', function () {
+                alert("Funcionalidad de deshacer no implementada");
+            });
+
+            document.getElementById('finishFormulasButton').addEventListener('click', function () {
                 var formulaText = document.getElementById('formulaText').value;
                 var formulasInput = document.getElementById('formulas');
                 if (formulasInput) {
                     formulasInput.value = formulaText;
                 }
+                alert("Operación terminada");
             });
-        }
+        });
     </script>
 </body>
 
