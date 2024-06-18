@@ -90,16 +90,6 @@
             color: #ccc;
             pointer-events: none;
         }
-
-        /* Custom Field styles */
-        .custom-field {
-            margin-bottom: 15px;
-        }
-
-        .custom-field input {
-            margin-right: 5px;
-        }
-
     </style>
 </head>
 
@@ -123,15 +113,6 @@
                             <div onclick="showTab('logical_operators')">LOGICAL OPERATORS</div>
                         </div>
                         <div class="result-display" id="currentSelection"></div>
-
-                        <!-- Custom Field Section -->
-                        <div class="custom-field">
-                            <label for="customField">Custom Field</label>
-                            <input type="text" id="customField" class="form-control" placeholder="Enter field name">
-                            <label>=</label>
-                            <input type="text" id="customFieldValue" class="form-control" placeholder="Enter field value">
-                        </div>
-
                         <div id="fields" class="tab-content">
                             <table id="fieldsTable">
                                 <!-- Campos se cargarán dinámicamente aquí -->
@@ -403,7 +384,7 @@
         function showTab(tabName) {
             var tabs = document.getElementsByClassName('tab-content');
             for (var i = 0; i < tabs.length; i++) {
-                tabs[i.style.display = 'none'];
+                tabs[i].style.display = 'none';
             }
             document.getElementById(tabName).style.display = 'block';
         }

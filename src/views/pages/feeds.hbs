@@ -319,6 +319,8 @@
         </div>
     </div>
 
+    {{>formulasModal}}
+
 
     <!-- Modal de Sincronización -->
     <div class="modal fade" id="syncModal" tabindex="-1" aria-labelledby="syncModalLabel" aria-hidden="true"
@@ -615,8 +617,15 @@
                 });
             });
         });
+
+        // Funcionalidad para abrir el modal de fórmulas
+        document.getElementById('formulas').addEventListener('click', function () {
+            var formulasModal = new bootstrap.Modal(document.getElementById('formulasModal'));
+            formulasModal.show();
+        });
+
     </script>
-    
+
 </body>
 
 </html>
