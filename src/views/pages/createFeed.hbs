@@ -127,7 +127,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="formulas" class="form-label">Formulas</label>
-                            <input type="text" class="form-control" id="formulas">
+                            <input type="text" class="form-control" id="formulas" readonly>
                         </div>
                         <div class="mb-3">
                             <label for="company_id" class="form-label">Company</label>
@@ -384,6 +384,13 @@
             }
             document.getElementById(tabName).style.display = 'block';
         }
+
+        // Agregar evento de clic al campo de texto "formulas" para abrir el modal
+        document.getElementById('formulas').addEventListener('click', function() {
+            console.log('Formulas clicked');
+            var modal = new bootstrap.Modal(document.getElementById('formulasModal'));
+            modal.show();
+        });
     </script>
 </body>
 
