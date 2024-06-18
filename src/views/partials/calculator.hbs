@@ -164,239 +164,242 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
 
-    var operators = {
-        type: ['=', '!='],
-        price: ['=', '!=', '>', '<', '>=', '<='],
-        is_featured: ['=', '!='],
-        availability: ['=', '!='],
-        is_visible: ['=', '!='],
-        is_free_shipping: ['=', '!='],
-        id: ['=', '!=', '>', '<', '>=', '<='], // Agregando operadores para id
-        weight: ['=', '!=', '>', '<', '>=', '<='], // Agregando operadores para weight
-        condition: ['=', '!='],
-    };
+        var operators = {
+            type: ['=', '!='],
+            price: ['=', '!=', '>', '<', '>=', '<='],
+            is_featured: ['=', '!='],
+            availability: ['=', '!='],
+            is_visible: ['=', '!='],
+            is_free_shipping: ['=', '!='],
+            id: ['=', '!=', '>', '<', '>=', '<='], // Agregando operadores para id
+            weight: ['=', '!=', '>', '<', '>=', '<='], // Agregando operadores para weight
+            condition: ['=', '!='],
+        };
 
-    var values = {
-        type: ['digital', 'physical'],
-        price: [], // Puedes llenar esto según tus necesidades
-        is_featured: ['true', 'false'],
-        availability: ['available', 'disabled', 'preorder'],
-        is_visible: ['true', 'false'],
-        is_free_shipping: ['true', 'false'],
-        id: [], // Dejar como array vacío para que se comporte como price
-        weight: [], // Dejar como array vacío para que se comporte como price
-        condition: ["new","used","refurbished"]
-    };
+        var values = {
+            type: ['digital', 'physical'],
+            price: [], // Puedes llenar esto según tus necesidades
+            is_featured: ['true', 'false'],
+            availability: ['available', 'disabled', 'preorder'],
+            is_visible: ['true', 'false'],
+            is_free_shipping: ['true', 'false'],
+            id: [], // Dejar como array vacío para que se comporte como price
+            weight: [], // Dejar como array vacío para que se comporte como price
+            condition: ["new", "used", "refurbished"]
+        };
 
-    var fields = ['type', 'price', 'is_featured', 'availability', 'is_visible', 'is_free_shipping', 'id', 'weight',"condition"]; // Agregar id y weight
-    var selectedFields = new Set(); // Almacena los campos seleccionados
-    var currentExpression = []; // Almacena la expresión actual
-    var fullExpression = []; // Almacena la expresión completa
+        var fields = ['type', 'price', 'is_featured', 'availability', 'is_visible', 'is_free_shipping', 'id', 'weight', "condition"]; // Agregar id y weight
+        var selectedFields = new Set(); // Almacena los campos seleccionados
+        var currentExpression = []; // Almacena la expresión actual
+        var fullExpression = []; // Almacena la expresión completa
 
-    function loadFields() {
-        var fieldsTable = document.getElementById('fieldsTable');
-        fieldsTable.innerHTML = ''; // Limpiar campos anteriores
-        var row = document.createElement('tr');
-        fields.forEach(function (field, index) {
-            var cell = document.createElement('td');
-            cell.innerText = field;
-            cell.className = (selectedFields.has(field) && field !== 'price' && field !== 'id' && field !== 'weight') ? 'disabled' : '';
-            cell.onclick = function () {
-                if (!selectedFields.has(field) || field === 'price' || field === 'id' || field === 'weight') {
-                    selectField(field);
-                }
-            };
-            row.appendChild(cell);
-            // Crear una nueva fila cada 4 campos
-            if ((index + 1) % 4 === 0) {
-                fieldsTable.appendChild(row);
-                row = document.createElement('tr');
-            }
-        });
-        fieldsTable.appendChild(row);
-    }
-
-    function selectField(field) {
-        currentExpression = [field];
-        if (field !== 'price' && field !== 'id' && field !== 'weight') {
-            selectedFields.add(field);
-        }
-        loadFields(); // Actualizar campos disponibles
-        loadOperators(field);
-        showTab('operators');
-    }
-
-    function loadOperators(field) {
-        var operatorTable = document.getElementById('operatorTable');
-        operatorTable.innerHTML = ''; // Limpiar operadores anteriores
-        var row = document.createElement('tr');
-        operators[field].forEach(function (op) {
-            var cell = document.createElement('td');
-            cell.innerText = op;
-            cell.onclick = function () {
-                currentExpression.push(op);
-                loadValues(field); // Cargar valores después de seleccionar un operador
-                showTab('values');
-            };
-            row.appendChild(cell);
-        });
-        operatorTable.appendChild(row);
-    }
-
-    function loadValues(field) {
-        var valueTable = document.getElementById('valueTable');
-        valueTable.innerHTML = ''; // Limpiar valores anteriores
-        var row = document.createElement('tr');
-        if (field === 'price' || field === 'id' || field === 'weight') {
-            var cell = document.createElement('td');
-            var numberInput = document.createElement('input');
-            numberInput.type = 'number';
-            numberInput.min = 0;
-            numberInput.className = 'form-control';
-
-            var confirmButton = document.createElement('button');
-            confirmButton.className = 'btn btn-success';
-            confirmButton.innerText = '✔';
-            confirmButton.onclick = function () {
-                currentExpression.push(numberInput.value);
-                finalizeSelection(); // Finalizar selección después de seleccionar un valor
-            };
-
-            var inputWrapper = document.createElement('div');
-            inputWrapper.style.display = 'flex';
-            inputWrapper.style.alignItems = 'center';
-            inputWrapper.appendChild(numberInput);
-            inputWrapper.appendChild(confirmButton);
-
-            cell.appendChild(inputWrapper);
-            row.appendChild(cell);
-        } else {
-            values[field].forEach(function (val) {
+        function loadFields() {
+            var fieldsTable = document.getElementById('fieldsTable');
+            fieldsTable.innerHTML = ''; // Limpiar campos anteriores
+            var row = document.createElement('tr');
+            fields.forEach(function (field, index) {
                 var cell = document.createElement('td');
-                cell.innerText = val;
+                cell.innerText = field;
+                cell.className = (selectedFields.has(field) && field !== 'price' && field !== 'id' && field !== 'weight') ? 'disabled' : '';
                 cell.onclick = function () {
-                    currentExpression.push(val);
-                    finalizeSelection(); // Finalizar selección después de seleccionar un valor
+                    if (!selectedFields.has(field) || field === 'price' || field === 'id' || field === 'weight') {
+                        selectField(field);
+                    }
+                };
+                row.appendChild(cell);
+                // Crear una nueva fila cada 4 campos
+                if ((index + 1) % 4 === 0) {
+                    fieldsTable.appendChild(row);
+                    row = document.createElement('tr');
+                }
+            });
+            fieldsTable.appendChild(row);
+        }
+
+        function selectField(field) {
+            currentExpression = [field];
+            if (field !== 'price' && field !== 'id' && field !== 'weight') {
+                selectedFields.add(field);
+            }
+            loadFields(); // Actualizar campos disponibles
+            loadOperators(field);
+            showTab('operators');
+        }
+
+        function loadOperators(field) {
+            var operatorTable = document.getElementById('operatorTable');
+            operatorTable.innerHTML = ''; // Limpiar operadores anteriores
+            var row = document.createElement('tr');
+            operators[field].forEach(function (op) {
+                var cell = document.createElement('td');
+                cell.innerText = op;
+                cell.onclick = function () {
+                    currentExpression.push(op);
+                    loadValues(field); // Cargar valores después de seleccionar un operador
+                    showTab('values');
                 };
                 row.appendChild(cell);
             });
+            operatorTable.appendChild(row);
         }
-        valueTable.appendChild(row);
-    }
 
-    function finalizeSelection() {
-        var currentSelection = document.getElementById('currentSelection');
-        var expressionHtml = '[';
-        currentExpression.forEach(function (item) {
-            expressionHtml += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' + item + '</button> ';
-        });
-        expressionHtml += '] ';
-        fullExpression.push(expressionHtml);
-        currentSelection.innerHTML = fullExpression.join(' ');
-        currentExpression = [];
-        showTab('logical_operators');
-    }
+        function loadValues(field) {
+            var valueTable = document.getElementById('valueTable');
+            valueTable.innerHTML = ''; // Limpiar valores anteriores
+            var row = document.createElement('tr');
+            if (field === 'price' || field === 'id' || field === 'weight') {
+                var cell = document.createElement('td');
+                var numberInput = document.createElement('input');
+                numberInput.type = 'number';
+                numberInput.min = 0;
+                numberInput.className = 'form-control';
 
-    function selectLogicalOperator(logicOp) {
-        var currentSelection = document.getElementById('currentSelection');
-        fullExpression.push('<button class="btn btn-outline-secondary" onclick="editExpression(this)">' +
-            logicOp + '</button> ');
-        currentSelection.innerHTML = fullExpression.join(' ');
-        showTab('fields');
-    }
+                var confirmButton = document.createElement('button');
+                confirmButton.className = 'btn btn-success';
+                confirmButton.innerText = '✔';
+                confirmButton.onclick = function () {
+                    currentExpression.push(numberInput.value);
+                    finalizeSelection(); // Finalizar selección después de seleccionar un valor
+                };
 
-    function editExpression(button) {
-        var text = button.innerText;
-        var currentSelection = document.getElementById('currentSelection');
-        var index = fullExpression.findIndex(expr => expr.includes(text));
-        if (index !== -1) {
-            fullExpression.splice(index, 1);
-        }
-        if (fields.includes(text) && text !== 'price' && text !== 'id' && text !== 'weight') {
-            selectedFields.delete(text); // Habilitar campo al eliminar
-        }
-        currentSelection.innerHTML = fullExpression.join(' ');
-        loadFields(); // Actualizar campos disponibles
-        if (text === '[' || text === ']') {
-            return;
-        }
-        if (fields.includes(text)) {
-            currentExpression = [text];
-            loadOperators(text); // Cargar operadores del campo seleccionado
-            showTab('operators');
-        } else if (operators[currentExpression[0]] && operators[currentExpression[0]].includes(text)) {
-            currentExpression[1] = text;
-            if (currentExpression[0] === 'price' || currentExpression[0] === 'id' || currentExpression[0] === 'weight') {
-                showNumberSelector(currentExpression[0]); // Mostrar selector de números para price, id y weight
+                var inputWrapper = document.createElement('div');
+                inputWrapper.style.display = 'flex';
+                inputWrapper.style.alignItems = 'center';
+                inputWrapper.appendChild(numberInput);
+                inputWrapper.appendChild(confirmButton);
+
+                cell.appendChild(inputWrapper);
+                row.appendChild(cell);
             } else {
-                loadValues(currentExpression[0]); // Cargar valores del campo seleccionado
+                values[field].forEach(function (val) {
+                    var cell = document.createElement('td');
+                    cell.innerText = val;
+                    cell.onclick = function () {
+                        currentExpression.push(val);
+                        finalizeSelection(); // Finalizar selección después de seleccionar un valor
+                    };
+                    row.appendChild(cell);
+                });
             }
-            showTab('values');
-        } else {
-            loadFields(); // Volver a mostrar los campos disponibles
+            valueTable.appendChild(row);
+        }
+
+        function finalizeSelection() {
+            var currentSelection = document.getElementById('currentSelection');
+            var expressionHtml = '[';
+            currentExpression.forEach(function (item) {
+                expressionHtml += '<button class="btn btn-outline-secondary" onclick="editExpression(this)">' + item + '</button> ';
+            });
+            expressionHtml += '] ';
+            fullExpression.push(expressionHtml);
+            currentSelection.innerHTML = fullExpression.join(' ');
+            currentExpression = [];
+            showTab('logical_operators');
+        }
+
+        function selectLogicalOperator(logicOp) {
+            var currentSelection = document.getElementById('currentSelection');
+            fullExpression.push('<button class="btn btn-outline-secondary" onclick="editExpression(this)">' +
+                logicOp + '</button> ');
+            currentSelection.innerHTML = fullExpression.join(' ');
             showTab('fields');
         }
-    }
 
-    function toggleCalculator() {
-        var calculator = document.getElementById('calculator');
-        if (calculator.style.display === 'block') {
-            calculator.style.display = 'none';
-        } else {
-            calculator.style.display = 'block';
-        }
-    }
-
-    function clearAll() {
-        document.getElementById('result').value = '';
-        document.getElementById('currentSelection').innerHTML = '';
-        currentExpression = [];
-        fullExpression = [];
-        selectedFields.clear();
-        loadFields();
-    }
-
-    function clearLast() {
-        if (fullExpression.length > 0) {
-            fullExpression.pop();
-            if (fullExpression.length > 0) {
-                var lastExpression = fullExpression.pop();
-                if (lastExpression) {
-                    var fieldMatch = lastExpression.match(/\b(type|price|is_featured|availability|id|weight)\b/); // Incluir id y weight
-                    if (fieldMatch && fieldMatch[0] !== 'price' && fieldMatch[0] !== 'id' && fieldMatch[0] !== 'weight') {
-                        selectedFields.delete(fieldMatch[0]); // Habilitar campo al eliminar
-                    }
-                    fullExpression.push(lastExpression); // Volver a añadir la última expresión
-                }
+        function editExpression(button) {
+            var text = button.innerText;
+            var currentSelection = document.getElementById('currentSelection');
+            var index = fullExpression.findIndex(expr => expr.includes(text));
+            if (index !== -1) {
+                fullExpression.splice(index, 1);
             }
-            document.getElementById('currentSelection').innerHTML = fullExpression.join(' ');
+            if (fields.includes(text) && text !== 'price' && text !== 'id' && text !== 'weight') {
+                selectedFields.delete(text); // Habilitar campo al eliminar
+            }
+            currentSelection.innerHTML = fullExpression.join(' ');
+            loadFields(); // Actualizar campos disponibles
+            if (text === '[' || text === ']') {
+                return;
+            }
+            if (fields.includes(text)) {
+                currentExpression = [text];
+                loadOperators(text); // Cargar operadores del campo seleccionado
+                showTab('operators');
+            } else if (operators[currentExpression[0]] && operators[currentExpression[0]].includes(text)) {
+                currentExpression[1] = text;
+                if (currentExpression[0] === 'price' || currentExpression[0] === 'id' || currentExpression[0] === 'weight') {
+                    showNumberSelector(currentExpression[0]); // Mostrar selector de números para price, id y weight
+                } else {
+                    loadValues(currentExpression[0]); // Cargar valores del campo seleccionado
+                }
+                showTab('values');
+            } else {
+                loadFields(); // Volver a mostrar los campos disponibles
+                showTab('fields');
+            }
+        }
+
+        function toggleCalculator() {
+            var calculator = document.getElementById('calculator');
+            if (calculator.style.display === 'block') {
+                calculator.style.display = 'none';
+            } else {
+                calculator.style.display = 'block';
+            }
+        }
+
+        function clearAll() {
+            document.getElementById('result').value = '';
+            document.getElementById('currentSelection').innerHTML = '';
+            currentExpression = [];
+            fullExpression = [];
+            selectedFields.clear();
             loadFields();
         }
-    }
 
-    function finalize() {
-        // Mostrar un mensaje aleatorio
-        alert("La fórmula ha sido finalizada.");
-        var result = document.getElementById('result');
-        var currentSelection = document.getElementById('currentSelection').innerText.trim();
-        result.value = currentSelection;
-        $('#calculatorModal').modal('hide');
-    }
-
-    function showTab(tabName) {
-        var tabs = document.getElementsByClassName('tab-content');
-        for (var i = 0; i < tabs.length; i++) {
-            tabs[i].style.display = 'none';
+        function clearLast() {
+            if (fullExpression.length > 0) {
+                fullExpression.pop();
+                if (fullExpression.length > 0) {
+                    var lastExpression = fullExpression.pop();
+                    if (lastExpression) {
+                        var fieldMatch = lastExpression.match(/\b(type|price|is_featured|availability|id|weight)\b/); // Incluir id y weight
+                        if (fieldMatch && fieldMatch[0] !== 'price' && fieldMatch[0] !== 'id' && fieldMatch[0] !== 'weight') {
+                            selectedFields.delete(fieldMatch[0]); // Habilitar campo al eliminar
+                        }
+                        fullExpression.push(lastExpression); // Volver a añadir la última expresión
+                    }
+                }
+                document.getElementById('currentSelection').innerHTML = fullExpression.join(' ');
+                loadFields();
+            }
         }
-        document.getElementById(tabName).style.display = 'block';
-    }
 
-    // Mostrar la primera pestaña por defecto y cargar los campos
-    document.addEventListener('DOMContentLoaded', function () {
-        loadFields();
-        showTab('fields');
-    });
-</script>
+        function finalize() {
+            // Mostrar un mensaje aleatorio
+            alert("La fórmula ha sido finalizada.");
+            var result = document.getElementById('result');
+            var currentSelection = document.getElementById('currentSelection').innerText.trim();
+            result.value = currentSelection;
+
+            // Cerrar el modal usando Bootstrap 5
+            var modal = new bootstrap.Modal(document.getElementById('calculatorModal'));
+            modal.hide();
+        }
+
+        function showTab(tabName) {
+            var tabs = document.getElementsByClassName('tab-content');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].style.display = 'none';
+            }
+            document.getElementById(tabName).style.display = 'block';
+        }
+
+        // Mostrar la primera pestaña por defecto y cargar los campos
+        document.addEventListener('DOMContentLoaded', function () {
+            loadFields();
+            showTab('fields');
+        });
+    </script>
 
 </body>
 
