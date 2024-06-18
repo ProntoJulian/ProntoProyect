@@ -168,10 +168,14 @@
                         <label for="formulaText" class="form-label">Formulas</label>
                         <input type="text" class="form-control" id="formulaText">
                     </div>
+                    <div id="fields" class="tab-content">
+                        <table id="fieldsTable">
+                            <!-- Campos se cargarán dinámicamente aquí -->
+                        </table>
+                    </div>
                     <button type="button" class="btn btn-danger" id="deleteAllFormulasButton"><i class="fas fa-trash"></i> Eliminar Todo</button>
                     <button type="button" class="btn btn-warning" id="undoFormulasButton"><i class="fas fa-undo"></i> Deshacer</button>
-                    <button type="button" class="btn btn-success" id="finishFormulasButton"><i class="fas fa-check"></i> Terminar</button>
-                    <button type="button" class="btn btn-secondary" id="closeModalButton" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="finishFormulasButton" data-bs-dismiss="modal"><i class="fas fa-check"></i> Terminar</button>
                 </div>
             </div>
         </div>
@@ -181,165 +185,193 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-    const togglePassword = (fieldId) => {
-        const field = document.getElementById(fieldId);
-        const type = field.type === 'password' ? 'text' : 'password';
-        field.type = type;
-    };
-
-    document.querySelectorAll('.toggle-password').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const fieldId = btn.getAttribute('data-toggle');
-            togglePassword(fieldId);
-            btn.querySelector('i').classList.toggle('fa-eye');
-            btn.querySelector('i').classList.toggle('fa-eye-slash');
-        });
-    });
-
-    const cancelButton = document.getElementById('cancelButton');
-    if (cancelButton) {
-        cancelButton.addEventListener('click', function () {
-            window.location.href = "/app/feeds";
-        });
-    }
-
-    const createButton = document.getElementById('createButton');
-    if (createButton) {
-        createButton.addEventListener('click', function () {
-            const selectedDays = [];
-            ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].forEach(day => {
-                if (document.getElementById(day).checked) {
-                    selectedDays.push(day);
-                }
-            });
-
-            const intervalUnit = document.querySelector('.input-group select').value;
-
-            const feedData = {
-                feed_name: document.getElementById('feed_name').value.trim(),
-                store_hash: document.getElementById('store_hash').value.trim(),
-                x_auth_token: document.getElementById('x_auth_token').value.trim(),
-                client_id: document.getElementById('client_id').value.trim(),
-                formulas: document.getElementById('formulas').value.trim(),
-                company_id: document.getElementById('company_id').value.trim(),
-                client_email: document.getElementById('client_email').value.trim(),
-                private_key: document.getElementById('private_key').value.trim(),
-                recurrence: {
-                    intervalUnit: intervalUnit,
-                    selectedDays: selectedDays
-                },
-                domain: document.getElementById('domain').value.trim()
+            const togglePassword = (fieldId) => {
+                const field = document.getElementById(fieldId);
+                const type = field.type === 'password' ? 'text' : 'password';
+                field.type = type;
             };
 
-            for (let key in feedData) {
-                if (feedData[key] === "") {
-                    alert(`The field ${key} cannot be empty`);
-                    return;
-                }
-            }
-
-            if (feedData.recurrence.selectedDays.length === 0) {
-                alert("Please select at least one day of the week");
-                return;
-            }
-
-            fetch('/feeds/createFeed', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(feedData)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message === "Feed created successfully") {
-                        alert("Feed created successfully");
-                        window.location.href = "/app/feeds";
-                    } else {
-                        alert("Error creating feed: " + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert("Error creating feed");
+            document.querySelectorAll('.toggle-password').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const fieldId = btn.getAttribute('data-toggle');
+                    togglePassword(fieldId);
+                    btn.querySelector('i').classList.toggle('fa-eye');
+                    btn.querySelector('i').classList.toggle('fa-eye-slash');
                 });
-        });
-    }
-
-    const deleteAllButton = document.getElementById('deleteAllButton');
-    if (deleteAllButton) {
-        deleteAllButton.addEventListener('click', function () {
-            if (confirm("¿Estás seguro de que deseas eliminar todos los campos?")) {
-                document.getElementById('createForm').reset();
-            }
-        });
-    }
-
-    const undoButton = document.getElementById('undoButton');
-    if (undoButton) {
-        undoButton.addEventListener('click', function () {
-            alert("Funcionalidad de deshacer no implementada");
-        });
-    }
-
-    const finishButton = document.getElementById('finishButton');
-    if (finishButton) {
-        finishButton.addEventListener('click', function () {
-            alert("Operación terminada");
-            window.location.href = "/app/feeds";
-        });
-    }
-
-    const formulasInput = document.getElementById('formulas');
-    if (formulasInput) {
-        formulasInput.addEventListener('click', function () {
-            var formulasModal = new bootstrap.Modal(document.getElementById('formulasModal'), {
-                backdrop: 'static',
-                keyboard: false
             });
-            formulasModal.show();
-        });
-    }
 
-    const closeModalButton = document.getElementById('closeModalButton');
-    if (closeModalButton) {
-        closeModalButton.addEventListener('click', function () {
-            var formulaText = document.getElementById('formulaText').value;
-            var formulasInput = document.getElementById('formulas');
+            const cancelButton = document.getElementById('cancelButton');
+            if (cancelButton) {
+                cancelButton.addEventListener('click', function () {
+                    window.location.href = "/app/feeds";
+                });
+            }
+
+            const createButton = document.getElementById('createButton');
+            if (createButton) {
+                createButton.addEventListener('click', function () {
+                    const selectedDays = [];
+                    ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].forEach(day => {
+                        if (document.getElementById(day).checked) {
+                            selectedDays.push(day);
+                        }
+                    });
+
+                    const intervalUnit = document.querySelector('.input-group select').value;
+
+                    const feedData = {
+                        feed_name: document.getElementById('feed_name').value.trim(),
+                        store_hash: document.getElementById('store_hash').value.trim(),
+                        x_auth_token: document.getElementById('x_auth_token').value.trim(),
+                        client_id: document.getElementById('client_id').value.trim(),
+                        formulas: document.getElementById('formulas').value.trim(),
+                        company_id: document.getElementById('company_id').value.trim(),
+                        client_email: document.getElementById('client_email').value.trim(),
+                        private_key: document.getElementById('private_key').value.trim(),
+                        recurrence: {
+                            intervalUnit: intervalUnit,
+                            selectedDays: selectedDays
+                        },
+                        domain: document.getElementById('domain').value.trim()
+                    };
+
+                    for (let key in feedData) {
+                        if (feedData[key] === "") {
+                            alert(`The field ${key} cannot be empty`);
+                            return;
+                        }
+                    }
+
+                    if (feedData.recurrence.selectedDays.length === 0) {
+                        alert("Please select at least one day of the week");
+                        return;
+                    }
+
+                    fetch('/feeds/createFeed', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(feedData)
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === "Feed created successfully") {
+                                alert("Feed created successfully");
+                                window.location.href = "/app/feeds";
+                            } else {
+                                alert("Error creating feed: " + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert("Error creating feed");
+                        });
+                });
+            }
+
+            const deleteAllButton = document.getElementById('deleteAllButton');
+            if (deleteAllButton) {
+                deleteAllButton.addEventListener('click', function () {
+                    if (confirm("¿Estás seguro de que deseas eliminar todos los campos?")) {
+                        document.getElementById('createForm').reset();
+                    }
+                });
+            }
+
+            const undoButton = document.getElementById('undoButton');
+            if (undoButton) {
+                undoButton.addEventListener('click', function () {
+                    alert("Funcionalidad de deshacer no implementada");
+                });
+            }
+
+            const finishButton = document.getElementById('finishButton');
+            if (finishButton) {
+                finishButton.addEventListener('click', function () {
+                    alert("Operación terminada");
+                    window.location.href = "/app/feeds";
+                });
+            }
+
+            const formulasInput = document.getElementById('formulas');
             if (formulasInput) {
-                formulasInput.value = formulaText;
+                formulasInput.addEventListener('click', function () {
+                    var formulasModal = new bootstrap.Modal(document.getElementById('formulasModal'), {
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                    formulasModal.show();
+                });
             }
-        });
-    }
 
-    const deleteAllFormulasButton = document.getElementById('deleteAllFormulasButton');
-    if (deleteAllFormulasButton) {
-        deleteAllFormulasButton.addEventListener('click', function () {
-            if (confirm("¿Estás seguro de que deseas eliminar todas las fórmulas?")) {
-                document.getElementById('formulaText').value = '';
+            const closeModalButton = document.getElementById('closeModalButton');
+            if (closeModalButton) {
+                closeModalButton.addEventListener('click', function () {
+                    var formulaText = document.getElementById('formulaText').value;
+                    var formulasInput = document.getElementById('formulas');
+                    if (formulasInput) {
+                        formulasInput.value = formulaText;
+                    }
+                });
             }
-        });
-    }
 
-    const undoFormulasButton = document.getElementById('undoFormulasButton');
-    if (undoFormulasButton) {
-        undoFormulasButton.addEventListener('click', function () {
-            alert("Funcionalidad de deshacer no implementada");
-        });
-    }
-
-    const finishFormulasButton = document.getElementById('finishFormulasButton');
-    if (finishFormulasButton) {
-        finishFormulasButton.addEventListener('click', function () {
-            var formulaText = document.getElementById('formulaText').value;
-            var formulasInput = document.getElementById('formulas');
-            if (formulasInput) {
-                formulasInput.value = formulaText;
+            const deleteAllFormulasButton = document.getElementById('deleteAllFormulasButton');
+            if (deleteAllFormulasButton) {
+                deleteAllFormulasButton.addEventListener('click', function () {
+                    if (confirm("¿Estás seguro de que deseas eliminar todas las fórmulas?")) {
+                        document.getElementById('formulaText').value = '';
+                    }
+                });
             }
-            alert("Operación terminada");
+
+            const undoFormulasButton = document.getElementById('undoFormulasButton');
+            if (undoFormulasButton) {
+                undoFormulasButton.addEventListener('click', function () {
+                    alert("Funcionalidad de deshacer no implementada");
+                });
+            }
+
+            const finishFormulasButton = document.getElementById('finishFormulasButton');
+            if (finishFormulasButton) {
+                finishFormulasButton.addEventListener('click', function () {
+                    var formulaText = document.getElementById('formulaText').value;
+                    var formulasInput = document.getElementById('formulas');
+                    if (formulasInput) {
+                        formulasInput.value = formulaText;
+                    }
+                    alert("Operación terminada");
+                });
+            }
+
+            // Función para cargar los campos
+            const fields = ['type', 'price', 'is_featured', 'availability', 'is_visible', 'is_free_shipping', 'id', 'weight', 'condition'];
+            function loadFields() {
+                const fieldsTable = document.getElementById('fieldsTable');
+                fieldsTable.innerHTML = ''; // Limpiar campos anteriores
+                let row = document.createElement('tr');
+                fields.forEach((field, index) => {
+                    const cell = document.createElement('td');
+                    cell.innerText = field;
+                    cell.onclick = function () {
+                        selectField(field);
+                    };
+                    row.appendChild(cell);
+                    // Crear una nueva fila cada 4 campos
+                    if ((index + 1) % 4 === 0) {
+                        fieldsTable.appendChild(row);
+                        row = document.createElement('tr');
+                    }
+                });
+                fieldsTable.appendChild(row);
+            }
+
+            function selectField(field) {
+                document.getElementById('formulaText').value += field + ' ';
+            }
+
+            loadFields(); // Cargar los campos al cargar el documento
         });
-    }
-});
 
     </script>
 </body>
