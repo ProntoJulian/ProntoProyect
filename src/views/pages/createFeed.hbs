@@ -85,7 +85,96 @@
                 </div>
                 <div class="card-body">
                     <form id="createForm">
-                        <!-- Rest of the form elements here -->
+                        <div class="mb-3">
+                            <label for="feed_name" class="form-label">Feed Name</label>
+                            <input type="text" class="form-control" id="feed_name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="domain" class="form-label">Domain</label>
+                            <input type="text" class="form-control" id="domain">
+                        </div>
+                        <div class="mb-3">
+                            <label for="store_hash" class="form-label">Store Hash</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="store_hash">
+                                <span class="input-group-text toggle-password" data-toggle="store_hash"><i class="fas fa-eye"></i></span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="x_auth_token" class="form-label">x_auth_token</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="x_auth_token">
+                                <span class="input-group-text toggle-password" data-toggle="x_auth_token"><i class="fas fa-eye"></i></span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="client_id" class="form-label">Merchant ID</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="client_id">
+                                <span class="input-group-text toggle-password" data-toggle="client_id"><i class="fas fa-eye"></i></span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="client_email" class="form-label">Client Email</label>
+                            <input type="email" class="form-control" id="client_email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="private_key" class="form-label">Private Key</label>
+                            <div class="input-group">
+                                <textarea class="form-control password-protected" id="private_key" rows="3" maxlength="2500"></textarea>
+                                <span class="input-group-text toggle-password" data-toggle="private_key"><i class="fas fa-eye"></i></span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="formulas" class="form-label">Formulas</label>
+                            <input type="text" class="form-control" id="formulas">
+                        </div>
+                        <div class="mb-3">
+                            <label for="company_id" class="form-label">Company</label>
+                            <select class="form-control" id="company_id" disabled>
+                                {{#each companies}}
+                                <option value="{{this.company_id}}">{{this.company_name}}</option>
+                                {{/each}}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Custom recurrence</label>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Repeat every</span>
+                                <select class="form-control">
+                                    <option value="1">1 hour</option>
+                                    <option value="3">3 hours</option>
+                                    <option value="6">6 hours</option>
+                                    <option value="12">12 hours</option>
+                                </select>
+                            </div>
+                            <div class="btn-group" role="group" aria-label="Repeat on">
+                                <input type="checkbox" class="btn-check" id="monday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="monday">M</label>
+
+                                <input type="checkbox" class="btn-check" id="tuesday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="tuesday">T</label>
+
+                                <input type="checkbox" class="btn-check" id="wednesday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="wednesday">W</label>
+
+                                <input type="checkbox" class="btn-check" id="thursday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="thursday">T</label>
+
+                                <input type="checkbox" class="btn-check" id="friday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="friday">F</label>
+
+                                <input type="checkbox" class="btn-check" id="saturday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="saturday">S</label>
+
+                                <input type="checkbox" class="btn-check" id="sunday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="sunday">S</label>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button type="button" class="btn btn-primary" id="createButton">Create</button>
+                            <button type="button" class="btn btn-secondary" id="cancelButton">Cancel</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -137,34 +226,170 @@
                 });
             });
 
-            const fields = ['type', 'price', 'is_featured', 'availability', 'is_visible', 'is_free_shipping', 'id', 'weight', 'condition'];
+            const cancelButton = document.getElementById('cancelButton');
+            if (cancelButton) {
+                cancelButton.addEventListener('click', function () {
+                    window.location.href = "/app/feeds";
+                });
+            }
 
+            const createButton = document.getElementById('createButton');
+            if (createButton) {
+                createButton.addEventListener('click', function () {
+                    const selectedDays = [];
+                    ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].forEach(day => {
+                        if (document.getElementById(day).checked) {
+                            selectedDays.push(day);
+                        }
+                    });
+
+                    const intervalUnit = document.querySelector('.input-group select').value;
+
+                    const feedData = {
+                        feed_name: document.getElementById('feed_name').value.trim(),
+                        store_hash: document.getElementById('store_hash').value.trim(),
+                        x_auth_token: document.getElementById('x_auth_token').value.trim(),
+                        client_id: document.getElementById('client_id').value.trim(),
+                        formulas: document.getElementById('formulas').value.trim(),
+                        company_id: document.getElementById('company_id').value.trim(),
+                        client_email: document.getElementById('client_email').value.trim(),
+                        private_key: document.getElementById('private_key').value.trim(),
+                        recurrence: {
+                            intervalUnit: intervalUnit,
+                            selectedDays: selectedDays
+                        },
+                        domain: document.getElementById('domain').value.trim()
+                    };
+
+                    for (let key in feedData) {
+                        if (feedData[key] === "") {
+                            alert(`The field ${key} cannot be empty`);
+                            return;
+                        }
+                    }
+
+                    if (feedData.recurrence.selectedDays.length === 0) {
+                        alert("Please select at least one day of the week");
+                        return;
+                    }
+
+                    fetch('/feeds/createFeed', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(feedData)
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === "Feed created successfully") {
+                                alert("Feed created successfully");
+                                window.location.href = "/app/feeds";
+                            } else {
+                                alert("Error creating feed: " + data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert("Error creating feed");
+                        });
+                });
+            }
+
+            const deleteAllButton = document.getElementById('deleteAllButton');
+            if (deleteAllButton) {
+                deleteAllButton.addEventListener('click', function () {
+                    if (confirm("¿Estás seguro de que deseas eliminar todos los campos?")) {
+                        document.getElementById('createForm').reset();
+                    }
+                });
+            }
+
+            const undoButton = document.getElementById('undoButton');
+            if (undoButton) {
+                undoButton.addEventListener('click', function () {
+                    alert("Funcionalidad de deshacer no implementada");
+                });
+            }
+
+            const finishButton = document.getElementById('finishButton');
+            if (finishButton) {
+                finishButton.addEventListener('click', function () {
+                    alert("Operación terminada");
+                    window.location.href = "/app/feeds";
+                });
+            }
+
+            const formulasInput = document.getElementById('formulas');
+            if (formulasInput) {
+                formulasInput.addEventListener('click', function () {
+                    var formulasModal = new bootstrap.Modal(document.getElementById('formulasModal'), {
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                    formulasModal.show();
+                });
+            }
+
+            const closeModalButton = document.getElementById('closeModalButton');
+            if (closeModalButton) {
+                closeModalButton.addEventListener('click', function () {
+                    var formulaText = document.getElementById('formulaText').value;
+                    var formulasInput = document.getElementById('formulas');
+                    if (formulasInput) {
+                        formulasInput.value = formulaText;
+                    }
+                });
+            }
+
+            const deleteAllFormulasButton = document.getElementById('deleteAllFormulasButton');
+            if (deleteAllFormulasButton) {
+                deleteAllFormulasButton.addEventListener('click', function () {
+                    if (confirm("¿Estás seguro de que deseas eliminar todas las fórmulas?")) {
+                        document.getElementById('formulaText').value = '';
+                    }
+                });
+            }
+
+            const undoFormulasButton = document.getElementById('undoFormulasButton');
+            if (undoFormulasButton) {
+                undoFormulasButton.addEventListener('click', function () {
+                    alert("Funcionalidad de deshacer no implementada");
+                });
+            }
+
+            const finishFormulasButton = document.getElementById('finishFormulasButton');
+            if (finishFormulasButton) {
+                finishFormulasButton.addEventListener('click', function () {
+                    var formulaText = document.getElementById('formulaText').value;
+                    var formulasInput = document.getElementById('formulas');
+                    if (formulasInput) {
+                        formulasInput.value = formulaText;
+                    }
+                    alert("Operación terminada");
+                });
+            }
+
+            // Función para cargar los campos
+            const fields = ['type', 'price', 'is_featured', 'availability', 'is_visible', 'is_free_shipping', 'id', 'weight', 'condition'];
             function loadFields() {
                 const fieldsTable = document.getElementById('fieldsTable');
                 fieldsTable.innerHTML = ''; // Limpiar campos anteriores
-
                 let row = document.createElement('tr');
-                let cellCounter = 0;
-
-                fields.forEach(field => {
+                fields.forEach((field, index) => {
                     const cell = document.createElement('td');
                     cell.innerText = field;
                     cell.onclick = function () {
                         selectField(field);
                     };
                     row.appendChild(cell);
-
-                    cellCounter++;
-
-                    if (cellCounter % 3 === 0) {
+                    // Crear una nueva fila cada 4 campos
+                    if ((index + 1) % 4 === 0) {
                         fieldsTable.appendChild(row);
                         row = document.createElement('tr');
                     }
                 });
-
-                if (cellCounter % 3 !== 0) {
-                    fieldsTable.appendChild(row);
-                }
+                fieldsTable.appendChild(row);
             }
 
             function selectField(field) {
@@ -173,6 +398,7 @@
 
             loadFields(); // Cargar los campos al cargar el documento
         });
+
     </script>
 </body>
 
