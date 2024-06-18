@@ -664,7 +664,10 @@
         var formulasInput = document.getElementById('formulas');
         if (formulasInput) {
             formulasInput.addEventListener('click', function () {
-                var formulasModal = new bootstrap.Modal(document.getElementById('formulasModal'));
+                var formulasModal = new bootstrap.Modal(document.getElementById('formulasModal'), {
+                    backdrop: 'static',
+                    keyboard: false
+                });
                 formulasModal.show();
             });
         }
