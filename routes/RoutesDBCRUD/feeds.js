@@ -103,6 +103,8 @@ routerFeeds.get("/feeds/updateFeed/:feedId", authenticateToken, async (req, res)
 
 routerFeeds.get("app/feeds/createFeed", authenticateToken, async (req, res) => {
 
+    console.log("Funciona?")
+
     try {
         const companies = await fetchDataFromTable('companies');
         res.render("pages/createFeed", { companies: companies });
