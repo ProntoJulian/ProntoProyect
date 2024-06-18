@@ -48,7 +48,9 @@
             }
         }
 
-        #fieldsTable td, #operatorTable td, #valueTable td {
+        #fieldsTable td,
+        #operatorTable td,
+        #valueTable td {
             border: 1px solid #dee2e6;
             padding: 8px;
             text-align: center;
@@ -56,11 +58,15 @@
             transition: background-color 0.3s;
         }
 
-        #fieldsTable td:hover, #operatorTable td:hover, #valueTable td:hover {
+        #fieldsTable td:hover,
+        #operatorTable td:hover,
+        #valueTable td:hover {
             background-color: #f8f9fa;
         }
 
-        #fieldsTable, #operatorTable, #valueTable {
+        #fieldsTable,
+        #operatorTable,
+        #valueTable {
             border-collapse: collapse;
             width: 100%;
         }
@@ -97,21 +103,24 @@
                             <label for="store_hash" class="form-label">Store Hash</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="store_hash">
-                                <span class="input-group-text toggle-password" data-toggle="store_hash"><i class="fas fa-eye"></i></span>
+                                <span class="input-group-text toggle-password" data-toggle="store_hash"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="x_auth_token" class="form-label">x_auth_token</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="x_auth_token">
-                                <span class="input-group-text toggle-password" data-toggle="x_auth_token"><i class="fas fa-eye"></i></span>
+                                <span class="input-group-text toggle-password" data-toggle="x_auth_token"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="client_id" class="form-label">Merchant ID</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="client_id">
-                                <span class="input-group-text toggle-password" data-toggle="client_id"><i class="fas fa-eye"></i></span>
+                                <span class="input-group-text toggle-password" data-toggle="client_id"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -121,8 +130,10 @@
                         <div class="mb-3">
                             <label for="private_key" class="form-label">Private Key</label>
                             <div class="input-group">
-                                <textarea class="form-control password-protected" id="private_key" rows="3" maxlength="2500"></textarea>
-                                <span class="input-group-text toggle-password" data-toggle="private_key"><i class="fas fa-eye"></i></span>
+                                <textarea class="form-control password-protected" id="private_key" rows="3"
+                                    maxlength="2500"></textarea>
+                                <span class="input-group-text toggle-password" data-toggle="private_key"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -204,9 +215,12 @@
                         <table id="valueTable"></table>
                     </div>
                     <div class="mt-3">
-                        <button type="button" class="btn btn-danger" id="deleteAllFormulasButton"><i class="fas fa-trash"></i> Eliminar Todo</button>
-                        <button type="button" class="btn btn-warning" id="undoFormulasButton"><i class="fas fa-undo"></i> Deshacer</button>
-                        <button type="button" class="btn btn-success" id="finishFormulasButton" data-bs-dismiss="modal"><i class="fas fa-check"></i> Terminar</button>
+                        <button type="button" class="btn btn-danger" id="deleteAllFormulasButton"><i
+                                class="fas fa-trash"></i> Eliminar Todo</button>
+                        <button type="button" class="btn btn-warning" id="undoFormulasButton"><i
+                                class="fas fa-undo"></i> Deshacer</button>
+                        <button type="button" class="btn btn-success" id="finishFormulasButton"
+                            data-bs-dismiss="modal"><i class="fas fa-check"></i> Terminar</button>
                     </div>
                 </div>
             </div>
@@ -246,6 +260,7 @@
         var fullExpression = [];
 
         function loadFields() {
+            console.log('loadFields called');
             var fieldsTable = document.getElementById('fieldsTable');
             fieldsTable.innerHTML = '';
             var row = document.createElement('tr');
@@ -254,6 +269,7 @@
                 cell.innerText = field;
                 cell.className = (selectedFields.has(field) && field !== 'price' && field !== 'id' && field !== 'weight') ? 'disabled' : '';
                 cell.onclick = function () {
+                    console.log('Field clicked:', field);
                     if (!selectedFields.has(field) || field === 'price' || field === 'id' || field === 'weight') {
                         selectField(field);
                     }
@@ -268,6 +284,7 @@
         }
 
         function selectField(field) {
+            console.log('selectField called:', field);
             currentExpression = [field];
             if (field !== 'price' && field !== 'id' && field !== 'weight') {
                 selectedFields.add(field);
@@ -278,6 +295,7 @@
         }
 
         function loadOperators(field) {
+            console.log('loadOperators called:', field);
             var operatorTable = document.getElementById('operatorTable');
             operatorTable.innerHTML = '';
             var row = document.createElement('tr');
@@ -285,6 +303,7 @@
                 var cell = document.createElement('td');
                 cell.innerText = op;
                 cell.onclick = function () {
+                    console.log('Operator clicked:', op);
                     currentExpression.push(op);
                     loadValues(field);
                     showTab('values');
@@ -295,6 +314,7 @@
         }
 
         function loadValues(field) {
+            console.log('loadValues called:', field);
             var valueTable = document.getElementById('valueTable');
             valueTable.innerHTML = '';
             var row = document.createElement('tr');
@@ -309,6 +329,7 @@
                 confirmButton.className = 'btn btn-success';
                 confirmButton.innerText = '✔';
                 confirmButton.onclick = function () {
+                    console.log('Number confirmed:', numberInput.value);
                     currentExpression.push(numberInput.value);
                     finalizeSelection();
                 };
@@ -326,6 +347,7 @@
                     var cell = document.createElement('td');
                     cell.innerText = val;
                     cell.onclick = function () {
+                        console.log('Value clicked:', val);
                         currentExpression.push(val);
                         finalizeSelection();
                     };
@@ -336,6 +358,7 @@
         }
 
         function finalizeSelection() {
+            console.log('finalizeSelection called');
             var formulaText = document.getElementById('formulaText');
             var expressionStr = currentExpression.join(' ');
             fullExpression.push(expressionStr);
@@ -345,6 +368,7 @@
         }
 
         function clearAll() {
+            console.log('clearAll called');
             document.getElementById('formulaText').value = '';
             currentExpression = [];
             fullExpression = [];
@@ -353,6 +377,7 @@
         }
 
         function clearLast() {
+            console.log('clearLast called');
             if (fullExpression.length > 0) {
                 fullExpression.pop();
                 document.getElementById('formulaText').value = fullExpression.join(' AND ');
@@ -361,10 +386,12 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
+            console.log('DOMContentLoaded event');
             loadFields();
         });
 
         function showTab(tabName) {
+            console.log('showTab called:', tabName);
             var tabs = document.getElementsByClassName('tab-content');
             for (var i = 0; i < tabs.length; i++) {
                 tabs[i].style.display = 'none';
@@ -372,6 +399,7 @@
             document.getElementById(tabName).style.display = 'block';
         }
     </script>
+
 </body>
 
 </html>
