@@ -94,8 +94,10 @@
 </head>
 
 <body>
-    <input type="text" id="result" class="form-control" placeholder="Nombre" readonly data-toggle="modal" data-target="#calculatorModal">
-    <div class="modal fade" id="calculatorModal" tabindex="-1" role="dialog" aria-labelledby="calculatorModalLabel" aria-hidden="true">
+    <input type="text" id="result" class="form-control" placeholder="Nombre" readonly data-toggle="modal"
+        data-target="#calculatorModal">
+    <div class="modal fade" id="calculatorModal" tabindex="-1" role="dialog" aria-labelledby="calculatorModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -376,7 +378,10 @@
             var result = document.getElementById('result');
             var currentSelection = document.getElementById('currentSelection').innerText.trim();
             result.value = currentSelection;
-            $('#calculatorModal').modal('hide');
+
+            // Cerrar el modal usando Bootstrap 5
+            var modal = new bootstrap.Modal(document.getElementById('calculatorModal'));
+            modal.hide();
         }
 
         function showTab(tabName) {
