@@ -372,13 +372,14 @@
             console.log('finalizeSelection called');
             console.log('currentExpression before finalizing:', currentExpression);
             var formulaText = document.getElementById('formulaText');
-            var expressionStr = currentExpression.join(' ');
+            var expressionStr = '[' + currentExpression.join(' ') + ']';
             fullExpression.push(expressionStr);
             console.log('fullExpression after finalizing:', fullExpression);
-            formulaText.value = fullExpression.join(' ');
+            formulaText.value = fullExpression.join(' AND ');
             currentExpression = [];
             showTab('logical_operators');
         }
+
 
 
 
@@ -397,6 +398,7 @@
             currentExpression = [];
             showTab('fields');
         }
+
 
 
 
