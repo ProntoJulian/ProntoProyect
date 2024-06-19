@@ -375,7 +375,7 @@
             var expressionStr = '[' + currentExpression.join(' ') + ']';
             fullExpression.push(expressionStr);
             console.log('fullExpression after finalizing:', fullExpression);
-            formulaText.value = fullExpression.join(' AND ');
+            formulaText.value = fullExpression.join(' ');
             currentExpression = [];
             showTab('logical_operators');
         }
@@ -384,20 +384,22 @@
 
 
 
-        function selectLogicalOperator(logicOp) {
-            console.log('selectLogicalOperator called:', logicOp);
-            var formulaText = document.getElementById('formulaText');
-            console.log('fullExpression before adding logical operator:', fullExpression);
 
-            // Solo agregar operador lógico si el último no es un operador lógico
-            if (fullExpression.length > 0 && fullExpression[fullExpression.length - 1] !== 'AND' && fullExpression[fullExpression.length - 1] !== 'OR') {
-                fullExpression.push(logicOp);
-            }
-            console.log('fullExpression after adding logical operator:', fullExpression);
-            formulaText.value = fullExpression.join(' ');
-            currentExpression = [];
-            showTab('fields');
-        }
+        function selectLogicalOperator(logicOp) {
+    console.log('selectLogicalOperator called:', logicOp);
+    var formulaText = document.getElementById('formulaText');
+    console.log('fullExpression before adding logical operator:', fullExpression);
+
+    // Solo agregar operador lógico si el último no es un operador lógico
+    if (fullExpression.length > 0 && (fullExpression[fullExpression.length - 1] !== 'AND' && fullExpression[fullExpression.length - 1] !== 'OR')) {
+        fullExpression.push(logicOp);
+    }
+    console.log('fullExpression after adding logical operator:', fullExpression);
+    formulaText.value = fullExpression.join(' ');
+    currentExpression = [];
+    showTab('fields');
+}
+
 
 
 
