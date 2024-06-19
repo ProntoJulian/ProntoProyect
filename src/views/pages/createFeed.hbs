@@ -375,7 +375,7 @@
             var expressionStr = currentExpression.join(' ');
             fullExpression.push(expressionStr);
             console.log('fullExpression after finalizing:', fullExpression);
-            formulaText.value = fullExpression.join(' AND ');
+            formulaText.value = fullExpression.join(' ');
             currentExpression = [];
             showTab('logical_operators');
         }
@@ -448,6 +448,9 @@
             result.value = currentSelection; // Pasar el valor al input fuera del modal
             var modal = bootstrap.Modal.getInstance(document.getElementById('formulasModal'));
             modal.hide(); // Cerrar el modal usando Bootstrap 5
+            // Reset fullExpression to ensure it doesn't add duplicate logical operators
+            fullExpression = [];
+            currentExpression = [];
         }
     </script>
 </body>
