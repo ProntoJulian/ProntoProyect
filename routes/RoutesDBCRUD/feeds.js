@@ -216,7 +216,7 @@ routerFeeds.get("/feeds/getFeed/:feedId", authenticateToken, async (req, res) =>
     }
 });
 
-const {manageProductProcessingFeed, countPagesFeed} =require("../api/checkProductsFeeds")
+const {manageProductProcessingFeed, countPagesFeed} =require("../../api/checkProductsFeeds")
 
 routerFeeds.get("/feeds/synchronize2/:feedId", authenticateToken, async (req, res) => {
     const { feedId } = req.params;
