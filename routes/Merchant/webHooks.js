@@ -11,7 +11,7 @@ const { findProductByBigCommerceId,
 
 const { fetchOneFromTable } = require("../../databases/CRUD");
 
-const { transformProduct } = require("../../helpers/helpers")
+const { transformProduct} = require("../../helpers/helpers")
 
 const { fetchProductById, checkCustomField, getConfig } = require("../../api/productsBigCommerceApi");
 const { getConfigCategories } = require("../../api/categoriesBigCommerceApi");

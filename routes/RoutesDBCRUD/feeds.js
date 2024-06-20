@@ -1,6 +1,6 @@
 const express = require("express");
 const { authenticateToken } = require("../../middleware/index");
-const { encrypt, decrypt, logMemoryUsage, createSimpleCron, createCronJob } = require("../../helpers/helpers");
+const { encrypt, decrypt, logMemoryUsage, createSimpleCron, createCronJob,buildQueryUrl } = require("../../helpers/helpers");
 const { insertIntoTable,
     updateTable,
     fetchDataFromTable,
