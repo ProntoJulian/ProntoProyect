@@ -447,6 +447,8 @@
 
         function clearLast() {
             console.log('clearLast called');
+
+            
             if (fullExpression.length > 0) {
                 fullExpression.pop();
                 document.getElementById('formulaText').value = fullExpression.join(' AND ');
