@@ -121,7 +121,7 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
     const updateData = req.body;
 
     const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
-    
+
 
     const lastUpdate = new Date(updateData.last_update);
     const formattedLastUpdate = lastUpdate.toISOString().replace('T', ' ').substring(0, 19);
@@ -141,9 +141,9 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
         domain: feed.domain
     };
 
-    console.log("Config: ",config)
+    console.log("Config: ", config)
 
-    
+
 
     await getConfig(config);
     await initializeGoogleAuth(config);
@@ -216,7 +216,9 @@ routerFeeds.get("/feeds/getFeed/:feedId", authenticateToken, async (req, res) =>
     }
 });
 
-routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res) => {
+const {manageProductProcessingFeed, countPagesFeed} =require("../api/checkProductsFeeds")
+
+routerFeeds.get("/feeds/synchronize2/:feedId", authenticateToken, async (req, res) => {
     const { feedId } = req.params;
     try {
         const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
@@ -225,7 +227,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
             const accessToken = feed.x_auth_token;
             const privateKey = feed.private_key; // decrypt(JSON.parse(feed.private_key));
             const merchantId = feed.client_id;
-            
+
             console.log("Store Hash: ", storeHash);
             console.log("Access Token: ", accessToken);
 
@@ -291,15 +293,100 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
     }
 });
 
+routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res) => {
+    const { feedId } = req.params;
+    try {
+        const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
+
+
+
+        if (feed) {
+            const storeHash = feed.store_hash;
+            const accessToken = feed.x_auth_token;
+            const privateKey = feed.private_key; // decrypt(JSON.parse(feed.private_key));
+            const merchantId = feed.client_id;
+
+            console.log("Store Hash: ", storeHash);
+            console.log("Access Token: ", accessToken);
+
+            const baseUrl = `https://api.bigcommerce.com/stores/${storeHash}/v3/catalog/products`;
+            const url = await buildQueryUrl(baseUrl, formula);
+
+            const config = {
+                accessToken: accessToken,
+                storeHash: storeHash,
+                client_email: feed.client_email,
+                private_key: privateKey,
+                merchantId: merchantId,
+                domain: feed.domain,
+                apiInfo: url
+            };
+
+
+
+            // Ejecutar las operaciones asíncronas en segundo plano
+            setImmediate(async () => {
+                try {
+                    const conteoPages = await countPagesFeed(config);
+                    console.log("Conteo: ", conteoPages);
+                    const conteoByTipo = await manageProductProcessingFeed(config, conteoPages);
+
+                    console.log("Conteo: ", conteoPages);
+
+                    const WebHooks = await fetchWebHooks(config);
+
+                    if (WebHooks.data.length == 0) {
+                        await createWebhookToCreateProduct(config, feedId);
+                        await createWebhookToUpdateProduct(config, feedId);
+                    }
+
+                    // Ejecutar las operaciones de conteo en paralelo
+                    const [totalProductsGM, totalProductsBC, preorderProducts] = await Promise.all([
+                        listAllProducts(config),
+                        countTotalProducts(config),
+                        countProductsByAvailability(config, "preorder")
+                    ]);
+
+                    const updateData = {
+                        total_products_bc: totalProductsBC,
+                        active_products_gm: totalProductsGM,
+                        preorder_products: preorderProducts
+                    };
+
+                    /*await createCronJob(feedId,configCron);*/
+
+                    await updateFeed(feedId, updateData);
+
+                    // Responder inmediatamente al cliente
+                    res.status(200).json({ message: "Sincronización completada y feed actualizado" });
+                } catch (error) {
+                    console.error('Error durante la sincronización en segundo plano:', error);
+                    // Manejo de errores adicional si es necesario
+                    res.status(404).json({ message: "Hubo un error en la sincronización, verifique los datos ingresados" });
+                }
+            });
+
+        } else {
+            res.status(404).json({ message: "Feed no encontrado" });
+        }
+    } catch (error) {
+        console.error('Error al obtener el feed:', error);
+        res.status(500).json({ message: "Error interno del servidor al intentar obtener el feed" });
+
+    }
+});
+
+
+
 routerFeeds.get("/feeds/createJobs/:feedId", /*authenticateToken,*/ async (req, res) => {
     const { feedId } = req.params;
     try {
         const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
 
         const storeHash = feed.store_hash;
-            const accessToken = feed.x_auth_token;
-            const privateKey = feed.private_key; // decrypt(JSON.parse(feed.private_key));
-            const merchantId = feed.client_id;
+        const accessToken = feed.x_auth_token;
+        const privateKey = feed.private_key; // decrypt(JSON.parse(feed.private_key));
+        const merchantId = feed.client_id;
 
         const config = {
             accessToken: accessToken,
@@ -309,13 +396,13 @@ routerFeeds.get("/feeds/createJobs/:feedId", /*authenticateToken,*/ async (req, 
             merchantId: merchantId,
             domain: feed.domain
         };
-    
+
         const configCron = {
             selectedDays: feed.selectedDays,
             intervalHour: feed.intervalHour,
             isActive: feed.isActive
         }
-    
+
         await createCronJob(feedId, configCron);
 
         res.status(200).json({ message: "Se ha creado el cron" });

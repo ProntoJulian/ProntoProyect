@@ -225,12 +225,12 @@ const pm2 = require('pm2');
 async function createCronJob(feedId, configCron) {
   const scriptPath = 'cron-task.js';
   const deleteScriptPath = 'deleteProductsWeekly.js';
-  
+
   // Asegúrate de que `configCron` tiene los valores correctos
   console.log('configCron:', configCron);
-  
+
   const cronPatterns = await generateCronPattern(configCron);
-  
+
   // Verifica que `cronPatterns` es un array
   console.log('cronPatterns:', cronPatterns);
 
@@ -292,39 +292,101 @@ async function createCronJob(feedId, configCron) {
 
 async function buildQueryUrl(baseUrl, expression) {
   if (!expression) {
-      throw new Error('La expresión es undefined o null');
+    throw new Error("La expresión es undefined o null");
   }
 
+  const fields = [
+    "type",
+    "price",
+    "is_featured",
+    "availability",
+    "is_visible",
+    "is_free_shipping",
+    "id",
+    "weight",
+    "condition",
+  ];
   const queryParams = [];
-  const conditions = expression.split(/(AND|OR)/).map(cond => cond.trim());
+  const customFields = [];
+  let currentGroup = [];
+  const conditions = expression.split(/(AND|OR)/).map((cond) => cond.trim());
 
   conditions.forEach((condition, index) => {
-      if (condition !== 'AND' && condition !== 'OR') {
-          // Eliminar corchetes
-          condition = condition.replace(/\[|\]/g, '');
-          
-          const [field, operator, value] = condition.split(/\s+/);
-
-          if (operator === '=') {
-              queryParams.push(`${field}=${value}`);
-          } else if (operator === '!=') {
-              queryParams.push(`${field}:not=${value}`);
-          } else if (['>', '<', '>=', '<='].includes(operator)) {
-              const opMap = {
-                  '>': 'greater',
-                  '<': 'less',
-                  '>=': 'min',
-                  '<=': 'max'
-              };
-              queryParams.push(`${field}:${opMap[operator]}=${value}`);
-          }
+    if (condition === "AND" || condition === "OR") {
+      if (index === conditions.length - 1) {
+        // Ignorar si 'AND' o 'OR' están al final
+        return;
       }
+      if (currentGroup.length > 0) {
+        queryParams.push(currentGroup.join("&"));
+      }
+      queryParams.push(condition);
+      currentGroup = [];
+    } else {
+      // Eliminar corchetes
+      condition = condition.replace(/\[|\]/g, "");
+
+      const [field, operator, value] = condition.split(/\s+/);
+
+      if (fields.includes(field)) {
+        if (operator === "=") {
+          currentGroup.push(`${field}=${value}`);
+        } else if (operator === "!=") {
+          currentGroup.push(`${field}:not=${value}`);
+        } else if ([">", "<", ">=", "<="].includes(operator)) {
+          const opMap = {
+            ">": "greater",
+            "<": "less",
+            ">=": "min",
+            "<=": "max",
+          };
+          currentGroup.push(`${field}:${opMap[operator]}=${value}`);
+        }
+      } else if (field && value) {
+        // Es un campo personalizado
+        customFields.push({ name: field, value: value });
+      }
+    }
   });
 
-  // Unir condiciones con &
-  const joinedQueryParams = queryParams.join('&');
+  // Añadir el último grupo si existe
+  if (currentGroup.length > 0) {
+    queryParams.push(currentGroup.join("&"));
+  }
 
-  return `${baseUrl}?${joinedQueryParams}`;
+  // Construir la URL con AND y OR correctamente
+  let finalUrl = baseUrl;
+  let isFirstGroup = true;
+  queryParams.forEach((param) => {
+    if (param === "AND") {
+      finalUrl += "&";
+    } else if (param === "OR") {
+      finalUrl += "|";
+    } else {
+      if (isFirstGroup) {
+        finalUrl += `?${param}`;
+        isFirstGroup = false;
+      } else {
+        finalUrl += `&${param}`;
+      }
+    }
+  });
+
+  // Reemplazar combinaciones incorrectas de `|&` por `|`
+  finalUrl = finalUrl.replace(/\|\&/g, "|");
+
+  // Reemplazar combinaciones incorrectas de `&&` por `&`
+  finalUrl = finalUrl.replace(/&&/g, "&");
+
+  // Reemplazar combinaciones incorrectas de `&?` por `?`
+  finalUrl = finalUrl.replace(/&\?/g, "?");
+
+  // Eliminar el último carácter '&' si está presente
+  if (finalUrl.endsWith("&")) {
+    finalUrl = finalUrl.slice(0, -1);
+  }
+
+  return { url: finalUrl, customFields };
 }
 
 
