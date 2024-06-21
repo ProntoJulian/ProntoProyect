@@ -342,6 +342,16 @@
                     });
             });
 
+            // Función showTab agregada aquí
+            function showTab(tabName) {
+                console.log('showTab called:', tabName);
+                var tabs = document.getElementsByClassName('tab-content');
+                for (var i = 0; i < tabs.length; i++) {
+                    tabs[i].style.display = 'none';
+                }
+                document.getElementById(tabName).style.display = 'block';
+            }
+
             // Agregar evento de clic al campo de texto "formulas" para abrir el modal
             document.getElementById('formulas').addEventListener('click', function () {
                 console.log('Formulas clicked');
@@ -538,9 +548,10 @@
 
             loadFields();
             showTab('fields');
-        });
 
+        });
     </script>
+
 
 </body>
 
