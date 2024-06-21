@@ -342,47 +342,7 @@
                     });
             });
 
-            // Agregar evento de clic al campo de texto "formulas" para abrir el modal
-            document.getElementById('formulas').addEventListener('click', function () {
-                console.log('Formulas clicked');
-                var modal = new bootstrap.Modal(document.getElementById('formulasModal'));
-                modal.show();
-            });
-
-            document.getElementById('finishFormulasButton').addEventListener('click', finalize);
-
-            function finalize() {
-                console.log('finalize called');
-                alert("La fórmula ha sido finalizada.");
-                var result = document.getElementById('formulas');
-                var currentSelection = document.getElementById('formulaText').value.trim();
-                result.value = currentSelection;
-                var modal = bootstrap.Modal.getInstance(document.getElementById('formulasModal'));
-                modal.hide();
-                fullExpression = [];
-                currentExpression = [];
-            }
-
-            document.getElementById('deleteAllFormulasButton').addEventListener('click', clearAll);
-
-            function clearAll() {
-                console.log('clearAll called');
-                document.getElementById('formulaText').value = '';
-                currentExpression = [];
-                fullExpression = [];
-                selectedFields.clear();
-                loadFields();
-            }
-
-            function clearLast() {
-                console.log('clearLast called');
-                if (fullExpression.length > 0) {
-                    fullExpression.pop();
-                    document.getElementById('formulaText').value = fullExpression.join(' AND ');
-                    loadFields();
-                }
-            }
-
+            // Funcionalidad del modal de fórmulas
             var operators = {
                 type: ['=', '!='],
                 price: ['=', '!=', '>', '<', '>=', '<='],
@@ -545,9 +505,38 @@
                 document.getElementById(tabName).style.display = 'block';
             }
 
+            document.getElementById('formulas').addEventListener('click', function () {
+                console.log('Formulas clicked');
+                var modal = new bootstrap.Modal(document.getElementById('formulasModal'));
+                modal.show();
+            });
+
+            document.getElementById('finishFormulasButton').addEventListener('click', finalize);
+
+            document.getElementById('deleteAllFormulasButton').addEventListener('click', clearAll);
+
+            function clearAll() {
+                console.log('clearAll called');
+                document.getElementById('formulaText').value = '';
+                currentExpression = [];
+                fullExpression = [];
+                selectedFields.clear();
+                loadFields();
+            }
+
+            function clearLast() {
+                console.log('clearLast called');
+                if (fullExpression.length > 0) {
+                    fullExpression.pop();
+                    document.getElementById('formulaText').value = fullExpression.join(' AND ');
+                    loadFields();
+                }
+            }
+
             loadFields();
             showTab('fields');
         });
+
 
     </script>
 
