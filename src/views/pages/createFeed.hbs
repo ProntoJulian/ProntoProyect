@@ -364,17 +364,21 @@
                 var cell = document.createElement('td');
                 var numberInput = document.createElement('input');
                 numberInput.type = 'number';
-                numberInput.min = 0;
+                numberInput.min = 0; // Esto asegura que el número no puede ser negativo
                 numberInput.className = 'form-control';
 
                 var confirmButton = document.createElement('button');
                 confirmButton.className = 'btn btn-success';
                 confirmButton.innerText = '✔';
                 confirmButton.onclick = function () {
-                    console.log('Number confirmed:', numberInput.value);
-                    currentExpression.push(numberInput.value);
-                    finalizeSelection();
-                    updateFormulaText();  // Llamar a la función aquí
+                    if (numberInput.value >= 0) { // Validación para asegurar que el número no es negativo
+                        console.log('Number confirmed:', numberInput.value);
+                        currentExpression.push(numberInput.value);
+                        finalizeSelection();
+                        updateFormulaText();  // Llamar a la función aquí
+                    } else {
+                        alert("Please enter a non-negative number."); // Mensaje de alerta si el número es negativo
+                    }
                 };
 
                 var inputWrapper = document.createElement('div');
@@ -400,6 +404,7 @@
             }
             valueTable.appendChild(row);
         }
+
 
         function finalizeSelection() {
             console.log('finalizeSelection called');
