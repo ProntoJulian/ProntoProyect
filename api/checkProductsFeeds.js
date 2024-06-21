@@ -153,7 +153,7 @@ async function manageProductProcessingFeed(config, totalPages) {
             validProductIds.map((product) => transformProduct(config, product))
         );
 
-        await insertBatchProducts(transformedProductos);
+        await insertBatchProducts(config,transformedProductos);
 
         currentPage = endPage + 1;
     }
