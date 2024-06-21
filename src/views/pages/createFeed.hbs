@@ -252,8 +252,9 @@
                         <div class="d-flex justify-content-between">
                             <button type="button" class="btn btn-danger" id="deleteAllFormulasButton"><i
                                     class="fas fa-trash"></i> Eliminar Todo</button>
-                            <button type="button" class="btn btn-warning" id="undoFormulasButton"><i
-                                    class="fas fa-undo"></i> Deshacer</button>
+                            <button type="button" class="btn btn-warning" id="undoFormulasButton"
+                                onclick="clearLast()"><i class="fas fa-undo"></i> Deshacer</button>
+
                             <button type="button" class="btn btn-success" id="finishFormulasButton"><i
                                     class="fas fa-check"></i> Terminar</button>
                         </div>
@@ -331,6 +332,7 @@
             loadFields();
             loadOperators(field);
             showTab('operators');
+            updateFormulaText();  // Llamar a la función aquí
         }
 
         function loadOperators(field) {
@@ -346,6 +348,7 @@
                     currentExpression.push(op);
                     loadValues(field);
                     showTab('values');
+                    updateFormulaText();  // Llamar a la función aquí
                 };
                 row.appendChild(cell);
             });
@@ -371,6 +374,7 @@
                     console.log('Number confirmed:', numberInput.value);
                     currentExpression.push(numberInput.value);
                     finalizeSelection();
+                    updateFormulaText();  // Llamar a la función aquí
                 };
 
                 var inputWrapper = document.createElement('div');
@@ -389,6 +393,7 @@
                         console.log('Value clicked:', val);
                         currentExpression.push(val);
                         finalizeSelection();
+                        updateFormulaText();  // Llamar a la función aquí
                     };
                     row.appendChild(cell);
                 });
@@ -447,14 +452,14 @@
 
         function clearLast() {
             console.log('clearLast called');
-
-
             if (fullExpression.length > 0) {
                 fullExpression.pop();
-                document.getElementById('formulaText').value = fullExpression.join(' AND ');
+                document.getElementById('formulaText').value = fullExpression.join(' ');
                 loadFields();
+                updateFormulaText();  // Asegúrate de llamar a esta función para actualizar el campo en pantalla
             }
         }
+
 
         document.addEventListener('DOMContentLoaded', function () {
             console.log('DOMContentLoaded event');
@@ -578,7 +583,11 @@
             window.location.href = '/app/feeds';
         });
 
-
+        function updateFormulaText() {
+            var formulaText = document.getElementById('formulaText');
+            var expressionStr = '' + currentExpression.join(' ') + '';
+            formulaText.value = fullExpression.join(' ') + ' ' + expressionStr;
+        }
 
     </script>
 </body>

@@ -473,6 +473,7 @@
                         console.log('Value clicked:', val);
                         currentExpression.push(val);
                         finalizeSelection();
+                        updateFormulaText();  // Llamar a la función aquí
                     };
                     row.appendChild(cell);
                 });
