@@ -412,6 +412,7 @@
             loadFields();
             loadOperators(field);
             showTab('operators');
+            updateFormulaText();
         }
 
         function loadOperators(field) {
@@ -427,6 +428,7 @@
                     currentExpression.push(op);
                     loadValues(field);
                     showTab('values');
+                    updateFormulaText();
                 };
                 row.appendChild(cell);
             });
@@ -452,6 +454,7 @@
                     console.log('Number confirmed:', numberInput.value);
                     currentExpression.push(numberInput.value);
                     finalizeSelection();
+                    updateFormulaText();
                 };
 
                 var inputWrapper = document.createElement('div');
@@ -487,6 +490,7 @@
             formulaText.value = fullExpression.join(' ');
             currentExpression = [];
             showTab('logical_operators');
+            updateFormulaText();  // Llamar a la función aquí
         }
 
 
@@ -557,7 +561,7 @@
         document.getElementById('formulas').addEventListener('click', function () {
             console.log('Formulas clicked');
             var modal = new bootstrap.Modal(document.getElementById('formulasModal'));
-             document.getElementById('formulaText').value = document.getElementById('formulas').value;
+            document.getElementById('formulaText').value = document.getElementById('formulas').value;
             modal.show();
         });
 
@@ -587,6 +591,12 @@
             } else {
                 alert('Please fill in all custom field details.');
             }
+        }
+
+        function updateFormulaText() {
+            var formulaText = document.getElementById('formulaText');
+            var expressionStr = '[' + currentExpression.join(' ') + ']';
+            formulaText.value = fullExpression.join(' ') + ' ' + expressionStr;
         }
     </script>
 </body>
