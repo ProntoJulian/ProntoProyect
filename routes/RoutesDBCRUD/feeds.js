@@ -302,13 +302,14 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
 
         if (feed) {
 
-            console.log("Feed: ", feed)
+            
             const storeHash = feed.store_hash;
             const accessToken = feed.x_auth_token;
             const privateKey = feed.private_key; // decrypt(JSON.parse(feed.private_key));
             const merchantId = feed.client_id;
             const formula = feed.formula;
-
+            
+            console.log("Formula: ", formula)
             console.log("Store Hash: ", storeHash);
             console.log("Access Token: ", accessToken);
 
