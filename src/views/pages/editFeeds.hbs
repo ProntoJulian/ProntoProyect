@@ -47,6 +47,41 @@
                 transform: rotate(360deg);
             }
         }
+
+        #fieldsTable td,
+        #operatorTable td,
+        #valueTable td,
+        #logicalOperatorsTable td {
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #fieldsTable td:hover,
+        #operatorTable td:hover,
+        #valueTable td:hover,
+        #logicalOperatorsTable td:hover {
+            background-color: #f8f9fa;
+        }
+
+        #fieldsTable,
+        #operatorTable,
+        #valueTable,
+        #logicalOperatorsTable {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .field-table-header {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
     </style>
 </head>
 
