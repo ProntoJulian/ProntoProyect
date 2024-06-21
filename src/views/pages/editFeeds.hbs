@@ -557,6 +557,7 @@
         document.getElementById('formulas').addEventListener('click', function () {
             console.log('Formulas clicked');
             var modal = new bootstrap.Modal(document.getElementById('formulasModal'));
+             document.getElementById('formulaText').value = document.getElementById('formulas').value;
             modal.show();
         });
 
