@@ -595,7 +595,7 @@
 
         function updateFormulaText() {
             var formulaText = document.getElementById('formulaText');
-            var expressionStr = '[' + currentExpression.join(' ') + ']';
+            var expressionStr = '' + currentExpression.join(' ') + '';
             formulaText.value = fullExpression.join(' ') + ' ' + expressionStr;
         }
     </script>
