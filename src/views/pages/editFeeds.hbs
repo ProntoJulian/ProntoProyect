@@ -73,21 +73,25 @@
                             <label for="store_hash" class="form-label">Store Hash</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="store_hash" value="{{this.store_hash}}">
-                                <span class="input-group-text toggle-password" data-toggle="store_hash"><i class="fas fa-eye"></i></span>
+                                <span class="input-group-text toggle-password" data-toggle="store_hash"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="x_auth_token" class="form-label">x_auth_token</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="x_auth_token" value="{{this.x_auth_token}}">
-                                <span class="input-group-text toggle-password" data-toggle="x_auth_token"><i class="fas fa-eye"></i></span>
+                                <input type="password" class="form-control" id="x_auth_token"
+                                    value="{{this.x_auth_token}}">
+                                <span class="input-group-text toggle-password" data-toggle="x_auth_token"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="client_id" class="form-label">Merchant ID</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="client_id" value="{{this.client_id}}">
-                                <span class="input-group-text toggle-password" data-toggle="client_id"><i class="fas fa-eye"></i></span>
+                                <span class="input-group-text toggle-password" data-toggle="client_id"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -97,29 +101,36 @@
                         <div class="mb-3">
                             <label for="private_key" class="form-label">Private Key</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="private_key" value="{{this.private_key}}">
-                                <span class="input-group-text toggle-password" data-toggle="private_key"><i class="fas fa-eye"></i></span>
+                                <input type="password" class="form-control" id="private_key"
+                                    value="{{this.private_key}}">
+                                <span class="input-group-text toggle-password" data-toggle="private_key"><i
+                                        class="fas fa-eye"></i></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="formulas" class="form-label">Formulas</label>
                             <input type="text" class="form-control" id="formulas" value="{{this.formulas}}">
                         </div>
+
                         <div class="mb-3">
                             <label for="last_update" class="form-label">Last Update</label>
-                            <input type="text" class="form-control" id="last_update" value="{{this.last_update}}" disabled>
+                            <input type="text" class="form-control" id="last_update" value="{{this.last_update}}"
+                                disabled>
                         </div>
                         <div class="mb-3">
                             <label for="active_products_gm" class="form-label">Active GM Products</label>
-                            <input type="number" class="form-control" id="active_products_gm" disabled value="{{this.active_products_gm}}">
+                            <input type="number" class="form-control" id="active_products_gm" disabled
+                                value="{{this.active_products_gm}}">
                         </div>
                         <div class="mb-3">
                             <label for="total_products_bc" class="form-label">Total BC Products</label>
-                            <input type="number" class="form-control" id="total_products_bc" disabled value="{{this.total_products_bc}}">
+                            <input type="number" class="form-control" id="total_products_bc" disabled
+                                value="{{this.total_products_bc}}">
                         </div>
                         <div class="mb-3">
                             <label for="preorder_products" class="form-label">Preorder Products</label>
-                            <input type="number" class="form-control" id="preorder_products" disabled value="{{this.preorder_products}}">
+                            <input type="number" class="form-control" id="preorder_products" disabled
+                                value="{{this.preorder_products}}">
                         </div>
                         <div class="mb-3">
                             <label for="company_id" class="form-label">Company</label>
@@ -142,7 +153,8 @@
     </div>
 
     <!-- Progress Modal -->
-    <div class="modal fade" id="progressModal" tabindex="-1" aria-labelledby="progressModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal fade" id="progressModal" tabindex="-1" aria-labelledby="progressModalLabel" aria-hidden="true"
+        data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -150,11 +162,81 @@
                 </div>
                 <div class="modal-body text-center">
                     <i class="fas fa-hourglass-half hourglass-icon"></i>
-                    <p class="mt-3">Counting the number of products in Big Commerce and Google Merchant, please wait a moment.</p>
+                    <p class="mt-3">Counting the number of products in Big Commerce and Google Merchant, please wait a
+                        moment.</p>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal para las Formulas -->
+    <div class="modal fade" id="formulasModal" tabindex="-1" aria-labelledby="formulasModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="formulasModalLabel">Edit Formulas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="formulaText" class="form-label">Formulas</label>
+                        <input type="text" class="form-control" id="formulaText" readonly>
+                    </div>
+                    <div id="fields" class="tab-content">
+                        <table id="fieldsTable"></table>
+                    </div>
+                    <div id="operators" class="tab-content" style="display: none;">
+                        <table id="operatorTable"></table>
+                    </div>
+                    <div id="values" class="tab-content" style="display: none;">
+                        <table id="valueTable"></table>
+                    </div>
+                    <div id="logical_operators" class="tab-content" style="display: none;">
+                        <table id="logicalOperatorsTable">
+                            <tr>
+                                <td onclick="selectLogicalOperator('AND')">AND</td>
+                                <td onclick="selectLogicalOperator('OR')">OR</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="customFieldSection" class="tab-content" style="display: none;">
+                        <div class="mb-3">
+                            <label for="customFieldName" class="form-label">Enter Custom Field</label>
+                            <input type="text" class="form-control" id="customFieldName">
+                        </div>
+                        <div class="mb-3">
+                            <label for="customFieldOperator" class="form-label">Select Operator</label>
+                            <select class="form-control" id="customFieldOperator">
+                                <option value="=">=</option>
+                                <option value="!=">!=</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="customFieldValue" class="form-label">Enter Custom Field Value</label>
+                            <input type="text" class="form-control" id="customFieldValue">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="addCustomField()">Add Custom
+                            Field</button>
+                    </div>
+                    <div class="mt-3">
+                        <div class="d-grid gap-2 mb-2">
+                            <button type="button" class="btn btn-secondary" onclick="showTab('customFieldSection')">Add
+                                Custom Field</button>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-danger" id="deleteAllFormulasButton"><i
+                                    class="fas fa-trash"></i> Eliminar Todo</button>
+                            <button type="button" class="btn btn-warning" id="undoFormulasButton"><i
+                                    class="fas fa-undo"></i> Deshacer</button>
+                            <button type="button" class="btn btn-success" id="finishFormulasButton"><i
+                                    class="fas fa-check"></i> Terminar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Bootstrap JS bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -200,13 +282,7 @@
                     company_id: document.getElementById('company_id').value.trim(),
                     domain: document.getElementById('domain').value.trim(),
                 };
-/*
-                var progressModal = new bootstrap.Modal(document.getElementById('progressModal'), {
-                    backdrop: 'static',
-                    keyboard: false
-                });
-                progressModal.show();
-*/
+
                 fetch(`/feeds/update/${feedId}`, {
                     method: 'PUT',
                     headers: {
@@ -230,8 +306,207 @@
                         window.location.reload();
                     });
             });
+
+            // Agregar evento de clic al campo de texto "formulas" para abrir el modal
+            document.getElementById('formulas').addEventListener('click', function () {
+                console.log('Formulas clicked');
+                var modal = new bootstrap.Modal(document.getElementById('formulasModal'));
+                modal.show();
+            });
+
+            document.getElementById('finishFormulasButton').addEventListener('click', finalize);
+
+            function finalize() {
+                console.log('finalize called');
+                alert("La fórmula ha sido finalizada.");
+                var result = document.getElementById('formulas');
+                var currentSelection = document.getElementById('formulaText').value.trim();
+                result.value = currentSelection;
+                var modal = bootstrap.Modal.getInstance(document.getElementById('formulasModal'));
+                modal.hide();
+                fullExpression = [];
+                currentExpression = [];
+            }
+
+            document.getElementById('deleteAllFormulasButton').addEventListener('click', clearAll);
+
+            function clearAll() {
+                console.log('clearAll called');
+                document.getElementById('formulaText').value = '';
+                currentExpression = [];
+                fullExpression = [];
+                selectedFields.clear();
+                loadFields();
+            }
+
+            function clearLast() {
+                console.log('clearLast called');
+                if (fullExpression.length > 0) {
+                    fullExpression.pop();
+                    document.getElementById('formulaText').value = fullExpression.join(' AND ');
+                    loadFields();
+                }
+            }
+
+            var operators = {
+                type: ['=', '!='],
+                price: ['=', '!=', '>', '<', '>=', '<='],
+                is_featured: ['=', '!='],
+                availability: ['=', '!='],
+                is_visible: ['=', '!='],
+                is_free_shipping: ['=', '!='],
+                id: ['=', '!=', '>', '<', '>=', '<='],
+                weight: ['=', '!=', '>', '<', '>=', '<='],
+                condition: ['=', '!='],
+            };
+
+            var values = {
+                type: ['digital', 'physical'],
+                price: [],
+                is_featured: ['true', 'false'],
+                availability: ['available', 'disabled', 'preorder'],
+                is_visible: ['true', 'false'],
+                is_free_shipping: ['true', 'false'],
+                id: [],
+                weight: [],
+                condition: ["new", "used", "refurbished"]
+            };
+
+            var fields = ['type', 'price', 'is_featured', 'availability', 'is_visible', 'is_free_shipping', 'id', 'weight', 'condition'];
+            var selectedFields = new Set();
+            var currentExpression = [];
+            var fullExpression = [];
+
+            function loadFields() {
+                console.log('loadFields called');
+                var fieldsTable = document.getElementById('fieldsTable');
+                fieldsTable.innerHTML = '';
+                var row = document.createElement('tr');
+                fields.forEach(function (field, index) {
+                    var cell = document.createElement('td');
+                    cell.innerText = field;
+                    cell.className = (selectedFields.has(field) && field !== 'price' && field !== 'id' && field !== 'weight') ? 'disabled' : '';
+                    cell.onclick = function () {
+                        console.log('Field clicked:', field);
+                        if (!selectedFields.has(field) || field === 'price' || field === 'id' || field === 'weight') {
+                            selectField(field);
+                        }
+                    };
+                    row.appendChild(cell);
+                    if ((index + 1) % 4 === 0) {
+                        fieldsTable.appendChild(row);
+                        row = document.createElement('tr');
+                    }
+                });
+                fieldsTable.appendChild(row);
+            }
+
+            function selectField(field) {
+                console.log('selectField called:', field);
+                currentExpression = [field];
+                if (field !== 'price' && field !== 'id' && field !== 'weight') {
+                    selectedFields.add(field);
+                }
+                loadFields();
+                loadOperators(field);
+                showTab('operators');
+            }
+
+            function loadOperators(field) {
+                console.log('loadOperators called:', field);
+                var operatorTable = document.getElementById('operatorTable');
+                operatorTable.innerHTML = '';
+                var row = document.createElement('tr');
+                operators[field].forEach(function (op) {
+                    var cell = document.createElement('td');
+                    cell.innerText = op;
+                    cell.onclick = function () {
+                        console.log('Operator clicked:', op);
+                        currentExpression.push(op);
+                        loadValues(field);
+                        showTab('values');
+                    };
+                    row.appendChild(cell);
+                });
+                operatorTable.appendChild(row);
+            }
+
+            function loadValues(field) {
+                console.log('loadValues called:', field);
+                var valueTable = document.getElementById('valueTable');
+                valueTable.innerHTML = '';
+                var row = document.createElement('tr');
+                if (field === 'price' || field === 'id' || field === 'weight') {
+                    var cell = document.createElement('td');
+                    var numberInput = document.createElement('input');
+                    numberInput.type = 'number';
+                    numberInput.min = 0;
+                    numberInput.className = 'form-control';
+
+                    var confirmButton = document.createElement('button');
+                    confirmButton.className = 'btn btn-success';
+                    confirmButton.innerText = '✔';
+                    confirmButton.onclick = function () {
+                        console.log('Number confirmed:', numberInput.value);
+                        currentExpression.push(numberInput.value);
+                        finalizeSelection();
+                    };
+
+                    var inputWrapper = document.createElement('div');
+                    inputWrapper.style.display = 'flex';
+                    inputWrapper.style.alignItems = 'center';
+                    inputWrapper.appendChild(numberInput);
+                    inputWrapper.appendChild(confirmButton);
+
+                    cell.appendChild(inputWrapper);
+                    row.appendChild(cell);
+                } else {
+                    values[field].forEach(function (val) {
+                        var cell = document.createElement('td');
+                        cell.innerText = val;
+                        cell.onclick = function () {
+                            console.log('Value clicked:', val);
+                            currentExpression.push(val);
+                            finalizeSelection();
+                        };
+                        row.appendChild(cell);
+                    });
+                }
+                valueTable.appendChild(row);
+            }
+
+            function finalizeSelection() {
+                console.log('finalizeSelection called');
+                console.log('currentExpression before finalizing:', currentExpression);
+                var formulaText = document.getElementById('formulaText');
+                var expressionStr = '[' + currentExpression.join(' ') + ']';
+                fullExpression.push(expressionStr);
+                console.log('fullExpression after finalizing:', fullExpression);
+                formulaText.value = fullExpression.join(' ');
+                currentExpression = [];
+                showTab('logical_operators');
+            }
+
+            function selectLogicalOperator(logicOp) {
+                console.log('selectLogicalOperator called:', logicOp);
+                var formulaText = document.getElementById('formulaText');
+                console.log('fullExpression before adding logical operator:', fullExpression);
+
+                if (fullExpression.length > 0 && (fullExpression[fullExpression.length - 1] !== 'AND' && fullExpression[fullExpression.length - 1] !== 'OR')) {
+                    fullExpression.push(logicOp);
+                }
+                console.log('fullExpression after adding logical operator:', fullExpression);
+                formulaText.value = fullExpression.join(' ');
+                currentExpression = [];
+                showTab('fields');
+            }
+
+            loadFields();
+            showTab('fields');
+
         });
     </script>
+
 </body>
 
 </html>
