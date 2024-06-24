@@ -6,7 +6,7 @@ const { insertIntoTable,
     fetchDataFromTable,
     deleteFromTable,
     fetchOneFromTable, updateFeed } = require("../../databases/CRUD");
-const { createWebhookToCreateProduct, createWebhookToUpdateProduct, fetchWebHooks } = require("../../api/webHooksBigCommerceApi")
+const { createWebhookToCreateProduct, createWebhookToUpdateProduct, fetchWebHooks, activateAllWebHooks } = require("../../api/webHooksBigCommerceApi")
 const { getProductInfoGoogleMerchant, initializeGoogleAuth, listAllProducts, getInfoOfAllProducts, createExcel } = require("../../api/googleMerchantAPI")
 const routerFeeds = express.Router();
 
@@ -342,6 +342,8 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
                     if (WebHooks.data.length == 0) {
                         await createWebhookToCreateProduct(config, feedId);
                         await createWebhookToUpdateProduct(config, feedId);
+                    }else{
+                        await activateAllWebHooks(config)
                     }
 
                     // Ejecutar las operaciones de conteo en paralelo

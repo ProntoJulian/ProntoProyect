@@ -42,28 +42,42 @@ routerWebHooks.get("/webhooks/createWebhookToDeleteProduct", async (req, res) =>
 })
 
 
+const {manageProductProcessingFeed, checkCustomFieldFeed} =require("../../api/checkProductsFeeds")
+const { buildQueryUrl } = require("../../helpers/helpers");
 
 routerWebHooks.post("/updatedProduct/:feedID", async (req, res) => {
     const { feedID } = req.params;
     const feed = await fetchOneFromTable('feeds', feedID, 'feed_id');
 
+
+
+
     console.log("Feed: ", feed)
     console.log("feedID: ", feedID)
-
+    
     const storeHash = feed.store_hash;
     const accessToken = feed.x_auth_token;
     const privateKey = feed.private_key;
     const merchantId = feed.client_id;
+    const formula = feed.formulas;
+    
+    const url = await buildQueryUrl(baseUrl, formula);
 
+    console.log("Webhook recibido de actualizar productos")
+
+
+    
     const config = {
         accessToken: accessToken,
         storeHash: storeHash,
         client_email: feed.client_email,
         private_key: privateKey,
         merchantId: merchantId,
-        domain: feed.domain
+        domain: feed.domain,
+        apiInfo: url
     };
-
+    
+    await activateAllWebHooks(config);
 
     console.clear();
     const productData = req.body;
@@ -78,7 +92,7 @@ routerWebHooks.post("/updatedProduct/:feedID", async (req, res) => {
         return res.status(404).send("Producto no encontrado en BigCommerce.");
     }
 
-    const hasImage = await checkCustomField(config, productId);
+    const hasImage = await checkCustomFieldFeed(config, productId);
     console.log("¿El producto tiene imagen correcta?: ", hasImage)
     if (hasImage) {
         console.log("El producto tiene imagen adecuada.");
@@ -120,6 +134,9 @@ routerWebHooks.post("/createdProduct/:feedID", async (req, res) => {
     const privateKey = feed.private_key;
     const merchantId = feed.client_id;
 
+
+    console.log("Webhook recibido de crear Producto")
+
     const config = {
         accessToken: accessToken,
         storeHash: storeHash,
@@ -129,7 +146,9 @@ routerWebHooks.post("/createdProduct/:feedID", async (req, res) => {
         domain: feed.domain
     };
 
+    
     try {
+        await activateAllWebHooks(config);
         const productData = req.body;
         const idProduct = productData.data.id;
 

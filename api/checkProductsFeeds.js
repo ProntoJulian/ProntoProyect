@@ -196,5 +196,6 @@ async function countPagesFeed(config) {
 
 module.exports = {
     manageProductProcessingFeed,
-    countPagesFeed
+    countPagesFeed,
+    checkCustomFieldFeed
 }

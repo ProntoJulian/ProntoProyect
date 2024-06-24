@@ -52,9 +52,9 @@ async function fetchWebHooks(config) {
   }
 }
 
-async function activateAllWebHooks() {
+async function activateAllWebHooks(config) {
   try {
-    const webHooksData = await fetchWebHooks(); // Llama a la función que recupera todos los webhooks
+    const webHooksData = await fetchWebHooks(config); // Llama a la función que recupera todos los webhooks
     if (!webHooksData || webHooksData.data.length === 0) {
       console.log("No se encontraron webhooks");
       return;
@@ -66,7 +66,7 @@ async function activateAllWebHooks() {
           ...webhook,
           is_active: true // Cambia is_active a true
         };
-        return updateWebhook(webhook.id, updateData);
+        return updateWebhook(webhook.id, updateData,config);
       }
     });
 
@@ -78,9 +78,8 @@ async function activateAllWebHooks() {
   }
 }
 
-async function updateWebhook(webhookId, updateData) {
-  const storeHash = process.env.STOREHASH; // Debería estar definido en tu archivo .env
-  const accessToken = process.env.ACCESS_TOKEN;
+async function updateWebhook(webhookId, updateData,config) {
+  const { storeHash, accessToken } = config;
   const url = `https://api.bigcommerce.com/stores/${storeHash}/v3/hooks/${webhookId}`;
 
   const options = {
