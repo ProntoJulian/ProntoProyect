@@ -378,6 +378,11 @@
         var selectedFields = new Set();
         var currentExpression = [];
         var fullExpression = [];
+        var customFieldsExpressions = [];
+        var fieldsExpressions = [];
+        var isCustomFieldMode = false;
+        var lastOperator = '';
+        var lastLogicalOperator = '';
 
         function loadFields() {
             console.log('loadFields called');
@@ -412,7 +417,7 @@
             loadFields();
             loadOperators(field);
             showTab('operators');
-            updateFormulaText();
+            updateFormulaText(); // Llamar a la función aquí para actualizar inmediatamente
         }
 
         function loadOperators(field) {
@@ -428,7 +433,7 @@
                     currentExpression.push(op);
                     loadValues(field);
                     showTab('values');
-                    updateFormulaText();
+                    updateFormulaText(); // Llamar a la función aquí para actualizar inmediatamente
                 };
                 row.appendChild(cell);
             });
@@ -492,36 +497,33 @@
             var formulaText = document.getElementById('formulaText');
             var expressionStr = '[' + currentExpression.join(' ') + ']';
             fullExpression.push(expressionStr);
+
+            if (isCustomFieldMode) {
+                customFieldsExpressions.push(expressionStr);
+            } else {
+                fieldsExpressions.push(expressionStr);
+            }
+
             console.log('fullExpression after finalizing:', fullExpression);
-            formulaText.value = fullExpression.join(' ');
+            formulaText.value = buildFormula();
             currentExpression = [];
             showTab('logical_operators');
-            updateFormulaText();  // Llamar a la función aquí
         }
-
-
-
-
-
 
         function selectLogicalOperator(logicOp) {
             console.log('selectLogicalOperator called:', logicOp);
             var formulaText = document.getElementById('formulaText');
             console.log('fullExpression before adding logical operator:', fullExpression);
 
-            // Solo agregar operador lógico si el último no es un operador lógico
             if (fullExpression.length > 0 && (fullExpression[fullExpression.length - 1] !== 'AND' && fullExpression[fullExpression.length - 1] !== 'OR')) {
                 fullExpression.push(logicOp);
+                lastLogicalOperator = logicOp;
             }
+
             console.log('fullExpression after adding logical operator:', fullExpression);
-            formulaText.value = fullExpression.join(' ');
-            currentExpression = [];
+            formulaText.value = buildFormula();
             showTab('fields');
         }
-
-
-
-
 
 
         document.getElementById('deleteAllFormulasButton').addEventListener('click', clearAll);
@@ -531,20 +533,29 @@
             document.getElementById('formulaText').value = '';
             currentExpression = [];
             fullExpression = [];
+            customFieldsExpressions = [];
+            fieldsExpressions = [];
             selectedFields.clear();
             loadFields();
         }
 
 
+
         function clearLast() {
             console.log('clearLast called');
             if (fullExpression.length > 0) {
-                fullExpression.pop();
-                document.getElementById('formulaText').value = fullExpression.join(' ');
+                const lastExpression = fullExpression.pop();
+                if (customFieldsExpressions.includes(lastExpression)) {
+                    customFieldsExpressions.pop();
+                } else {
+                    fieldsExpressions.pop();
+                }
+                document.getElementById('formulaText').value = buildFormula();
                 loadFields();
-                updateFormulaText();  // Asegúrate de llamar a esta función para actualizar el campo en pantalla
+                updateFormulaText();
             }
         }
+
 
         document.addEventListener('DOMContentLoaded', function () {
             console.log('DOMContentLoaded event');
@@ -580,8 +591,9 @@
             result.value = currentSelection; // Pasar el valor al input fuera del modal
             var modal = bootstrap.Modal.getInstance(document.getElementById('formulasModal'));
             modal.hide(); // Cerrar el modal usando Bootstrap 5
-            // Reset fullExpression to ensure it doesn't add duplicate logical operators
             fullExpression = [];
+            customFieldsExpressions = [];
+            fieldsExpressions = [];
             currentExpression = [];
         }
 
@@ -592,6 +604,7 @@
 
             if (customFieldName && customFieldOperator && customFieldValue) {
                 currentExpression = [customFieldName, customFieldOperator, customFieldValue];
+                isCustomFieldMode = true;
                 finalizeSelection();
             } else {
                 alert('Please fill in all custom field details.');
@@ -600,9 +613,29 @@
 
         function updateFormulaText() {
             var formulaText = document.getElementById('formulaText');
-            var expressionStr = '' + currentExpression.join(' ') + '';
-            formulaText.value = fullExpression.join(' ') + ' ' + expressionStr;
+            var customFieldsStr = customFieldsExpressions.join(' AND ');
+            var fullStr = fullExpression.join(' ');
+
+            if (customFieldsStr) {
+                formulaText.value = '(' + customFieldsStr + ') AND ' + fullStr;
+            } else {
+                formulaText.value = fullStr;
+            }
         }
+
+        function buildFormula() {
+            let customFieldsPart = '';
+            if (customFieldsExpressions.length > 0) {
+                customFieldsPart = `(${customFieldsExpressions.join(' ' + lastLogicalOperator + ' ')})`;
+            }
+            let fieldsPart = fieldsExpressions.join(' AND '); // Change this to handle other logical operators as needed
+            if (customFieldsPart && fieldsPart) {
+                return `${customFieldsPart} AND ${fieldsPart}`;
+            } else {
+                return customFieldsPart || fieldsPart;
+            }
+        }
+
     </script>
 </body>
 

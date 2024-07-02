@@ -270,253 +270,6 @@
     <!-- Bootstrap JS bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        var operators = {
-            type: ['=', '!='],
-            price: ['=', '!=', '>', '<', '>=', '<='],
-            is_featured: ['=', '!='],
-            availability: ['=', '!='],
-            is_visible: ['=', '!='],
-            is_free_shipping: ['=', '!='],
-            id: ['=', '!=', '>', '<', '>=', '<='],
-            weight: ['=', '!=', '>', '<', '>=', '<='],
-            condition: ['=', '!='],
-        };
-
-        var values = {
-            type: ['digital', 'physical'],
-            price: [],
-            is_featured: ['true', 'false'],
-            availability: ['available', 'disabled', 'preorder'],
-            is_visible: ['true', 'false'],
-            is_free_shipping: ['true', 'false'],
-            id: [],
-            weight: [],
-            condition: ["new", "used", "refurbished"]
-        };
-
-        var fields = ['type', 'price', 'is_featured', 'availability', 'is_visible', 'is_free_shipping', 'id', 'weight', 'condition'];
-        var selectedFields = new Set();
-        var currentExpression = [];
-        var fullExpression = [];
-
-        function loadFields() {
-            console.log('loadFields called');
-            var fieldsTable = document.getElementById('fieldsTable');
-            fieldsTable.innerHTML = '';
-            var row = document.createElement('tr');
-            fields.forEach(function (field, index) {
-                var cell = document.createElement('td');
-                cell.innerText = field;
-                cell.className = (selectedFields.has(field) && field !== 'price' && field !== 'id' && field !== 'weight') ? 'disabled' : '';
-                cell.onclick = function () {
-                    console.log('Field clicked:', field);
-                    if (!selectedFields.has(field) || field === 'price' || field === 'id' || field === 'weight') {
-                        selectField(field);
-                    }
-                };
-                row.appendChild(cell);
-                if ((index + 1) % 4 === 0) {
-                    fieldsTable.appendChild(row);
-                    row = document.createElement('tr');
-                }
-            });
-            fieldsTable.appendChild(row);
-        }
-
-        function selectField(field) {
-            console.log('selectField called:', field);
-            currentExpression = [field];
-            if (field !== 'price' && field !== 'id' && field !== 'weight') {
-                selectedFields.add(field);
-            }
-            loadFields();
-            loadOperators(field);
-            showTab('operators');
-            updateFormulaText();  // Llamar a la función aquí
-        }
-
-        function loadOperators(field) {
-            console.log('loadOperators called:', field);
-            var operatorTable = document.getElementById('operatorTable');
-            operatorTable.innerHTML = '';
-            var row = document.createElement('tr');
-            operators[field].forEach(function (op) {
-                var cell = document.createElement('td');
-                cell.innerText = op;
-                cell.onclick = function () {
-                    console.log('Operator clicked:', op);
-                    currentExpression.push(op);
-                    loadValues(field);
-                    showTab('values');
-                    updateFormulaText();  // Llamar a la función aquí
-                };
-                row.appendChild(cell);
-            });
-            operatorTable.appendChild(row);
-        }
-
-        function loadValues(field) {
-            console.log('loadValues called:', field);
-            var valueTable = document.getElementById('valueTable');
-            valueTable.innerHTML = '';
-            var row = document.createElement('tr');
-            if (field === 'price' || field === 'id' || field === 'weight') {
-                var cell = document.createElement('td');
-                var numberInput = document.createElement('input');
-                numberInput.type = 'number';
-                numberInput.min = 0; // Esto asegura que el número no puede ser negativo
-                numberInput.className = 'form-control';
-
-                var confirmButton = document.createElement('button');
-                confirmButton.className = 'btn btn-success';
-                confirmButton.innerText = '✔';
-                confirmButton.onclick = function () {
-                    if (numberInput.value >= 0) { // Validación para asegurar que el número no es negativo
-                        console.log('Number confirmed:', numberInput.value);
-                        currentExpression.push(numberInput.value);
-                        finalizeSelection();
-                        updateFormulaText();  // Llamar a la función aquí
-                    } else {
-                        alert("Please enter a non-negative number."); // Mensaje de alerta si el número es negativo
-                    }
-                };
-
-                var inputWrapper = document.createElement('div');
-                inputWrapper.style.display = 'flex';
-                inputWrapper.style.alignItems = 'center';
-                inputWrapper.appendChild(numberInput);
-                inputWrapper.appendChild(confirmButton);
-
-                cell.appendChild(inputWrapper);
-                row.appendChild(cell);
-            } else {
-                values[field].forEach(function (val) {
-                    var cell = document.createElement('td');
-                    cell.innerText = val;
-                    cell.onclick = function () {
-                        console.log('Value clicked:', val);
-                        currentExpression.push(val);
-                        finalizeSelection();
-                        updateFormulaText();  // Llamar a la función aquí
-                    };
-                    row.appendChild(cell);
-                });
-            }
-            valueTable.appendChild(row);
-        }
-
-
-        function finalizeSelection() {
-            console.log('finalizeSelection called');
-            console.log('currentExpression before finalizing:', currentExpression);
-            var formulaText = document.getElementById('formulaText');
-            var expressionStr = '[' + currentExpression.join(' ') + ']';
-            fullExpression.push(expressionStr);
-            console.log('fullExpression after finalizing:', fullExpression);
-            formulaText.value = fullExpression.join(' ');
-            currentExpression = [];
-            showTab('logical_operators');
-        }
-
-
-
-
-
-
-        function selectLogicalOperator(logicOp) {
-            console.log('selectLogicalOperator called:', logicOp);
-            var formulaText = document.getElementById('formulaText');
-            console.log('fullExpression before adding logical operator:', fullExpression);
-
-            // Solo agregar operador lógico si el último no es un operador lógico
-            if (fullExpression.length > 0 && (fullExpression[fullExpression.length - 1] !== 'AND' && fullExpression[fullExpression.length - 1] !== 'OR')) {
-                fullExpression.push(logicOp);
-            }
-            console.log('fullExpression after adding logical operator:', fullExpression);
-            formulaText.value = fullExpression.join(' ');
-            currentExpression = [];
-            showTab('fields');
-        }
-
-
-
-
-
-
-        document.getElementById('deleteAllFormulasButton').addEventListener('click', clearAll);
-
-        function clearAll() {
-            console.log('clearAll called');
-            document.getElementById('formulaText').value = '';
-            currentExpression = [];
-            fullExpression = [];
-            selectedFields.clear();
-            loadFields();
-        }
-
-
-        function clearLast() {
-            console.log('clearLast called');
-            if (fullExpression.length > 0) {
-                fullExpression.pop();
-                document.getElementById('formulaText').value = fullExpression.join(' ');
-                loadFields();
-                updateFormulaText();  // Asegúrate de llamar a esta función para actualizar el campo en pantalla
-            }
-        }
-
-
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log('DOMContentLoaded event');
-            loadFields();
-            showTab('fields'); // Asegúrate de que el primer tab se muestre al cargar
-        });
-
-
-        function showTab(tabName) {
-            console.log('showTab called:', tabName);
-            var tabs = document.getElementsByClassName('tab-content');
-            for (var i = 0; i < tabs.length; i++) {
-                tabs[i].style.display = 'none';
-            }
-            document.getElementById(tabName).style.display = 'block';
-        }
-
-        // Agregar evento de clic al campo de texto "formulas" para abrir el modal
-        document.getElementById('formulas').addEventListener('click', function () {
-            console.log('Formulas clicked');
-            var modal = new bootstrap.Modal(document.getElementById('formulasModal'));
-            modal.show();
-        });
-
-        document.getElementById('finishFormulasButton').addEventListener('click', finalize);
-
-        function finalize() {
-            console.log('finalize called');
-            alert("La fórmula ha sido finalizada.");
-            var result = document.getElementById('formulas'); // Cambia 'result' a 'formulas'
-            var currentSelection = document.getElementById('formulaText').value.trim(); // Usar el valor del input dentro del modal
-            result.value = currentSelection; // Pasar el valor al input fuera del modal
-            var modal = bootstrap.Modal.getInstance(document.getElementById('formulasModal'));
-            modal.hide(); // Cerrar el modal usando Bootstrap 5
-            // Reset fullExpression to ensure it doesn't add duplicate logical operators
-            fullExpression = [];
-            currentExpression = [];
-        }
-
-        function addCustomField() {
-            var customFieldName = document.getElementById('customFieldName').value;
-            var customFieldOperator = document.getElementById('customFieldOperator').value;
-            var customFieldValue = document.getElementById('customFieldValue').value;
-
-            if (customFieldName && customFieldOperator && customFieldValue) {
-                currentExpression = [customFieldName, customFieldOperator, customFieldValue];
-                finalizeSelection();
-            } else {
-                alert('Please fill in all custom field details.');
-            }
-        }
-
 
         // Funcionalidad de crear nuevo feed
         document.getElementById('createButton').addEventListener('click', function () {
@@ -571,7 +324,7 @@
                 .then(data => {
                     if (data.message === "Feed created successfully") {
                         alert("Feed created successfully");
-                        window.location.href = '/app/feeds';
+                        window.location.href = "/app/feeds";
                     } else {
                         alert("Error creating feed");
                     }
@@ -582,19 +335,299 @@
                 });
         });
 
-
         // Funcionalidad de cancelar en el modal de creación
-        document.getElementById('cancelButton').addEventListener('click', function () {
-            window.location.href = '/app/feeds';
+            document.getElementById('cancelButton').addEventListener('click', function () {
+                window.location.href = "/app/feeds";
+            });
+
+
+        var operators = {
+            type: ['=', '!='],
+            price: ['=', '!=', '>', '<', '>=', '<='],
+            is_featured: ['=', '!='],
+            availability: ['=', '!='],
+            is_visible: ['=', '!='],
+            is_free_shipping: ['=', '!='],
+            id: ['=', '!=', '>', '<', '>=', '<='],
+            weight: ['=', '!=', '>', '<', '>=', '<='],
+            condition: ['=', '!='],
+        };
+
+        var values = {
+            type: ['digital', 'physical'],
+            price: [],
+            is_featured: ['true', 'false'],
+            availability: ['available', 'disabled', 'preorder'],
+            is_visible: ['true', 'false'],
+            is_free_shipping: ['true', 'false'],
+            id: [],
+            weight: [],
+            condition: ["new", "used", "refurbished"]
+        };
+
+        var fields = ['type', 'price', 'is_featured', 'availability', 'is_visible', 'is_free_shipping', 'id', 'weight', 'condition'];
+        var selectedFields = new Set();
+        var currentExpression = [];
+        var fullExpression = [];
+        var customFieldsExpressions = [];
+        var fieldsExpressions = [];
+        var isCustomFieldMode = false;
+        var lastOperator = '';
+        var lastLogicalOperator = '';
+
+        function loadFields() {
+            console.log('loadFields called');
+            var fieldsTable = document.getElementById('fieldsTable');
+            fieldsTable.innerHTML = '';
+            var row = document.createElement('tr');
+            fields.forEach(function (field, index) {
+                var cell = document.createElement('td');
+                cell.innerText = field;
+                cell.className = (selectedFields.has(field) && field !== 'price' && field !== 'id' && field !== 'weight') ? 'disabled' : '';
+                cell.onclick = function () {
+                    console.log('Field clicked:', field);
+                    if (!selectedFields.has(field) || field === 'price' || field === 'id' || field === 'weight') {
+                        selectField(field);
+                    }
+                };
+                row.appendChild(cell);
+                if ((index + 1) % 4 === 0) {
+                    fieldsTable.appendChild(row);
+                    row = document.createElement('tr');
+                }
+            });
+            fieldsTable.appendChild(row);
+        }
+
+        function selectField(field) {
+            console.log('selectField called:', field);
+            currentExpression = [field];
+            if (field !== 'price' && field !== 'id' && field !== 'weight') {
+                selectedFields.add(field);
+            }
+            loadFields();
+            loadOperators(field);
+            showTab('operators');
+            updateFormulaText(); // Llamar a la función aquí para actualizar inmediatamente
+        }
+
+
+        function loadOperators(field) {
+            console.log('loadOperators called:', field);
+            var operatorTable = document.getElementById('operatorTable');
+            operatorTable.innerHTML = '';
+            var row = document.createElement('tr');
+            operators[field].forEach(function (op) {
+                var cell = document.createElement('td');
+                cell.innerText = op;
+                cell.onclick = function () {
+                    console.log('Operator clicked:', op);
+                    currentExpression.push(op);
+                    loadValues(field);
+                    showTab('values');
+                    updateFormulaText(); // Llamar a la función aquí para actualizar inmediatamente
+                };
+                row.appendChild(cell);
+            });
+            operatorTable.appendChild(row);
+        }
+
+
+        function loadValues(field) {
+            console.log('loadValues called:', field);
+            var valueTable = document.getElementById('valueTable');
+            valueTable.innerHTML = '';
+            var row = document.createElement('tr');
+            if (field === 'price' || field === 'id' || field === 'weight') {
+                var cell = document.createElement('td');
+                var numberInput = document.createElement('input');
+                numberInput.type = 'number';
+                numberInput.min = 0; // Esto asegura que el número no puede ser negativo
+                numberInput.className = 'form-control';
+
+                var confirmButton = document.createElement('button');
+                confirmButton.className = 'btn btn-success';
+                confirmButton.innerText = '✔';
+                confirmButton.onclick = function () {
+                    if (numberInput.value >= 0) { // Validación para asegurar que el número no es negativo
+                        console.log('Number confirmed:', numberInput.value);
+                        currentExpression.push(numberInput.value);
+                        finalizeSelection();
+                        updateFormulaText();  // Llamar a la función aquí
+                    } else {
+                        alert("Please enter a non-negative number."); // Mensaje de alerta si el número es negativo
+                    }
+                };
+
+                var inputWrapper = document.createElement('div');
+                inputWrapper.style.display = 'flex';
+                inputWrapper.style.alignItems = 'center';
+                inputWrapper.appendChild(numberInput);
+                inputWrapper.appendChild(confirmButton);
+
+                cell.appendChild(inputWrapper);
+                row.appendChild(cell);
+            } else {
+                values[field].forEach(function (val) {
+                    var cell = document.createElement('td');
+                    cell.innerText = val;
+                    cell.onclick = function () {
+                        console.log('Value clicked:', val);
+                        currentExpression.push(val);
+                        finalizeSelection();
+                        updateFormulaText();  // Llamar a la función aquí
+                    };
+                    row.appendChild(cell);
+                });
+            }
+            valueTable.appendChild(row);
+        }
+
+        function finalizeSelection() {
+            console.log('finalizeSelection called');
+            console.log('currentExpression before finalizing:', currentExpression);
+            var formulaText = document.getElementById('formulaText');
+            var expressionStr = '[' + currentExpression.join(' ') + ']';
+            fullExpression.push(expressionStr);
+
+            if (isCustomFieldMode) {
+                customFieldsExpressions.push(expressionStr);
+            } else {
+                fieldsExpressions.push(expressionStr);
+            }
+
+            console.log('fullExpression after finalizing:', fullExpression);
+            formulaText.value = buildFormula();
+            currentExpression = [];
+            showTab('logical_operators');
+        }
+
+
+        function selectLogicalOperator(logicOp) {
+            console.log('selectLogicalOperator called:', logicOp);
+            var formulaText = document.getElementById('formulaText');
+            console.log('fullExpression before adding logical operator:', fullExpression);
+
+            if (fullExpression.length > 0 && (fullExpression[fullExpression.length - 1] !== 'AND' && fullExpression[fullExpression.length - 1] !== 'OR')) {
+                fullExpression.push(logicOp);
+                lastLogicalOperator = logicOp;
+            }
+
+            console.log('fullExpression after adding logical operator:', fullExpression);
+            formulaText.value = buildFormula();
+            showTab('fields');
+        }
+
+
+        document.getElementById('deleteAllFormulasButton').addEventListener('click', clearAll);
+
+        function clearAll() {
+            console.log('clearAll called');
+            document.getElementById('formulaText').value = '';
+            currentExpression = [];
+            fullExpression = [];
+            customFieldsExpressions = [];
+            fieldsExpressions = [];
+            selectedFields.clear();
+            loadFields();
+        }
+
+        function clearLast() {
+            console.log('clearLast called');
+            if (fullExpression.length > 0) {
+                const lastExpression = fullExpression.pop();
+                if (customFieldsExpressions.includes(lastExpression)) {
+                    customFieldsExpressions.pop();
+                } else {
+                    fieldsExpressions.pop();
+                }
+                document.getElementById('formulaText').value = buildFormula();
+                loadFields();
+                updateFormulaText();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('DOMContentLoaded event');
+            loadFields();
+            showTab('fields'); // Asegúrate de que el primer tab se muestre al cargar
         });
+
+        function showTab(tabName) {
+            console.log('showTab called:', tabName);
+            var tabs = document.getElementsByClassName('tab-content');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].style.display = 'none';
+            }
+            document.getElementById(tabName).style.display = 'block';
+        }
+
+        document.getElementById('formulas').addEventListener('click', function () {
+            console.log('Formulas clicked');
+            var modal = new bootstrap.Modal(document.getElementById('formulasModal'));
+            modal.show();
+        });
+
+        document.getElementById('finishFormulasButton').addEventListener('click', finalize);
+
+        function finalize() {
+            console.log('finalize called');
+            alert("La fórmula ha sido finalizada.");
+            var result = document.getElementById('formulas'); // Cambia 'result' a 'formulas'
+            var currentSelection = document.getElementById('formulaText').value.trim(); // Usar el valor del input dentro del modal
+            result.value = currentSelection; // Pasar el valor al input fuera del modal
+            var modal = bootstrap.Modal.getInstance(document.getElementById('formulasModal'));
+            modal.hide(); // Cerrar el modal usando Bootstrap 5
+            fullExpression = [];
+            customFieldsExpressions = [];
+            fieldsExpressions = [];
+            currentExpression = [];
+        }
+
+        function addCustomField() {
+            var customFieldName = document.getElementById('customFieldName').value;
+            var customFieldOperator = document.getElementById('customFieldOperator').value;
+            var customFieldValue = document.getElementById('customFieldValue').value;
+
+            if (customFieldName && customFieldOperator && customFieldValue) {
+                currentExpression = [customFieldName, customFieldOperator, customFieldValue];
+                isCustomFieldMode = true;
+                finalizeSelection();
+            } else {
+                alert('Please fill in all custom field details.');
+            }
+        }
 
         function updateFormulaText() {
             var formulaText = document.getElementById('formulaText');
-            var expressionStr = '' + currentExpression.join(' ') + '';
-            formulaText.value = fullExpression.join(' ') + ' ' + expressionStr;
+            var customFieldsStr = customFieldsExpressions.join(' AND ');
+            var fullStr = fullExpression.join(' ');
+
+            if (customFieldsStr) {
+                formulaText.value = '(' + customFieldsStr + ') AND ' + fullStr;
+            } else {
+                formulaText.value = fullStr;
+            }
         }
 
+        function buildFormula() {
+            let customFieldsPart = '';
+            if (customFieldsExpressions.length > 0) {
+                customFieldsPart = `(${customFieldsExpressions.join(' ' + lastLogicalOperator + ' ')})`;
+            }
+            let fieldsPart = fieldsExpressions.join(' AND '); // Change this to handle other logical operators as needed
+            if (customFieldsPart && fieldsPart) {
+                return `${customFieldsPart} AND ${fieldsPart}`;
+            } else {
+                return customFieldsPart || fieldsPart;
+            }
+        }
+
+
     </script>
+
+
+
 </body>
 
 </html>

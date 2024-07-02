@@ -38,7 +38,6 @@ async function transformProduct(config, bcProduct) {
   };
 
   if (bcProduct.gtin !== "") {
-    console.log()
     googleProductFormat.gtin = bcProduct.gtin
   }
 
@@ -47,7 +46,9 @@ async function transformProduct(config, bcProduct) {
 
     try {
       const Category = await fetchCategoryNameById(config, bcProduct.categories[0]);
-      googleProductFormat.productTypes = Category
+      if (Category) {
+        googleProductFormat.productTypes = Category
+      }
     } catch (error) {
       console.error('Error fetching category:', error);
     }
@@ -55,10 +56,9 @@ async function transformProduct(config, bcProduct) {
 
   if (bcProduct.sale_price > 0 && bcProduct.sale_price > bcProduct.price) {
     googleProductFormat.sale_price = `<g:sale_price>${parseFloat(bcProduct.sale_price).toFixed(2)} USD</g:sale_price>`;
-
   }
 
-  if (bcProduct.fixed_cost_shipping_price > 0) {
+  if (bcProduct.fixed_cost_shipping_price > 0 && !bcProduct.is_free_shipping) {
     googleProductFormat.shipping = [{
       country: "US",
       service: "Standard shipping",
@@ -66,6 +66,17 @@ async function transformProduct(config, bcProduct) {
         currency: "USD",
         value: bcProduct.fixed_cost_shipping_price.toString(),
       },
+    }];
+  }
+
+  if (bcProduct.is_free_shipping) {
+    googleProductFormat.shipping = [{
+      country: "US",
+      service: "Standard shipping",
+      price: {
+        currency: "USD",
+        value: "0.00",
+      }
     }];
   }
 
@@ -249,7 +260,7 @@ async function createCronJob(feedId, configCron) {
         pm2.start({
           script: scriptPath,
           name: `cron-task-${feedId}`,
-          cron: '0 23 * * *',  // Todos los días a las 8:45 am
+          cron: '0 * * * *',  // Todos los días a las 8:45 am
           args: [feedId],  // Pasar feedId como argumento de línea de comandos
           autorestart: false
         }, (err, apps) => {
@@ -260,23 +271,7 @@ async function createCronJob(feedId, configCron) {
         });
       });
 
-      // Crear un trabajo cron para ejecutar deleteProductsWeekly.js todos los días a las 11 pm
-      const deleteCronJob = new Promise((res, rej) => {
-        pm2.start({
-          script: deleteScriptPath,
-          name: `delete-products-weekly-${feedId}`,
-          cron: '0 6 * * *',  // Todos los días a las 11 pm
-          args: [feedId],
-          autorestart: false
-        }, (err, apps) => {
-          if (err) {
-            return rej(err);
-          }
-          res(`Trabajo cron para eliminar productos creado exitosamente para feedId: ${feedId}`);
-        });
-      });
-
-      Promise.all([mainCronJob, deleteCronJob])
+      Promise.all([mainCronJob])
         .then(messages => {
           pm2.disconnect();
           resolve(messages);
@@ -307,24 +302,25 @@ async function buildQueryUrl(baseUrl, expression) {
     "condition",
   ];
   const queryParams = [];
-  const customFields = [];
   let currentGroup = [];
-  const conditions = expression.split(/(AND|OR)/).map((cond) => cond.trim());
+  let lastLogicOperator = "AND";
+
+  const conditions = expression.split(/(AND|OR|\(|\))/).map((cond) => cond.trim()).filter(cond => cond);
 
   conditions.forEach((condition, index) => {
-    if (condition === "AND" || condition === "OR") {
-      if (index === conditions.length - 1) {
-        // Ignorar si 'AND' o 'OR' están al final
-        return;
-      }
+    if (condition === "(" || condition === ")") {
+      // Ignorar paréntesis
+      return;
+    } else if (condition === "AND" || condition === "OR") {
+      lastLogicOperator = condition;
       if (currentGroup.length > 0) {
         queryParams.push(currentGroup.join("&"));
+        currentGroup = [];
       }
       queryParams.push(condition);
-      currentGroup = [];
     } else {
-      // Eliminar corchetes
-      condition = condition.replace(/\[|\]/g, "");
+      // Eliminar corchetes y paréntesis
+      condition = condition.replace(/[\[\]\(\)]/g, "");
 
       const [field, operator, value] = condition.split(/\s+/);
 
@@ -342,9 +338,6 @@ async function buildQueryUrl(baseUrl, expression) {
           };
           currentGroup.push(`${field}:${opMap[operator]}=${value}`);
         }
-      } else if (field && value) {
-        // Es un campo personalizado
-        customFields.push({ name: field, value: value });
       }
     }
   });
@@ -358,36 +351,87 @@ async function buildQueryUrl(baseUrl, expression) {
   let finalUrl = baseUrl;
   let isFirstGroup = true;
   queryParams.forEach((param) => {
-    if (param === "AND") {
-      finalUrl += "&";
-    } else if (param === "OR") {
-      finalUrl += "|";
-    } else {
+    if (param !== "AND" && param !== "OR") {
       if (isFirstGroup) {
         finalUrl += `?${param}`;
         isFirstGroup = false;
       } else {
         finalUrl += `&${param}`;
       }
+    } else {
+      // Agregar operadores lógicos sólo si ya hay parámetros en la URL
+      if (finalUrl.includes('?')) {
+        finalUrl += param === "AND" ? "&" : "|";
+      }
     }
   });
 
-  // Reemplazar combinaciones incorrectas de `|&` por `|`
-  finalUrl = finalUrl.replace(/\|\&/g, "|");
+  // Limpiar casos donde pueda haber |& al inicio
+  finalUrl = finalUrl.replace('|&', '|');
 
-  // Reemplazar combinaciones incorrectas de `&&` por `&`
-  finalUrl = finalUrl.replace(/&&/g, "&");
-
-  // Reemplazar combinaciones incorrectas de `&?` por `?`
-  finalUrl = finalUrl.replace(/&\?/g, "?");
-
-  // Eliminar el último carácter '&' si está presente
-  if (finalUrl.endsWith("&")) {
-    finalUrl = finalUrl.slice(0, -1);
+  // Si no hay parámetros en queryParams, devolver solo el baseUrl
+  if (queryParams.length === 0) {
+    finalUrl = baseUrl;
   }
 
-  return { url: finalUrl, customFields };
+  // Llamar a organizeCustomFields
+  const customFieldGroups = organizeCustomFields(expression);
+
+  finalUrl = finalUrl.replace('?&', '?').replace('&&', '&').replace('|&', '|');
+
+  return {
+    url: finalUrl,
+    customFields: customFieldGroups
+  };
 }
+
+
+function organizeCustomFields(expression) {
+  const customFieldGroups = [];
+  let currentCustomGroup = [];
+  let lastLogicOperator = "AND";
+  let inCustomFieldGroup = false;
+
+  const conditions = expression.split(/(AND|OR|\(|\))/).map((cond) => cond.trim()).filter(cond => cond);
+
+  conditions.forEach((condition, index) => {
+    if (condition === "(") {
+      inCustomFieldGroup = true;
+    } else if (condition === ")") {
+      if (currentCustomGroup.length > 0) {
+        customFieldGroups.push({
+          logic: lastLogicOperator,
+          fields: currentCustomGroup
+        });
+        currentCustomGroup = [];
+      }
+      inCustomFieldGroup = false;
+    } else if (condition === "AND" || condition === "OR") {
+      lastLogicOperator = condition;
+    } else {
+      // Eliminar corchetes
+      condition = condition.replace(/\[|\]/g, "");
+
+      const [field, operator, value] = condition.split(/\s+/);
+      if (inCustomFieldGroup && field && value) {
+        currentCustomGroup.push({ name: field, value: value });
+      }
+    }
+  });
+
+  // Añadir el último grupo si existe
+  if (currentCustomGroup.length > 0) {
+    customFieldGroups.push({
+      logic: lastLogicOperator,
+      fields: currentCustomGroup
+    });
+  }
+
+  return customFieldGroups;
+}
+
+
+
 
 
 

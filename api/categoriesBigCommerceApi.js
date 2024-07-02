@@ -11,6 +11,9 @@ async function getConfigCategories(config) {
   };
 }
 
+const fetch = require('node-fetch');
+
+
 async function fetchCategoryNameById(config, categoryId) {
   const { storeHash } = config;
   const options = await getConfigCategories(config);
@@ -18,14 +21,11 @@ async function fetchCategoryNameById(config, categoryId) {
 
   try {
     const response = await fetch(url, options);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status en Category: ${response}`);
-    }
     const categoryData = await response.json();
     return categoryData.data.name; // Retorna el nombre de la categoría
   } catch (error) {
-    console.error(`Error fetching category name for ID ${categoryId}:`, error);
-    throw error; // O puedes optar por devolver un valor por defecto o manejar de otra manera
+    console.error(`Error fetching category name for ID ${categoryId}:`/*, error*/);
+    return 1// O puedes optar por devolver un valor por defecto o manejar de otra manera
   }
 }
 

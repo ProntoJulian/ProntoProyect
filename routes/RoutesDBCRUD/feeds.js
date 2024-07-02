@@ -216,7 +216,7 @@ routerFeeds.get("/feeds/getFeed/:feedId", authenticateToken, async (req, res) =>
     }
 });
 
-const {manageProductProcessingFeed, countPagesFeed} =require("../../api/checkProductsFeeds")
+const {manageProductProcessingFeed, countPagesFeed, countPagesNew} =require("../../api/checkProductsFeeds")
 
 routerFeeds.get("/feeds/synchronize2/:feedId", authenticateToken, async (req, res) => {
     const { feedId } = req.params;
@@ -326,14 +326,22 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
                 apiInfo: url
             };
 
+            const configCron = {
+                selectedDays: feed.selectedDays,
+                intervalHour: feed.intervalHour,
+                isActive: feed.isActive
+            }
 
+            console.log("Url Formada: ", JSON.stringify(url.customFields, null, 2));
+            console.log("Url Formada: ",url.url);
 
             // Ejecutar las operaciones asíncronas en segundo plano
             setImmediate(async () => {
                 try {
-                    const conteoPages = await countPagesFeed(config);
+                    const conteoPages = await countPagesNew(config);
                     console.log("Conteo: ", conteoPages);
                     const conteoByTipo = await manageProductProcessingFeed(config, conteoPages);
+                    
 
                     console.log("Conteo: ", conteoPages);
 
@@ -359,7 +367,9 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
                         preorder_products: preorderProducts
                     };
 
-                    /*await createCronJob(feedId,configCron);*/
+                    
+
+                    await createCronJob(feedId,configCron);
 
                     await updateFeed(feedId, updateData);
 
@@ -381,6 +391,112 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
 
     }
 });
+
+const {manageProductSync, findMissingProductsInBigCommerce} =require("../../api/checkProductsFeeds")
+const { listAllProductIds } = require("../../api/googleMerchantAPI")
+
+routerFeeds.get("/feeds/CreateCron/:feedId", async (req, res) => {
+    const { feedId } = req.params;
+    try {
+        const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
+
+
+
+        if (feed) {
+
+            
+            const storeHash = feed.store_hash;
+            const accessToken = feed.x_auth_token;
+            const privateKey = feed.private_key; // decrypt(JSON.parse(feed.private_key));
+            const merchantId = feed.client_id;
+            const formula = feed.formulas;
+
+            console.log("Formula: ", formula)
+            console.log("Store Hash: ", storeHash);
+            console.log("Access Token: ", accessToken);
+
+            const baseUrl = `https://api.bigcommerce.com/stores/${storeHash}/v3/catalog/products`;
+            const url = await buildQueryUrl(baseUrl, formula);
+
+            const config = {
+                accessToken: accessToken,
+                storeHash: storeHash,
+                client_email: feed.client_email,
+                private_key: privateKey,
+                merchantId: merchantId,
+                domain: feed.domain,
+                apiInfo: url
+            };
+
+            const configCron = {
+                selectedDays: feed.selectedDays,
+                intervalHour: feed.intervalHour,
+                isActive: feed.isActive
+            }
+
+            console.log("Url Formada: ", JSON.stringify(url.customFields, null, 2));
+            console.log("Url Formada: ",url.url);
+
+            // Ejecutar las operaciones asíncronas en segundo plano
+            setImmediate(async () => {
+                try {
+                    const productsSKUs = await listAllProductIds(config);
+                    const conteoPages = await countPagesNew(config);
+                    console.log("Conteo: ", conteoPages);
+                    
+                    //const productosEliminar = await findMissingProductsInBigCommerce(config, conteoPages,productsSKUs);
+                    const conteoByTipo = await manageProductSync(config, conteoPages,productsSKUs);
+                    
+
+                    console.log("Conteo: ", conteoPages);
+
+                    const WebHooks = await fetchWebHooks(config);
+
+                    if (WebHooks.data.length == 0) {
+                        await createWebhookToCreateProduct(config, feedId);
+                        await createWebhookToUpdateProduct(config, feedId);
+                    }else{
+                        await activateAllWebHooks(config)
+                    }
+
+                    // Ejecutar las operaciones de conteo en paralelo
+                    const [totalProductsGM, totalProductsBC, preorderProducts] = await Promise.all([
+                        listAllProducts(config),
+                        countTotalProducts(config),
+                        countProductsByAvailability(config, "preorder")
+                    ]);
+
+                    const updateData = {
+                        total_products_bc: totalProductsBC,
+                        active_products_gm: totalProductsGM,
+                        preorder_products: preorderProducts
+                    };
+
+                    
+
+                    await createCronJob(feedId,configCron);
+
+                    await updateFeed(feedId, updateData);
+
+                    // Responder inmediatamente al cliente
+                    res.status(200).json({ message: "Sincronización completada y feed actualizado" });
+                } catch (error) {
+                    console.error('Error durante la sincronización en segundo plano:', error);
+                    // Manejo de errores adicional si es necesario
+                    res.status(404).json({ message: "Hubo un error en la sincronización, verifique los datos ingresados" });
+                }
+            });
+
+        } else {
+            res.status(404).json({ message: "Feed no encontrado" });
+        }
+    } catch (error) {
+        console.error('Error al obtener el feed:', error);
+        res.status(500).json({ message: "Error interno del servidor al intentar obtener el feed" });
+
+    }
+});
+
 
 
 
