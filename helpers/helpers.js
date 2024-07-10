@@ -54,10 +54,6 @@ async function transformProduct(config, bcProduct) {
     }
   }
 
-  if (bcProduct.sale_price > 0 && bcProduct.sale_price > bcProduct.price) {
-    googleProductFormat.sale_price = `<g:sale_price>${parseFloat(bcProduct.sale_price).toFixed(2)} USD</g:sale_price>`;
-  }
-
   if (bcProduct.fixed_cost_shipping_price > 0 && !bcProduct.is_free_shipping) {
     googleProductFormat.shipping = [{
       country: "US",
@@ -177,7 +173,6 @@ function logMemoryUsage(label) {
 
 
 
-
 async function generateCronPattern(configCron) {
   const { selectedDays, intervalHour, isActive } = configCron;
 
@@ -195,20 +190,21 @@ async function generateCronPattern(configCron) {
     'sunday': '0'
   };
 
-  if (isActive) {
-    console.log("Cron is not active. Skipping cron creation.");
-    return [];
-  }
-
   // Split the selectedDays string into an array
   const daysArray = selectedDays.split(';').map(day => day.trim());
 
-  // Generate cron expressions for each day
-  return daysArray.map(day => {
-    const cronDay = dayMap[day.toLowerCase()];
-    return `0 */${intervalHour} * * ${cronDay}`;
-  });
+  // Check if all days are selected
+  const allDaysSelected = daysArray.length === 7;
+
+  if (allDaysSelected) {
+    return `0 */${intervalHour} * * *`; // Single cron pattern for every hour on all days
+  }
+
+  // Generate a single cron expression for all selected days
+  const cronDays = daysArray.map(day => dayMap[day.toLowerCase()]).join(',');
+  return `0 */${intervalHour} * * ${cronDays}`;
 }
+
 
 const createSimpleCron = async () => {
   const cronExpression = '*/10 * * * * *'; // cada 10 segundos
@@ -230,23 +226,19 @@ const createSimpleCron = async () => {
 
 const pm2 = require('pm2');
 // Usar fetchWithRetry en lugar de fetch directamente
-
-// Función para crear el trabajo cron
-
 async function createCronJob(feedId, configCron) {
   const scriptPath = 'cron-task.js';
-  const deleteScriptPath = 'deleteProductsWeekly.js';
 
   // Asegúrate de que `configCron` tiene los valores correctos
   console.log('configCron:', configCron);
 
-  const cronPatterns = await generateCronPattern(configCron);
+  const cronPattern = await generateCronPattern(configCron);
 
-  // Verifica que `cronPatterns` es un array
-  console.log('cronPatterns:', cronPatterns);
+  // Verifica que `cronPattern` es una cadena válida
+  console.log('cronPattern:', cronPattern);
 
-  if (!Array.isArray(cronPatterns)) {
-    return Promise.reject(new Error('generateCronPattern did not return an array'));
+  if (!cronPattern || typeof cronPattern !== 'string') {
+    return Promise.reject(new Error('generateCronPattern did not return a valid string'));
   }
 
   return new Promise((resolve, reject) => {
@@ -255,31 +247,46 @@ async function createCronJob(feedId, configCron) {
         return reject(err);
       }
 
-      // Crear un trabajo cron que se ejecute todos los días a las 8:45
-      const mainCronJob = new Promise((res, rej) => {
+      // Primero, verifica si el trabajo cron existe
+      pm2.describe(`cron-task-${feedId}`, (err, processDescription) => {
+        if (err) {
+          pm2.disconnect();
+          return reject(err);
+        }
+
+        // Si el proceso existe, elimínalo
+        if (processDescription && processDescription.length > 0) {
+          pm2.delete(`cron-task-${feedId}`, (err) => {
+            if (err && err.message !== 'Process or namespace not found') {
+              pm2.disconnect();
+              return reject(err);
+            }
+
+            // Luego, crea el nuevo trabajo cron
+            startNewCronJob();
+          });
+        } else {
+          // Si el proceso no existe, crea el nuevo trabajo cron directamente
+          startNewCronJob();
+        }
+      });
+
+      function startNewCronJob() {
         pm2.start({
           script: scriptPath,
           name: `cron-task-${feedId}`,
-          cron: '0 * * * *',  // Todos los días a las 8:45 am
-          args: [feedId],  // Pasar feedId como argumento de línea de comandos
+          cron: cronPattern,
+          args: [feedId],
           autorestart: false
         }, (err, apps) => {
           if (err) {
-            return rej(err);
+            pm2.disconnect();
+            return reject(err);
           }
-          res(`Trabajo cron creado exitosamente para feedId: ${feedId} con expresión cron: 45 8 * * *`);
-        });
-      });
-
-      Promise.all([mainCronJob])
-        .then(messages => {
           pm2.disconnect();
-          resolve(messages);
-        })
-        .catch(err => {
-          pm2.disconnect();
-          reject(err);
+          resolve(`Trabajo cron creado/actualizado exitosamente para feedId: ${feedId} con expresión cron: ${cronPattern}`);
         });
+      }
     });
   });
 }
@@ -431,8 +438,63 @@ function organizeCustomFields(expression) {
 }
 
 
+async function doesCronJobExist(feedId) {
+  return new Promise((resolve, reject) => {
+    pm2.connect((err) => {
+      if (err) {
+        return reject(err);
+      }
+
+      pm2.describe(`cron-task-${feedId}`, (err, processDescription) => {
+        pm2.disconnect();
+        
+        if (err) {
+          return reject(err);
+        }
+
+        if (processDescription && processDescription.length > 0) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      });
+    });
+  });
+}
 
 
+async function deleteCronJob(feedId) {
+  return new Promise((resolve, reject) => {
+    pm2.connect((err) => {
+      if (err) {
+        return reject(err);
+      }
+
+      // Primero, verifica si el trabajo cron existe
+      pm2.describe(`cron-task-${feedId}`, (err, processDescription) => {
+        if (err) {
+          pm2.disconnect();
+          return reject(err);
+        }
+
+        // Si el proceso existe, elimínalo
+        if (processDescription && processDescription.length > 0) {
+          pm2.delete(`cron-task-${feedId}`, (err) => {
+            pm2.disconnect();
+            if (err) {
+              return reject(err);
+            }
+            resolve(`Trabajo cron eliminado exitosamente para feedId: ${feedId}`);
+          });
+        } else {
+          // Si el proceso no existe, no hay nada que eliminar
+          pm2.disconnect();
+          resolve(`No se encontró ningún trabajo cron para feedId: ${feedId}`);
+        }
+      });
+    });
+  });
+}
 
 
 module.exports = {
@@ -445,5 +507,7 @@ module.exports = {
   logMemoryUsage,
   createCronJob,
   createSimpleCron,
-  buildQueryUrl
+  buildQueryUrl,
+  doesCronJobExist,
+  deleteCronJob
 };

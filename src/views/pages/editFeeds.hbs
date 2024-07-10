@@ -176,6 +176,40 @@
                             </select>
                         </div>
                         {{/each}}
+                        <div class="mb-3">
+                            <label class="form-label">Custom recurrence</label>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Repeat every</span>
+                                <select class="form-control">
+                                    <option value="1">1 hour</option>
+                                    <option value="3">3 hours</option>
+                                    <option value="6">6 hours</option>
+                                    <option value="12">12 hours</option>
+                                </select>
+                            </div>
+                            <div class="btn-group" role="group" aria-label="Repeat on">
+                                <input type="checkbox" class="btn-check" id="monday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="monday">M</label>
+
+                                <input type="checkbox" class="btn-check" id="tuesday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="tuesday">T</label>
+
+                                <input type="checkbox" class="btn-check" id="wednesday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="wednesday">W</label>
+
+                                <input type="checkbox" class="btn-check" id="thursday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="thursday">T</label>
+
+                                <input type="checkbox" class="btn-check" id="friday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="friday">F</label>
+
+                                <input type="checkbox" class="btn-check" id="saturday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="saturday">S</label>
+
+                                <input type="checkbox" class="btn-check" id="sunday" autocomplete="off">
+                                <label class="btn btn-outline-primary" for="sunday">S</label>
+                            </div>
+                        </div>
                         <div class="action-buttons">
                             <button type="button" class="btn btn-primary" id="updateButton">Update</button>
                             <button type="button" class="btn btn-secondary" id="cancelButton">Cancel</button>
@@ -301,6 +335,17 @@
 
             updateButton.addEventListener('click', function () {
                 const feedId = document.getElementById('feed_id').value;
+
+                const selectedDays = [];
+                ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].forEach(day => {
+                    if (document.getElementById(day).checked) {
+                        selectedDays.push(day);
+                    }
+                });
+
+                // Obtener el valor del intervalo de tiempo
+                const intervalUnit = document.querySelector('.input-group select').value;
+
                 const feedData = {
                     feed_name: document.getElementById('feed_name').value.trim(),
                     store_hash: document.getElementById('store_hash').value.trim(),
@@ -314,8 +359,14 @@
                     total_products_bc: document.getElementById('total_products_bc').value.trim(),
                     preorder_products: document.getElementById('preorder_products').value.trim(),
                     company_id: document.getElementById('company_id').value.trim(),
+                    recurrence: {
+                        intervalUnit: intervalUnit,
+                        selectedDays: selectedDays
+                    },
                     domain: document.getElementById('domain').value.trim(),
                 };
+
+
                 /*
                                 var progressModal = new bootstrap.Modal(document.getElementById('progressModal'), {
                                     backdrop: 'static',

@@ -34,6 +34,10 @@
             animation: rotateHourglass 5s infinite linear;
         }
 
+        #alertContainer {
+            margin-bottom: 1rem;
+        }
+
         @keyframes rotateHourglass {
             0% {
                 transform: rotate(0deg);
@@ -204,10 +208,15 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <div id="alertContainer" class="alert alert-warning" role="alert" style="display: none;">
+                        <span id="alertMessage"></span>
+                    </div>
                     <div class="mb-3">
                         <label for="formulaText" class="form-label">Formulas</label>
                         <input type="text" class="form-control" id="formulaText" readonly>
                     </div>
+
+
                     <div id="fields" class="tab-content">
                         <table id="fieldsTable"></table>
                     </div>
@@ -245,10 +254,10 @@
                             Field</button>
                     </div>
                     <div class="mt-3">
-                        <div class="d-grid gap-2 mb-2">
+                        {{!-- <div class="d-grid gap-2 mb-2">
                             <button type="button" class="btn btn-secondary" onclick="showTab('customFieldSection')">Add
                                 Custom Field</button>
-                        </div>
+                        </div> --}}
                         <div class="d-flex justify-content-between">
                             <button type="button" class="btn btn-danger" id="deleteAllFormulasButton"><i
                                     class="fas fa-trash"></i> Eliminar Todo</button>
@@ -336,9 +345,9 @@
         });
 
         // Funcionalidad de cancelar en el modal de creación
-            document.getElementById('cancelButton').addEventListener('click', function () {
-                window.location.href = "/app/feeds";
-            });
+        document.getElementById('cancelButton').addEventListener('click', function () {
+            window.location.href = "/app/feeds";
+        });
 
 
         var operators = {
@@ -365,7 +374,7 @@
             condition: ["new", "used", "refurbished"]
         };
 
-        var fields = ['type', 'price', 'is_featured', 'availability', 'is_visible', 'is_free_shipping', 'id', 'weight', 'condition'];
+        var fields = ['type', 'price', 'is_featured', 'availability', 'is_visible', 'is_free_shipping', 'id', 'weight', 'condition', 'Add Custom Field'];
         var selectedFields = new Set();
         var currentExpression = [];
         var fullExpression = [];
@@ -388,6 +397,7 @@
                     console.log('Field clicked:', field);
                     if (!selectedFields.has(field) || field === 'price' || field === 'id' || field === 'weight') {
                         selectField(field);
+                        //hideAlert();
                     }
                 };
                 row.appendChild(cell);
@@ -397,10 +407,17 @@
                 }
             });
             fieldsTable.appendChild(row);
+            //showAlert('Please select a field');
         }
 
         function selectField(field) {
             console.log('selectField called:', field);
+            if (field === 'Add Custom Field') {
+                showTab('customFieldSection');
+                //showAlert('Please enter the custom field details');
+                return;
+            }
+
             currentExpression = [field];
             if (field !== 'price' && field !== 'id' && field !== 'weight') {
                 selectedFields.add(field);
@@ -412,11 +429,13 @@
         }
 
 
+
         function loadOperators(field) {
             console.log('loadOperators called:', field);
             var operatorTable = document.getElementById('operatorTable');
             operatorTable.innerHTML = '';
             var row = document.createElement('tr');
+            //showAlert('Please select an operator');
             operators[field].forEach(function (op) {
                 var cell = document.createElement('td');
                 cell.innerText = op;
@@ -426,10 +445,12 @@
                     loadValues(field);
                     showTab('values');
                     updateFormulaText(); // Llamar a la función aquí para actualizar inmediatamente
+                    //showAlert('Please select a value');
                 };
                 row.appendChild(cell);
             });
             operatorTable.appendChild(row);
+
         }
 
 
@@ -453,6 +474,7 @@
                         console.log('Number confirmed:', numberInput.value);
                         currentExpression.push(numberInput.value);
                         finalizeSelection();
+                        //showAlert('Please select a field');
                         updateFormulaText();  // Llamar a la función aquí
                     } else {
                         alert("Please enter a non-negative number."); // Mensaje de alerta si el número es negativo
@@ -481,6 +503,7 @@
                 });
             }
             valueTable.appendChild(row);
+
         }
 
         function finalizeSelection() {
@@ -545,7 +568,9 @@
                 loadFields();
                 updateFormulaText();
             }
+            showTab('fields'); // Llevar al usuario a la pestaña de selección de campos
         }
+
 
         document.addEventListener('DOMContentLoaded', function () {
             console.log('DOMContentLoaded event');
@@ -560,7 +585,31 @@
                 tabs[i].style.display = 'none';
             }
             document.getElementById(tabName).style.display = 'block';
+
+            // Mostrar alertas específicas según la pestaña
+            switch (tabName) {
+                case 'fields':
+                    showAlert('Please select a field');
+                    break;
+                case 'operators':
+                    showAlert('Please select an operator');
+                    break;
+                case 'values':
+                    showAlert('Please select a value');
+                    break;
+                case 'logical_operators':
+                    showAlert('Please select a logical operator');
+                    break;
+                case 'customFieldSection':
+                    showAlert('Please enter the custom field details');
+                    break;
+                default:
+                    hideAlert();
+                    break;
+            }
         }
+
+
 
         document.getElementById('formulas').addEventListener('click', function () {
             console.log('Formulas clicked');
@@ -593,10 +642,12 @@
                 currentExpression = [customFieldName, customFieldOperator, customFieldValue];
                 isCustomFieldMode = true;
                 finalizeSelection();
+                //hideAlert();
             } else {
                 alert('Please fill in all custom field details.');
             }
         }
+
 
         function updateFormulaText() {
             var formulaText = document.getElementById('formulaText');
@@ -622,6 +673,29 @@
                 return customFieldsPart || fieldsPart;
             }
         }
+
+
+        function showAlert(message) {
+            console.log("Mensaje: ", message);
+            const alertMessage = document.getElementById('alertMessage');
+            const alertContainer = document.getElementById('alertContainer');
+
+            if (!alertMessage || !alertContainer) {
+                console.error('Alert elements not found in the DOM');
+                return;
+            }
+
+            alertMessage.innerText = message;
+            alertContainer.style.display = 'block';
+            alertContainer.style.setProperty('display', 'block', 'important'); // Forzar la visibilidad
+        }
+
+
+        function hideAlert() {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.style.display = 'none';
+        }
+
 
 
     </script>

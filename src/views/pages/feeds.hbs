@@ -32,6 +32,9 @@
 
         .table-responsive {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            /* Para una mejor experiencia en dispositivos táctiles */
+
         }
 
         .table thead th {
@@ -48,6 +51,10 @@
 
         .editing .editable {
             display: inline;
+        }
+
+        .d-none {
+            display: none;
         }
 
         .editing .non-editable {
@@ -82,6 +89,69 @@
                 transform: rotate(360deg);
             }
         }
+
+
+        .btn-toggle-cron {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            /* Añadir padding para un área de clic más grande */
+            margin: 0;
+            cursor: pointer;
+            outline: none;
+            /* Para eliminar el contorno de enfoque */
+            -webkit-appearance: none;
+            /* Para eliminar el estilo predeterminado en Safari */
+            border-radius: 5px;
+            /* Añadir border-radius */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            /* Añadir sombra */
+            display: flex;
+            align-items: center;
+            /* Centrar verticalmente el ícono dentro del botón */
+            justify-content: center;
+            /* Centrar horizontalmente el ícono dentro del botón */
+            transition: background-color 0.3s;
+        }
+
+        .btn-toggle-cron .cron-icon {
+            font-size: 1.2em;
+            /* Reducir tamaño del ícono */
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .btn-toggle-cron .cron-icon.active {
+            color: green;
+            background: none !important;
+            /* Asegura que no haya fondo */
+        }
+
+        .btn-toggle-cron .cron-icon.inactive {
+            color: red;
+            background: none !important;
+            /* Asegura que no haya fondo */
+        }
+
+        .btn-toggle-cron:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+            /* Fondo azul claro al pasar el ratón */
+        }
+
+        .btn-toggle-cron:hover .cron-icon.active {
+            color: darkgreen;
+            /* Color verde oscuro al pasar el ratón */
+        }
+
+        .btn-toggle-cron:hover .cron-icon.inactive {
+            color: darkred;
+            /* Color rojo oscuro al pasar el ratón */
+        }
+
+        .btn-toggle-cron:hover .cron-icon {
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
     </style>
 </head>
 
@@ -107,16 +177,19 @@
         </div>
         {{/unless}}
         <div class="card">
-            <div class="card-header">
+            <div class="card-header d-flex align-items-center">
+                <i class="fas fa-rss me-2"></i> <!-- Icono de Font Awesome -->
                 <h2>Feed List</h2>
             </div>
+
             <div class="table-responsive">
                 <table class="table table-bordered table-hover table-striped">
                     <thead class="table-dark">
                         <tr>
                             <th class="col-id">ID</th>
+                            <th class="col-status">Cron</th>
                             <th class="col-name">Name</th>
-                            <th>Formulas</th>
+                            <th class="d-none">Formulas</th>
                             <th>Last Update</th>
                             <th>GM Products</th>
                             <th>BC Products</th>
@@ -131,10 +204,21 @@
                         <tr>
                             <td><span class="non-editable">{{this.feed_id}}</span><span
                                     class="editable">{{this.feed_id}}</span></td>
+                            <td class="text-center">
+                                <button class="btn-toggle-cron" data-feed-id="{{this.feed_id}}">
+                                    <i
+                                        class="fas fa-lightbulb cron-icon {{#if this.isActive}}active{{else}}inactive{{/if}}"></i>
+                                </button>
+                            </td>
+
+
+
+
+
                             <td><span class="non-editable">{{this.feed_name}}</span><input type="text"
                                     class="form-control editable" value="{{this.feed_name}}"></td>
-                            <td><span class="non-editable">{{this.formulas}}</span><input type="text"
-                                    class="form-control editable" value="{{this.formulas}}"></td>
+                            <td class="d-none"><span class="d-none non-editable">{{this.formulas}}</span><input
+                                    type="text" class="d-none form-control editable" value="{{this.formulas}}"></td>
                             <td><span class="non-editable">{{this.last_update}}</span><input type="text"
                                     class="form-control editable" value="{{this.last_update}}"></td>
                             <td><span class="non-editable">{{this.active_products_gm}}</span><input type="text"
@@ -385,6 +469,28 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Modal de Confirmación de Activación de Cron -->
+    <div class="modal fade" id="toggleCronModal" tabindex="-1" aria-labelledby="toggleCronModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="toggleCronModalLabel">Toggle Cron Job</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to toggle the cron job?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmToggleCron">Yes, toggle it</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
 
@@ -647,6 +753,47 @@
                             downloadModal.hide(); // Cerrar el modal en caso de error
                         });
                 });
+            });
+        });
+
+
+        //Activador del cron
+
+        document.addEventListener('DOMContentLoaded', function () {
+            let selectedFeedId;
+
+            document.querySelectorAll('.btn-toggle-cron').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    selectedFeedId = btn.getAttribute('data-feed-id');
+                    var toggleCronModal = new bootstrap.Modal(document.getElementById('toggleCronModal'));
+                    toggleCronModal.show();
+                });
+            });
+
+            document.getElementById('confirmToggleCron').addEventListener('click', function () {
+                fetch(`/feeds/toggleCron/${selectedFeedId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            alert(data.message);
+                            window.location.reload();
+                        } else {
+                            alert("Error toggling the cron job");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Error toggling the cron job");
+                        window.location.reload();
+                    });
+
+                var toggleCronModal = bootstrap.Modal.getInstance(document.getElementById('toggleCronModal'));
+                toggleCronModal.hide();
             });
         });
 

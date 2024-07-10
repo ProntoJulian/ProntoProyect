@@ -72,9 +72,11 @@
         </div>
         {{/unless}}
         <div class="card">
-            <div class="card-header">
+            <div class="card-header d-flex align-items-center">
+                <i class="fas fa-users me-2"></i> <!-- Icono de Font Awesome -->
                 <h2>List of Users</h2>
             </div>
+
             <div class="table-responsive">
                 <table class="table table-bordered table-hover table-striped">
                     <thead class="table-dark">
@@ -407,7 +409,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username, password, newPassword, primaryCompanyId, roleId , selectedCompanies: selectedCompanies})
+                    body: JSON.stringify({ username, password, newPassword, primaryCompanyId, roleId, selectedCompanies: selectedCompanies })
                 })
                     .then(response => response.json())
                     .then(data => {

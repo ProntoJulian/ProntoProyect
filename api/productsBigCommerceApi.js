@@ -434,6 +434,32 @@ async function countTotalProducts(config) {
 }
 
 
+async function verifyBigCommerceCredentials(config) {
+  const { storeHash } = config;
+  const baseUrl = `https://api.bigcommerce.com/stores/${storeHash}/v3/catalog/products`;
+  const options = await getConfig(config);
+
+  try {
+    const initialUrl = `${baseUrl}?price:min=0.01&availability=available&page=1&limit=1`;
+    const initialResponse = await fetch(initialUrl, options);
+    
+    if (initialResponse.status !== 200) {
+      throw new Error(`HTTP Status: ${initialResponse.status}`);
+    }
+
+    const initialData = await initialResponse.json();
+    if (initialData.data && initialData.data.length > 0) {
+      console.log("Credenciales de BigCommerce verificadas exitosamente.");
+      return true;
+    } else {
+      //console.error("Error al verificar las credenciales de BigCommerce: No se encontraron productos.");
+      return false;
+    }
+  } catch (error) {
+    //console.error("Error al verificar las credenciales de BigCommerce: ");
+    throw error;
+  }
+}
 
 
 module.exports = {
@@ -448,5 +474,6 @@ module.exports = {
   manageDeleteProductsProcessing,
   getConfig,
   countProductsByAvailability,
-  countTotalProducts
+  countTotalProducts,
+  verifyBigCommerceCredentials
 };

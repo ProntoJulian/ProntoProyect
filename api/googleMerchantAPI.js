@@ -565,6 +565,30 @@ async function listAllProductIds(config) {
   }
 }
 
+async function verifyGoogleCredentials(config) {
+  const { content, merchantId } = await initializeGoogleAuth(config);
+
+  try {
+    const params = {
+      merchantId,
+      maxResults: 1, // Solo necesitamos un resultado para verificar las credenciales
+    };
+
+    const response = await content.products.list(params);
+
+    if (response.data.resources) {
+      console.log("Credenciales de Google verificadas exitosamente.");
+      return true;
+    } else {
+      //console.error("Error al verificar las credenciales de Google: No se encontraron productos.");
+      return false;
+    }
+  } catch (error) {
+    //console.error("Error al verificar las credenciales de Google: ");
+    throw error;
+  }
+}
+
 
 module.exports = {
   insertProductToGoogleMerchant,
@@ -580,5 +604,6 @@ module.exports = {
   initializeGoogleAuth,
   getInfoOfAllProducts,
   createExcel,
-  listAllProductIds
+  listAllProductIds,
+  verifyGoogleCredentials
 };

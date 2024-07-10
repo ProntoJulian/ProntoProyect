@@ -1,16 +1,16 @@
 const express = require("express");
 const { authenticateToken } = require("../../middleware/index");
-const { encrypt, decrypt, logMemoryUsage, createSimpleCron, createCronJob,buildQueryUrl } = require("../../helpers/helpers");
+const { encrypt, decrypt, logMemoryUsage, createSimpleCron, createCronJob, buildQueryUrl, doesCronJobExist, deleteCronJob } = require("../../helpers/helpers");
 const { insertIntoTable,
     updateTable,
     fetchDataFromTable,
     deleteFromTable,
     fetchOneFromTable, updateFeed } = require("../../databases/CRUD");
 const { createWebhookToCreateProduct, createWebhookToUpdateProduct, fetchWebHooks, activateAllWebHooks } = require("../../api/webHooksBigCommerceApi")
-const { getProductInfoGoogleMerchant, initializeGoogleAuth, listAllProducts, getInfoOfAllProducts, createExcel } = require("../../api/googleMerchantAPI")
+const { getProductInfoGoogleMerchant, verifyGoogleCredentials, initializeGoogleAuth, listAllProducts, getInfoOfAllProducts, createExcel } = require("../../api/googleMerchantAPI")
 const routerFeeds = express.Router();
 
-const { countPages, countProductsByAvailability, manageProductProcessing, getConfig, countTotalProducts } = require("../../api/productsBigCommerceApi")
+const { countPages, verifyBigCommerceCredentials, countProductsByAvailability, manageProductProcessing, getConfig, countTotalProducts } = require("../../api/productsBigCommerceApi")
 const { getConfigCategories } = require("../../api/categoriesBigCommerceApi");
 const { getConfigImages } = require("../../api/imagesBigCommerceApi");
 
@@ -103,7 +103,7 @@ routerFeeds.get("/feeds/updateFeed/:feedId", authenticateToken, async (req, res)
 
 routerFeeds.get("/app/feeds/createFeed", authenticateToken, async (req, res) => {
 
-    console.log("Funciona?")
+    //console.log("Funciona?")
 
     try {
         const companies = await fetchDataFromTable('companies');
@@ -132,6 +132,18 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
     const privateKey = feed.private_key;
     const merchantId = feed.client_id;
 
+    const intervalUnit = updateData.recurrence ? parseInt(updateData.recurrence.intervalUnit, 10) : undefined;
+    const selectedDaysArray = updateData.recurrence ? updateData.recurrence.selectedDays : undefined;
+    const selectedDays = selectedDaysArray ? selectedDaysArray.join(';') : undefined; // Convertir la lista en un string
+
+    console.log("Datos: ----------------", intervalUnit, selectedDays);
+
+    updateData.selectedDays = selectedDays;
+    updateData.intervalHour = intervalUnit;
+    updateData.isActive = updateData.recurrence ? Boolean(updateData.recurrence.isActive) : false;
+
+    console.log("Selected Days: ",)
+
     const config = {
         accessToken: accessToken,
         storeHash: storeHash,
@@ -151,6 +163,7 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
     try {
 
         const merchantId = feed.client_id;
+
         /*
         const [totalProductsGM, totalProductsBC, preorderProducts] = await Promise.all([
             listAllProducts(merchantId),
@@ -166,10 +179,10 @@ routerFeeds.put("/feeds/update/:feedId", authenticateToken, async (req, res) => 
             Configuración temporal
 
         */
-        updateData.selectedDays = "";
-        updateData.intervalHour = 1;
-        updateData.isActive = updateData.recurrence ? Boolean(updateData.recurrence.isActive) : false;
-
+        //updateData.selectedDays = "";
+        //updateData.intervalHour = 1;
+        //updateData.isActive = updateData.recurrence ? Boolean(updateData.recurrence.isActive) : false;
+        delete updateData.recurrence;
         const result = await updateTable('feeds', updateData, 'feed_id', feedId);
 
         console.log('Resultado de la consulta:', result); // Registro del resultado de la consulta
@@ -216,7 +229,7 @@ routerFeeds.get("/feeds/getFeed/:feedId", authenticateToken, async (req, res) =>
     }
 });
 
-const {manageProductProcessingFeed, countPagesFeed, countPagesNew} =require("../../api/checkProductsFeeds")
+const { manageProductProcessingFeed, countPagesFeed, countPagesNew } = require("../../api/checkProductsFeeds")
 
 routerFeeds.get("/feeds/synchronize2/:feedId", authenticateToken, async (req, res) => {
     const { feedId } = req.params;
@@ -302,7 +315,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
 
         if (feed) {
 
-            
+
             const storeHash = feed.store_hash;
             const accessToken = feed.x_auth_token;
             const privateKey = feed.private_key; // decrypt(JSON.parse(feed.private_key));
@@ -333,15 +346,16 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
             }
 
             console.log("Url Formada: ", JSON.stringify(url.customFields, null, 2));
-            console.log("Url Formada: ",url.url);
+            console.log("Url Formada: ", url.url);
 
             // Ejecutar las operaciones asíncronas en segundo plano
             setImmediate(async () => {
                 try {
+
                     const conteoPages = await countPagesNew(config);
                     console.log("Conteo: ", conteoPages);
                     const conteoByTipo = await manageProductProcessingFeed(config, conteoPages);
-                    
+
 
                     console.log("Conteo: ", conteoPages);
 
@@ -350,7 +364,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
                     if (WebHooks.data.length == 0) {
                         await createWebhookToCreateProduct(config, feedId);
                         await createWebhookToUpdateProduct(config, feedId);
-                    }else{
+                    } else {
                         await activateAllWebHooks(config)
                     }
 
@@ -364,12 +378,11 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
                     const updateData = {
                         total_products_bc: totalProductsBC,
                         active_products_gm: totalProductsGM,
-                        preorder_products: preorderProducts
+                        preorder_products: preorderProducts,
+                        isActive: true
                     };
 
-                    
-
-                    await createCronJob(feedId,configCron);
+                    await createCronJob(feedId, configCron);
 
                     await updateFeed(feedId, updateData);
 
@@ -392,7 +405,7 @@ routerFeeds.get("/feeds/synchronize/:feedId", authenticateToken, async (req, res
     }
 });
 
-const {manageProductSync, findMissingProductsInBigCommerce} =require("../../api/checkProductsFeeds")
+const { manageProductSync, findMissingProductsInBigCommerce } = require("../../api/checkProductsFeeds")
 const { listAllProductIds } = require("../../api/googleMerchantAPI")
 
 routerFeeds.get("/feeds/CreateCron/:feedId", async (req, res) => {
@@ -404,7 +417,7 @@ routerFeeds.get("/feeds/CreateCron/:feedId", async (req, res) => {
 
         if (feed) {
 
-            
+
             const storeHash = feed.store_hash;
             const accessToken = feed.x_auth_token;
             const privateKey = feed.private_key; // decrypt(JSON.parse(feed.private_key));
@@ -435,7 +448,7 @@ routerFeeds.get("/feeds/CreateCron/:feedId", async (req, res) => {
             }
 
             console.log("Url Formada: ", JSON.stringify(url.customFields, null, 2));
-            console.log("Url Formada: ",url.url);
+            console.log("Url Formada: ", url.url);
 
             // Ejecutar las operaciones asíncronas en segundo plano
             setImmediate(async () => {
@@ -443,10 +456,10 @@ routerFeeds.get("/feeds/CreateCron/:feedId", async (req, res) => {
                     const productsSKUs = await listAllProductIds(config);
                     const conteoPages = await countPagesNew(config);
                     console.log("Conteo: ", conteoPages);
-                    
+
                     //const productosEliminar = await findMissingProductsInBigCommerce(config, conteoPages,productsSKUs);
-                    const conteoByTipo = await manageProductSync(config, conteoPages,productsSKUs);
-                    
+                    const conteoByTipo = await manageProductSync(config, conteoPages, productsSKUs);
+
 
                     console.log("Conteo: ", conteoPages);
 
@@ -455,7 +468,7 @@ routerFeeds.get("/feeds/CreateCron/:feedId", async (req, res) => {
                     if (WebHooks.data.length == 0) {
                         await createWebhookToCreateProduct(config, feedId);
                         await createWebhookToUpdateProduct(config, feedId);
-                    }else{
+                    } else {
                         await activateAllWebHooks(config)
                     }
 
@@ -472,9 +485,9 @@ routerFeeds.get("/feeds/CreateCron/:feedId", async (req, res) => {
                         preorder_products: preorderProducts
                     };
 
-                    
 
-                    await createCronJob(feedId,configCron);
+
+                    await createCronJob(feedId, configCron);
 
                     await updateFeed(feedId, updateData);
 
@@ -572,6 +585,78 @@ routerFeeds.get("/feeds/downloadFeed/:feedId", authenticateToken, async (req, re
     }
 });
 
+routerFeeds.put("/feeds/toggleCron/:feedId", authenticateToken, async (req, res) => {
+    const { feedId } = req.params;
+    try {
+        const feed = await fetchOneFromTable('feeds', feedId, 'feed_id');
+        if (!feed) {
+            return res.status(404).json({ message: "Feed no encontrado" });
+        }
+
+        const storeHash = feed.store_hash;
+        const formula = feed.formulas;
+
+        const baseUrl = `https://api.bigcommerce.com/stores/${storeHash}/v3/catalog/products`;
+        const url = await buildQueryUrl(baseUrl, formula);
+
+
+        const config = {
+            accessToken: feed.x_auth_token,
+            storeHash: feed.store_hash,
+            client_email: feed.client_email,
+            private_key: feed.private_key,
+            merchantId: feed.client_id,
+            domain: feed.domain,
+            apiInfo: url
+        };
+
+        const configCron = {
+            selectedDays: feed.selectedDays,
+            intervalHour: feed.intervalHour,
+            isActive: !feed.isActive // Cambiar el estado actual
+        };
+
+        // Verificar credenciales antes de activar/desactivar el cron
+        let googleCredentialsValid = false;
+        let bigCommerceCredentialsValid = false;
+
+        try {
+            googleCredentialsValid = await verifyGoogleCredentials(config);
+            if (!googleCredentialsValid) {
+                return res.status(400).json({ message: "Credenciales de Google Merchant inválidas" });
+            }
+        } catch (error) {
+            console.error('Error al verificar las credenciales de Google:');
+            return res.status(400).json({ message: "Error al verificar las credenciales de Google Merchant" });
+        }
+
+        try {
+            bigCommerceCredentialsValid = await verifyBigCommerceCredentials(config);
+            if (!bigCommerceCredentialsValid) {
+                return res.status(400).json({ message: "Credenciales de BigCommerce inválidas" });
+            }
+        } catch (error) {
+            console.error('Error al verificar las credenciales de BigCommerce:');
+            return res.status(400).json({ message: "Error al verificar las credenciales de BigCommerce" });
+        }
+
+        if (googleCredentialsValid && bigCommerceCredentialsValid) {
+            if (configCron.isActive) {
+                await createCronJob(feedId, configCron);
+            } else {
+                await deleteCronJob(feedId);
+            }
+            console.log("Llegamos acá")
+            await updateTable('feeds', { isActive: configCron.isActive }, 'feed_id', feedId);
+            res.status(200).json({ message: `Cron job ${configCron.isActive ? 'activado' : 'desactivado'}` });
+        } else {
+            res.status(400).json({ message: "Error en las credenciales, no se puede cambiar el estado del cron job" });
+        }
+    } catch (error) {
+        console.error('Error al togglear el cron job:', error);
+        res.status(500).json({ message: "Error interno del servidor" });
+    }
+});
 
 
 module.exports = routerFeeds;
