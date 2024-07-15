@@ -6,6 +6,7 @@ const cron = require('node-cron');
 async function transformProduct(config, bcProduct) {
   const { getProductImages } = require("../api/imagesBigCommerceApi");
   const { fetchCategoryNameById, getStoreDomain } = require("../api/categoriesBigCommerceApi");
+  const { getBrandNameById } = require("../api/productsBigCommerceApi");
 
   const { primerImagen, ImagenesRestantes } = await getProductImages(config, bcProduct.id);
   //const domain = getStoreDomain(config);
@@ -32,7 +33,7 @@ async function transformProduct(config, bcProduct) {
     },
     // Agrega más campos según corresponda...
     // A continuación, se muestran algunos campos adicionales que podrías querer mapear:
-    brand: "Home & Garden",
+    //brand: "Home & Garden",
     mpn: bcProduct.mpn,
 
   };
@@ -41,13 +42,13 @@ async function transformProduct(config, bcProduct) {
     googleProductFormat.gtin = bcProduct.gtin
   }
 
-  if (bcProduct.categories.length > 0) {
+  if (bcProduct.brand_id) {
     //console.log("ID de la categoria: ", bcProduct.categories[0])
 
     try {
-      const Category = await fetchCategoryNameById(config, bcProduct.categories[0]);
+      const Category = await getBrandNameById(config, bcProduct.brand_id);
       if (Category) {
-        googleProductFormat.productTypes = Category
+        googleProductFormat.brand = Category
       }
     } catch (error) {
       console.error('Error fetching category:', error);

@@ -462,6 +462,30 @@ async function verifyBigCommerceCredentials(config) {
 }
 
 
+
+async function getBrandNameById(config, brandId) {
+  const { storeHash } = config;
+  const brandUrl = `https://api.bigcommerce.com/stores/${storeHash}/v3/catalog/brands/${brandId}`;
+
+  const options = await getConfig(config);
+
+  try {
+      const response = await fetch(brandUrl, options);
+      if (!response.ok) {
+          //throw new Error(`HTTP error! status 79 Brand: ${response.status}`);
+          return "";
+      }
+      const data = await response.json();
+      //console.log(`Nombre de la marca: ${data.data.name}`);
+      //console.timeEnd('getBrandNameById');
+      return data.data.name; // Retorna el nombre de la marca
+  } catch (error) {
+      console.error('Error fetching brand name:', error);
+      return ""; // Retorna null en caso de error
+  }
+}
+
+
 module.exports = {
   fetchProductById,
   checkCustomField,
@@ -475,5 +499,6 @@ module.exports = {
   getConfig,
   countProductsByAvailability,
   countTotalProducts,
-  verifyBigCommerceCredentials
+  verifyBigCommerceCredentials,
+  getBrandNameById
 };
