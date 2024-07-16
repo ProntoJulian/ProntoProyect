@@ -3,13 +3,24 @@ const bcrypt = require('bcrypt');
 
 require('dotenv').config()
 
-const pool = mysql.createPool({
+/* const pool = mysql.createPool({
   socketPath: `/cloudsql/${process.env.INSTANCE_CONNECTION_NAME}`,
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE
 });
+ */
+const pool = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    charset: process.env.DB_CHARSET,
+    connectTimeout: 20000,
+    waitForConnections: true,
+    queueLimit: 0
+  });
 
 async function authenticateUser(username, password) {
     const sql = `SELECT * FROM users WHERE username = ?`;

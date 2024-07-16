@@ -2,7 +2,6 @@ const mysql = require('mysql');
 require('dotenv').config();
 
 const dbConnection = mysql.createConnection({
-  socketPath: `/cloudsql/${process.env.INSTANCE_CONNECTION_NAME}`,
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -10,7 +9,7 @@ const dbConnection = mysql.createConnection({
   charset: process.env.DB_CHARSET,
   connectTimeout: 20000,
   waitForConnections: true,
-  queueLimit: 0 
+  queueLimit: 0
 });
 
 // Intenta conectar
