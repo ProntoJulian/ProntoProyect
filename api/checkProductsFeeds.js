@@ -387,7 +387,13 @@ async function manageProductProcessingFeed(config, totalPages) {
     const { transformProduct } = require("../helpers/helpers");
     const { insertBatchProducts } = require("../api/googleMerchantAPI");
 
-    const divisionOfPages = 10;
+    //const divisionOfPages = 10;
+
+    const maxSegmentSize = 20;
+    let divisionOfPages = Math.ceil(totalPages / maxSegmentSize);
+
+
+
     const segmentSize = Math.ceil(totalPages / divisionOfPages); // Divide las páginas en 10 partes
     let currentPage = 1;
     let totalValidCount = 0; // Contador total para todos los productos válidos
