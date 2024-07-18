@@ -47,6 +47,24 @@ async function initializeGoogleAuth(config) {
   return { content, merchantId };
 }
 
+async function initializeGoogleAuth2(config) {
+  const { client_email, private_key, merchantId } = config;
+
+  const auth = new google.auth.JWT(
+    client_email,
+    null,
+    private_key,
+    ["https://www.googleapis.com/auth/content"]
+  );
+
+  const content = google.content({
+    version: "v2.1",
+    auth: auth,
+  });
+
+  return { content, merchantId };
+}
+
 
 async function insertProductToGoogleMerchant(config, product) {
   const { content, merchantId } = await initializeGoogleAuth(config);
@@ -590,6 +608,49 @@ async function verifyGoogleCredentials(config) {
 }
 
 
+async function listAllActiveProducts(config) {
+  const { content, merchantId } = await initializeGoogleAuth(config);
+
+  let totalApprovedProducts = 0;
+  let nextPageToken = null;
+  const maxResults = 250;
+
+  console.time("Duración del listado de productos aprobados");
+
+  try {
+    do {
+      const params = {
+        merchantId,
+        destinations: ['Shopping'],
+        maxResults
+      };
+      if (nextPageToken) {
+        params.pageToken = nextPageToken;
+      }
+
+      const response = await content.productstatuses.list(params);
+
+      if (response.data.resources) {
+        const approvedProductsInPage = response.data.resources.filter(product =>
+          product.destinationStatuses.some(status => status.destination === 'Shopping' && status.status === 'approved')
+        );
+        totalApprovedProducts += approvedProductsInPage.length;
+        nextPageToken = response.data.nextPageToken;
+      }
+    } while (nextPageToken);
+
+    console.log("Total de productos aprobados: ", totalApprovedProducts);
+    console.timeEnd("Duración del listado de productos aprobados");
+    return totalApprovedProducts;
+  } catch (error) {
+    console.error("Error al listar los productos aprobados: ", error);
+    console.timeEnd("Duración del listado de productos aprobados");
+    throw error;
+  }
+}
+
+
+
 module.exports = {
   insertProductToGoogleMerchant,
   insertBatchProducts,
@@ -605,5 +666,6 @@ module.exports = {
   getInfoOfAllProducts,
   createExcel,
   listAllProductIds,
-  verifyGoogleCredentials
+  verifyGoogleCredentials,
+  listAllActiveProducts
 };
