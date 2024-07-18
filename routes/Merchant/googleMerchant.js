@@ -134,6 +134,7 @@ routerMerchant.post("/totalActiveProducts/multiple", async (req, res) => {
           return {
             storeHash,
             totalActiveProducts: null,
+            
             message: `No se encontró información para el storeHash: ${storeHash}`
           };
         }
