@@ -125,39 +125,54 @@ routerMerchant.post("/totalActiveProducts/multiple", async (req, res) => {
 
   try {
     const results = await Promise.all(storeHashes.map(async (storeHash) => {
-      console.log("Procesando Store Hash: ", storeHash);
-      const feedInfo = await fetchFeedByStoreHash(storeHash);
+      try {
+        console.log("Procesando Store Hash: ", storeHash);
+        const feedInfo = await fetchFeedByStoreHash(storeHash);
 
-      if (!feedInfo) {
-        throw new Error(`No se encontró información para el storeHash: ${storeHash}`);
+        if (!feedInfo) {
+          console.error(`No se encontró información para el storeHash: ${storeHash}`);
+          return {
+            storeHash,
+            totalActiveProducts: null,
+            message: `No se encontró información para el storeHash: ${storeHash}`
+          };
+        }
+
+        //console.log("Feed Info: ", feedInfo);
+
+        const config = {
+          client_email: feedInfo.client_email,
+          private_key: feedInfo.private_key,
+          merchantId: feedInfo.client_id
+        };
+
+        const totalActiveProducts = await listAllActiveProducts(config);
+
+        console.log("Total Active Products para Store Hash:", storeHash, totalActiveProducts);
+
+        return {
+          storeHash,
+          totalActiveProducts
+        };
+      } catch (error) {
+        console.error(`Error procesando el storeHash: ${storeHash}`, error);
+        return {
+          storeHash,
+          totalActiveProducts: null,
+          message: `Error procesando el storeHash: ${storeHash}`
+        };
       }
-
-      //console.log("Feed Info: ", feedInfo);
-
-      const config = {
-        client_email: feedInfo.client_email,
-        private_key: feedInfo.private_key,
-        merchantId: feedInfo.client_id
-      };
-
-      const totalActiveProducts = await listAllActiveProducts(config); // Cambié listAllActiveProducts por listApprovedProducts
-
-      console.log("Total Active Products para Store Hash:", storeHash, totalActiveProducts);
-
-      return {
-        storeHash,
-        totalActiveProducts
-      };
     }));
 
     console.timeEnd("Duración total");
-    res.send({ results, message: "Duración total registrada en el servidor." });
+    res.send({ results });
   } catch (error) {
     console.error("Error procesando los Store Hashes: ", error);
     console.timeEnd("Duración total");
     res.status(500).send({ error: error.message });
   }
 });
+
 
 
 module.exports = routerMerchant;
