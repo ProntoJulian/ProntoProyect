@@ -7,10 +7,9 @@ const {
 } = require("../helpers/helpers");
 
 
+
 function createOAuthConnection(config) {
     const { accessToken, storeHash } = config;
-    //const storeHash = process.env.STOREHASH; // Debería estar definido en tu archivo .env
-    //const accessToken = process.env.ACCESS_TOKEN; // Debería estar definido en tu archivo .env
     return axios.create({
         baseURL: `https://api.bigcommerce.com/stores/${storeHash}/v3/`,
         headers: {
@@ -18,7 +17,9 @@ function createOAuthConnection(config) {
             "Content-Type": "application/json",
             Accept: "application/json",
         },
-        timeout: 10000 // Ajuste del timeout a 10 segundos
+        timeout: 40000, // 30 segundos
+        httpAgent: new (require('http').Agent)({ keepAlive: true }),
+        httpsAgent: new (require('https').Agent)({ keepAlive: true })
     });
 }
 
