@@ -257,6 +257,22 @@ async function testInsertAndFetchFeedTest() {
 }
 
 
+async function fetchFeedByStoreHash(store_hash) {
+    const tableName = 'feeds';
+    const columnName = 'store_hash';
+    
+    const sql = `SELECT * FROM \`${tableName}\` WHERE \`${columnName}\` = ?`;
+    try {
+        const [results, fields] = await pool.promise().query(sql, [store_hash]);
+        return results.length > 0 ? results[0] : null;
+    } catch (error) {
+        console.error(`Error al obtener el registro desde ${tableName}:`, error);
+        throw error;
+    }
+}
+
+
+
 module.exports = {
     insertIntoTable,
     updateTable,
@@ -272,5 +288,6 @@ module.exports = {
     testInsertAndFetchFeedTest,
     fetchAllFromTableByUserId,
     updateUserCompany,
-    fetchAllFromTableUserRolByUserId
+    fetchAllFromTableUserRolByUserId,
+    fetchFeedByStoreHash
 };
